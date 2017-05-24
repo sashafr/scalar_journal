@@ -1,0 +1,57 @@
+----------------------------
+Scalar Updating Instructions
+----------------------------
+
+Scalar is a PHP and MySQL application built with CodeIgniter.
+
+***
+This document assumes that you have a working copy of Scalar operating on your server, and that you wish 
+to update to the most recent Scalar release. If you wish to install Scalar from scratch please see INSTALL.txt.
+***
+
+***
+A note on Scalar releases: 
+Of course, you can always update your Scalar install from the most recent build on GitHub.  However, 
+sometimes bugs can be introduced by commits to GitHub that haven't yet been verified by Scalar's development 
+team.  For this reason we keep checkpoints ("releases") of Scalar using GitHub Releases. Details below.
+***
+
+***
+A note on file uploads:
+Scalar authors can upload files to your server under Import > Local Media Files (the files are placed in the 
+directory corresponding to their book's URL segment).  We strongly suggest protecting your filesystem against 
+potentially malicious uploads, such as *.php files.  We have a template for this in place in the root folder's 
+.htaccess file.  Edit, uncomment the "malicious file uploads" rewrites, and set appropriate fields to let 
+through requests to system files.  Test by uploading a .php file -- when viewing the file you should see 
+Scalar's 404 in the media player.
+***
+
+***
+A note on SSL (https):
+As of Release 6.0.2 SSL (https) is supported out of the box.  If needed we have a template in the root 
+folder's .htaccess to force all requests through https.
+***
+ 
+To begin take a look at the "Changes to config files over time" wiki page (https://github.com/anvc/scalar/wiki/Changes-to-config-files-over-time).  
+Here we list any updates to Scalar config files or the database scheme that will need to be made on your 
+install for the update to work properly.  Each update is marked by the date it was added (and therefore the 
+date that the codebase assumes that the update exists).
+
+Step 1
+a) Update your database scheme based on "Changes to config files over time" (https://github.com/anvc/scalar/wiki/Changes-to-config-files-over-time).
+b) Update your config files based on "Changes to config files over time".  Config files are kept in two places:
+system/application/config -- most changes to config files will be here
+system/application/language -- text such as the name of your Scalar install is kept here
+
+Step 2
+a) Download the most recent release of Scalar (https://github.com/anvc/scalar/releases).
+b) Extract the compressed file and prepare to upload its contents.
+
+Step 3
+a) Upload all of the folders inside "system/application" **except** the aforementioned config folders (system/application/config & system/application/language). 
+This will ensure that you don't overwrite your config files with default values.
+b) Make sure that hidden files are copied to your server (some FTP clients hide .htaccess files).
+
+All done!  To test, you can check certain elements of Scalar including the Dashboard, media elements (media 
+included in pages), and the page editor.
+

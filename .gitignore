@@ -1,0 +1,8 @@
+.htaccess
+codeigniter.php
+error_log
+maintenance.html
+system/application/config/*
+system/database/*
+system/cache/*
+system/logs/*

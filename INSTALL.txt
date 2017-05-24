@@ -1,0 +1,145 @@
+--------------------------------
+Scalar Installation Instructions
+--------------------------------
+
+Scalar is a PHP and MySQL application built with CodeIgniter.
+ 
+*** 
+An important note on .htaccess:
+For Scalar to work properly, it is essential that mod_rewrite -- .htaccess -- be enabled in your Apache config.
+If .htaccess is not enabled, Scalar's URL rewriting will not operate; you'll know this is the case because clicking
+on links such as 'sign in' or 'register' will not take you to those pages (rather, the home page will reload).
+In addition, some FTP clients will interpret .htaccess as a hidden file and not copy them to the server by default.  
+There are a few .htaccess files included in the Scalar build, therefore please make sure that these files are copied.
+***
+
+***
+If PHP's short_open_tag (<? vs <?php) is turned off, CodeIgniter is supposed to make them operational, but this feature doesn't
+seem to be working properly.  Please make sure short_open_tag is turned on in PHP. Scalar also requires the non-default PHP extension mbstring. 
+See installation instructions for mbstring http://php.net/manual/en/mbstring.installation.php.
+***
+
+***
+You can download the most recent Scalar build from GitHub. However, we also occassionally package Scalar into a GitHub Release,
+downloadable at https://github.com/anvc/scalar/releases. Installing from a release ensures that the Scalar team has tested its contents on development and 
+live environments (e.g., scalar.usc.edu).  To update an existing Scalar install, see UPDATE.txt.
+***
+
+***
+Scalar supports servers running SSL (https) out of the box.  If needed we have a template in the root folder's .htaccess 
+file to force all requests through https.
+***
+
+1)
+
+Run the SQL script on a fresh MySQL database (e.g., "scalar_store"):
+
+system/application/config/scalar_store.sql
+
+Note that five additional tables will be added after Scalar's first use.
+
+Update database fields (hostname, database, username and password) at:
+
+system/application/config/database.php OR you can set the following environment variables:
+
+    SCALAR_DB_HOSTNAME
+    SCALAR_DB_USERNAME
+    SCALAR_DB_PASSWORD
+    SCALAR_DB_DATABASE
+
+
+2)
+
+Add a new SALT string, reCAPTCHA key (for your domain, http://www.google.com/recaptcha/whyrecaptcha), 
+registration key, SoundCloud key, and a few other keys:
+
+system/application/config/local_settings.php OR you can set the following environment variables:
+
+    SCALAR_SHASALT
+    SCALAR_RECAPTCHA_PUBLIC_KEY
+    SCALAR_RECAPTCHA_PRIVATE_KEY
+    SCALAR_SOUNDCLOUD_ID
+    SCALAR_DPLA_KEY
+    SCALAR_FLOWPLAYER_KEY
+    SCALAR_GOOGLE_MAPS_KEY
+    SCALAR_EMAIL_REPLYTO_ADDRESS
+    SCALAR_EMAIL_REPLYTO_NAME
+    SCALAR_SMTP_HOST
+    SCALAR_SMTP_USERNAME
+    SCALAR_SMTP_PASSWORD
+
+Add session encryption key ($config['encryption_key']) and cookie/session variable ($config['cookie_prefix']) at:
+
+system/application/config/config.php OR you can set the following environment variables:
+
+    SCALAR_ENCRYPTION_KEY
+    SCALAR_COOKIE_PREFIX
+    SCALAR_COOKIE_DOMAIN
+
+3) 
+
+By default, the home page (book index) will display "Scalar" as the page title; this can be updated at:
+
+system/application/language/en/content_lang.php OR you can set the following environment variables:
+
+    SCALAR_INSTALL_NAME
+
+4) 
+
+All should be set to visit your site at its URL and see a basic home page with the Scalar title at left and login at right.
+
+If you experience MySQL connection problems (say, there was a typo in the the connection parameters), correct, then refresh your page,
+you might notice an error from Session.php involving num_rows().  In this case, clear your browser cache & cookies and refresh.
+
+5) 
+
+You can register your new account using the 'register' link.
+
+To make your user (after it is registered) a "super admin" requires direct access to MySQL (e.g., phpMyAdmin).  
+In the database table "scalar_db_users" edit your user row then set the "is_super" bit to 1. After refreshing  
+Scalar, you will have access to all Scalar books and additional admin tabs in the "Dashboard" area. Note that  
+even super admins can't save changes to others' books unless they are explicitly provided "author" privilege  
+in the "Users" tab of the book's "Dashboard" area.  
+
+In the event your users wish to transfer Scalar books from other installs into your Scalar install, we have a  
+Scalar Transfer Tool available in a different repository: https://github.com/Michael628/scalar-book-transfer-tool   
+Simply download the package then place the ZIP's contents into the system/application/plugins/transfer folder.   
+It will then be available to users at Dashboard > Import/Export.  
+
+One last thing: Scalar authors can upload files to your server under Import > Local Media Files (the files are 
+placed in the directory corresponding to their book's URL segment).  We strongly suggest protecting your 
+filesystem against potentially malicious uploads, such as *.php files.  We have a template for this in place in 
+the root folder's .htaccess file.  Edit, uncomment the "malicious file uploads" rewrites, and set appropriate 
+fields to let through requests to system files.  Test by uploading a .php file -- when viewing the file you 
+should see Scalar's 404 in the media player.
+
+Enjoy!
+
+-------------------------------------------------------------------------------------------
+Updates we've made to incorporated libraries, kept here for reference if they need updating
+-------------------------------------------------------------------------------------------
+
+CodeIgniter:
+1) In system/libraries/Input.php->_clean_input_keys(), change regex "/^[a-z0-9:_\/-]+$/i" to "/^[a-z0-9:_\/\-~@]+$/i"
+
+ARC2 (updated 2014-10-29 from https://github.com/semsol/arc2):
+1) ARC2_Resource.php->getProps(): comment out "if (!isset($this->index[$s])) $this->fetchData($s);"
+2) ARC2_StoreDeleteQueryHandler.php->cleanValueTables(): add "$this->store->releaseLock();" (https://github.com/semsol/arc2/issues/33)
+
+Froogaloop:
+1) Changed $f=g to froogaloop=g
+
+Template (libraries/Template.php):
+1) Added add_meta() and supporting updates to regions arrays
+
+rdfQuery (views/arbors/HTML5_RDFa/js/jquery.rdfquery.rules-1.0.js):
+1) Replaced "elem.contents().each(function () {" with "elem.contents(':not(iframe)').each(function () {"
+
+CKEditor (views/widgets/ckeditor/.../):
+A few updates to core/htmlparser files, found by searching for 'Updated by Craig Dietrich'
+
+Annotorious:
+1) Replaced "Add a Comment..." with "Enter annotation title..." (views/widgets/mediaelement/annotorious.debug.js)
+2) Replaced the "canvas" selector with "canvas.annotorious-item" and the "canvas.hidden" selector with "canvas.annotorious-item.hidden" (views/widgets/mediaelement/css/annotorious.css)
+
+
