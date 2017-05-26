@@ -12,11 +12,8 @@
 	</body>
 	<script>
     function generateListObject(tagString, tagType) {
-      // For right now, forget about the info in the span
-      // Later on, however, fix it
       var listObject = {};
-      var regex = /<s*>|<\/span>|<\/li>|<\/ol>|<\/ul>|<ol>|<ul>|&nbsp;/g;
-      /*tagString = tagString.replace(/<s*>/g, ''); // tried a regex; nothing worked; will have to test again*/
+      var regex = /<span[^>]*>|<\/span>|<\/li>|<\/ol>|<\/ul>|<ol>|<ul>|&nbsp;/g;
       tagString = tagString.replace(regex, '');
       if (tagType === "ul") {
         listObject = {
@@ -36,6 +33,7 @@
               listObject.ol.push(listString);
               listString = "";
             } else {
+              listString = listString.replace("li>", "");
               listObject.ul.push(listString);
               listString = "";
             }
@@ -51,9 +49,17 @@
         listString = listString.replace("li>", "");
         listObject.ul.push(listString);
       }
-      //console.log("list");
-      //console.log(listObject);
       return listObject;
+    };
+
+    function generateBlockQuoteObject(tagString) {
+      var blockQuoteRegex = /<blockquote>|<p>|<\/blockquote>|<\/p>|blockquote>/g;
+      tagString = tagString.replace(blockQuoteRegex, '');
+      var blockObject = {
+        text: tagString,
+        style: 'quoteFormat'
+      }; 
+      return blockObject;
     };
 
     function generatePreObject(tagString) {
@@ -66,10 +72,10 @@
     function generateLinkObject (tagString) {
       tagString = tagString.replace('<a href="', '');
       var findQuote = tagString.indexOf('"');
-      var linkVal = tagString.substr(0, findQuote);
+      var linkVal = tagString.substring(0, findQuote);
       tagString = tagString.replace(linkVal+'">', '');
       var linkTextPos = tagString.indexOf('>');
-      linkText = tagString.substr(0,linkTextPos);
+      linkText = tagString.substring(0,linkTextPos);
       linkText = linkText.replace("</a", '');
       var linkObject = {
         text: linkText,
@@ -79,34 +85,41 @@
     };
 
     function filterContent(contentVal) {
+      // I don't think you can have a mix of underlined, bold, and italic
+      // text in the same paragraph
+      // so I'll just filter it out for right now :(
+      var filterRegex = /<\/u>|<u>|<em>|<\/em>|<strong>|<\/strong>/g;
       var objectList = [];
       var listString = "";
       var pushObject;
       for (var i = 0; i <= contentVal.length; i++) {
         // Add final element to list and break if i === contentVal.length
         if (i === contentVal.length && listString !== "") {
+          listString = listString.replace('br />', '');
+          listString = listString.replace(filterRegex, '');
           pushObject = {text: listString, style: 'body'};
           objectList.push(pushObject);
-          break
+          break;
+        } else if (i ===contentVal.length && listString === "") {
+          break;
         }
 
 
         // Unordered Lists
         if (contentVal.substring(i, i+4) === "<ul>") {
           if (listString.length !== 0) {
+            listString = listString.replace('br />', '');
             pushObject = {text: listString, style: 'body'};
             objectList.push(pushObject);
             listString = "";
           }
           for (var p = i; p <= contentVal.length; p++) {
             if (listString.length > 5 && 
-              listString.substr(listString.length - 5, listString.length) === "</ul>") {
+              listString.substring(listString.length - 5, listString.length) === "</ul>") {
               pushObject = generateListObject(listString, "ul");
               contentVal = contentVal.replace(listString, '');
               listString = "";
               objectList.push(pushObject);
-              console.log('A ' + contentVal.substr(i, contentVal.length));
-              console.log(" ");
               break;
             } 
             if (p === contentVal.length) {
@@ -120,19 +133,16 @@
         } 
 
         // Ordered Lists
-        //console.log(contentVal.substring(i, i+4) === "<ol>");
         if (contentVal.substring(i, i+4) === "<ol>") {
-          //console.log(listString);
           if (listString.length !== 0) {
+            listString = listString.replace('br />', '');
             pushObject = {text: listString, style: 'body'};
             objectList.push(pushObject);
             listString = "";
           }
           for (var p = i; p <= contentVal.length; p++) {
-            //console.log(listString);
-            //console.log(" ");
             if (listString.length > 5 && 
-              listString.substr(listString.length - 5, listString.length) === "</ol>") {
+              listString.substring(listString.length - 5, listString.length) === "</ol>") {
               pushObject = generateListObject(listString, "ol");
               contentVal = contentVal.replace(listString, '');
               listString = "";
@@ -149,22 +159,48 @@
         }
 
         // Links (I think I can only do paragraphs of links, but I'll try to play around with it)
-        if (contentVal.substring(i, i+2) === "<a") {
+        if (contentVal.substring(i, i+7) === "<a href") {
           if (listString.length !== 0) {
+            listString = listString.replace('br />', '');
             pushObject = {text: listString, style: 'body'};
             objectList.push(pushObject);
             listString = "";
           }
           for (var p = i; p < contentVal.length; p++) {
             if (listString.length > 4 && 
-              listString.substr(listString.length - 4, listString.length) === "</a>") {
+              listString.substring(listString.length - 4, listString.length) === "</a>") {
               pushObject = generateLinkObject(listString);
+              contentVal = contentVal.replace(listString, '');
               listString = "";
               objectList.push(pushObject);
-
               break;
             } else {
               listString = listString + contentVal.charAt(p);
+            }
+          }
+        }
+
+        // Blockquote Objects
+        //console.log(contentVal.substring(i, i+12));
+        if (contentVal.substring(i, i+12) === "<blockquote>") {
+          console.log("BINGO");
+          console.log(" ");
+          console.log(" ");
+          if (listString.length !== 0) {
+            pushObject = {text: listString, style: 'body'};
+            objectList.push(pushObject);
+            listString = "";
+          }
+          for (var u = i; u < contentVal.length; u++) {
+            if (listString.length > 17 && 
+              listString.substring(listString.length-13, listString.length-17) === "</p>") {
+              pushObject = generateBlockQuoteObject(listString);
+              contentVal = contentVal.replace(listString, '');
+              listString = "";
+              objectList.push(pushObject);
+              break;
+            } else {
+              listString = listString + contentVal.charAt(u);
             }
           }
         }
@@ -178,7 +214,7 @@
           }
           for (var q = i; q < contentVal.length; q++) {
             if (listString.length > 6 && 
-              listString.substr(listString.length - 6, listString.length) === "</pre>") {
+              listString.substring(listString.length - 6, listString.length) === "</pre>") {
               pushObject = generatePreObject(listString);
               listString = "";
               objectList.push(pushObject);
@@ -190,10 +226,10 @@
         }
         
         // The breaklines for the paragraphs
-        if (contentVal.substring(i, i+5) === "br />") {
-          contentVal = contentVal.replace("br />", "");
-        }
+        // I need a better way to get rid 
         if (contentVal.substring(i, i+6) === "<br />") {
+          listString = listString.replace(filterRegex, '');
+          listString = listString.replace('br />', '');
           var listStringObject = {text: listString, style: 'body'};
           objectList.push(listString);
           listString = "";
@@ -237,9 +273,52 @@
        * date things went live. That might come in handy.
        */
 
+      /* Extract the title and author so I can actually access the JSON by string
+       * First get a stringified form of the JSON object
+       * Then remove the http://dev.upenndi... part until we get to the / 
+       * past the "scalar" part of the URL
+       * then, until we get to the point where the next section of the stringified
+       * JSON is "/index" (do that for right now and hope to God that no one has that in 
+       * their title), extract tht title
+       */
+      var JSONString = JSON.stringify(JSONObj);
+      JSONString = JSONString.replace(`{"http://dev.upenndigitalscholarship.org/scalar/`, "");
+      var titleAuthor = "";
+      for (var w = 0; w < JSONString.length; w++) {
+        if (JSONString.charAt(w) === '/' && JSONString.charAt(w+1) === 'i') {
+          break;
+        } else {
+          titleAuthor = titleAuthor + JSONString.charAt(w);
+        }
+      }
+
+      // Version and Time It Went Live (I'll Need The Version Number For The Next Part)
+      var JSONTitleObject = JSONObj["http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index"];
+      var liveList = JSONTitleObject["http://purl.org/dc/terms/created"];
+      var liveIntermediary = liveList[0];
+      var wentLive = liveIntermediary["value"];
+
+      var numberRegex = /\d+/g;
+
+      var versionList = JSONTitleObject["http://purl.org/dc/terms/hasVersion"];
+      var versionIntermediary = versionList[0];
+      var versionString = versionIntermediary["value"];
+      var versionObject = versionString.match(numberRegex);
+      var versionNumber = versionObject[versionObject.length - 1];
+
+
+      // Getting the user number (but not the user) 
+      // This should help in getting the actual name of the user
+
+      var extractUserList = JSONTitleObject["http://www.w3.org/ns/prov#wasAttributedTo"];
+      var extractUserIntermediary = extractUserList[0];
+      var extractUserString = extractUserIntermediary["value"];
+      var extractUserObject = extractUserString.match(numberRegex);
+      var extractUserNumber = extractUserObject[extractUserObject.length - 1];
 
       // Title, Description, and Content
-			var JSONDescAndCont = JSONObj["http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index.4"]; // The .# at the end needs to be changed at for each document
+      var descAndContString = "http://dev.upenndigitalscholarship.org/scalar/" + titleAuthor + "/index." + versionNumber;
+			var JSONDescAndCont = JSONObj[descAndContString]; // The .# at the end needs to be changed at for each document
 			var JSONDescriptionList = JSONDescAndCont["http://purl.org/dc/terms/description"];
 
 			var JSONContentList = JSONDescAndCont["http://rdfs.org/sioc/ns#content"];
@@ -253,17 +332,7 @@
 
       var contentList = filterContent(content);
 
-      // Version and Time It Went Live
-      var JSONTitleObject = JSONObj["http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index"];
-      var liveList = JSONTitleObject["http://purl.org/dc/terms/created"];
-      var liveIntermediary = liveList[0];
-      var wentLive = liveIntermediary["value"];
-      //console.log(wentLive); These work
-
-      var versionList = JSONDescAndCont["http://open.vocab.org/terms/versionnumber"];
-      var versionIntermediary = versionList[0];
-      var version = versionIntermediary["value"];
-      //console.log(version); These work
+      
 
       /* Creating the docDef object. Features:
        * Letter paper with proper spacing
@@ -295,6 +364,10 @@
 				],
 
 				styles: {
+          /* Need to speak with Sasha regrding the design of the pdf
+           * These are just baseline things, just so I could quickly
+           * get to the PDF generation part of my work
+           */
 					title: {
 						fontSize: 22,
 						bold: true,
@@ -318,6 +391,16 @@
           spacing: {
             fontSize: 6,
             alignment: 'center'
+          },
+          preFormat: {
+            fontSize: 10,
+            alignment: 'center',
+            bold: false
+          },
+          quoteFormat: {
+            fontSize: 12,
+            alignment: 'center',
+            bold: true
           }
 				}
 			};
