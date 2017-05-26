@@ -181,11 +181,7 @@
         }
 
         // Blockquote Objects
-        //console.log(contentVal.substring(i, i+12));
         if (contentVal.substring(i, i+12) === "<blockquote>") {
-          console.log("BINGO");
-          console.log(" ");
-          console.log(" ");
           if (listString.length !== 0) {
             pushObject = {text: listString, style: 'body'};
             objectList.push(pushObject);
@@ -226,7 +222,6 @@
         }
         
         // The breaklines for the paragraphs
-        // I need a better way to get rid 
         if (contentVal.substring(i, i+6) === "<br />") {
           listString = listString.replace(filterRegex, '');
           listString = listString.replace('br />', '');
@@ -293,7 +288,8 @@
       }
 
       // Version and Time It Went Live (I'll Need The Version Number For The Next Part)
-      var JSONTitleObject = JSONObj["http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index"];
+      var jsonTitleString = "http://dev.upenndigitalscholarship.org/scalar/" + titleAuthor + "/index";
+      var JSONTitleObject = JSONObj[jsonTitleString];
       var liveList = JSONTitleObject["http://purl.org/dc/terms/created"];
       var liveIntermediary = liveList[0];
       var wentLive = liveIntermediary["value"];
@@ -318,7 +314,7 @@
 
       // Title, Description, and Content
       var descAndContString = "http://dev.upenndigitalscholarship.org/scalar/" + titleAuthor + "/index." + versionNumber;
-			var JSONDescAndCont = JSONObj[descAndContString]; // The .# at the end needs to be changed at for each document
+			var JSONDescAndCont = JSONObj[descAndContString]; 
 			var JSONDescriptionList = JSONDescAndCont["http://purl.org/dc/terms/description"];
 
 			var JSONContentList = JSONDescAndCont["http://rdfs.org/sioc/ns#content"];
@@ -347,7 +343,7 @@
 			var docDef = {
         pageSize: 'LETTER',
 
-        pageMargins: [ 30, 30, 30, 30 ],
+        pageMargins: [ 50, 50, 50, 50 ],
 
         footer: function(currentPage, pageCount) { 
           return "Page: " + currentPage.toString() + ' of ' + pageCount; 
