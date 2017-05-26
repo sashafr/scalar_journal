@@ -1,0 +1,370 @@
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="pdfmake.js"></script>
+<script src="vfs_fonts.js"></script>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test Site</title>
+	</head>
+	<body>
+		<button type="button">Click Me!</button>
+	</body>
+	<script>
+    function generateListObject(tagString, tagType) {
+      // For right now, forget about the info in the span
+      // Later on, however, fix it
+      var listObject = {};
+      var regex = /<s*>|<\/span>|<\/li>|<\/ol>|<\/ul>|<ol>|<ul>|&nbsp;/g;
+      /*tagString = tagString.replace(/<s*>/g, ''); // tried a regex; nothing worked; will have to test again*/
+      tagString = tagString.replace(regex, '');
+      if (tagType === "ul") {
+        listObject = {
+          ul: []
+        };
+      } else {
+        listObject = {
+          ol: []
+        };
+      }
+      var listString = "";
+      for (var a = 0; a < tagString.length; a++) {
+        if (tagString.substring(a, a+4) == "<li>") {
+          if (listString.length != 0) {
+            if (tagType === "ol") {
+              listString = listString.replace("li>", "");
+              listObject.ol.push(listString);
+              listString = "";
+            } else {
+              listObject.ul.push(listString);
+              listString = "";
+            }
+          }
+        } else {
+          listString = listString + tagString.charAt(a);   
+        }
+      }
+      if (tagType === "ol") {
+        listString = listString.replace("li>", "");
+        listObject.ol.push(listString);
+      } else {
+        listString = listString.replace("li>", "");
+        listObject.ul.push(listString);
+      }
+      //console.log("list");
+      //console.log(listObject);
+      return listObject;
+    };
+
+    function generatePreObject(tagString) {
+      var regex = /<pre>|<\/pre>/g;
+      tagString = tagString.replace(regex, '');
+      var returnObject = {text: tagString, style: "pre"};
+      return returnObject;
+    };
+
+    function generateLinkObject (tagString) {
+      tagString = tagString.replace('<a href="', '');
+      var findQuote = tagString.indexOf('"');
+      var linkVal = tagString.substr(0, findQuote);
+      tagString = tagString.replace(linkVal+'">', '');
+      var linkTextPos = tagString.indexOf('>');
+      linkText = tagString.substr(0,linkTextPos);
+      linkText = linkText.replace("</a", '');
+      var linkObject = {
+        text: linkText,
+        link: linkVal
+      }; 
+      return linkObject;
+    };
+
+    function filterContent(contentVal) {
+      var objectList = [];
+      var listString = "";
+      var pushObject;
+      for (var i = 0; i <= contentVal.length; i++) {
+        // Add final element to list and break if i === contentVal.length
+        if (i === contentVal.length && listString !== "") {
+          pushObject = {text: listString, style: 'body'};
+          objectList.push(pushObject);
+          break
+        }
+
+
+        // Unordered Lists
+        if (contentVal.substring(i, i+4) === "<ul>") {
+          if (listString.length !== 0) {
+            pushObject = {text: listString, style: 'body'};
+            objectList.push(pushObject);
+            listString = "";
+          }
+          for (var p = i; p <= contentVal.length; p++) {
+            if (listString.length > 5 && 
+              listString.substr(listString.length - 5, listString.length) === "</ul>") {
+              pushObject = generateListObject(listString, "ul");
+              contentVal = contentVal.replace(listString, '');
+              listString = "";
+              objectList.push(pushObject);
+              console.log('A ' + contentVal.substr(i, contentVal.length));
+              console.log(" ");
+              break;
+            } 
+            if (p === contentVal.length) {
+              contentVal = contentVal.replace(listString, '');
+              listString = "";
+              break;
+            } else {
+              listString = listString + contentVal.charAt(p);
+            }
+          }
+        } 
+
+        // Ordered Lists
+        //console.log(contentVal.substring(i, i+4) === "<ol>");
+        if (contentVal.substring(i, i+4) === "<ol>") {
+          //console.log(listString);
+          if (listString.length !== 0) {
+            pushObject = {text: listString, style: 'body'};
+            objectList.push(pushObject);
+            listString = "";
+          }
+          for (var p = i; p <= contentVal.length; p++) {
+            //console.log(listString);
+            //console.log(" ");
+            if (listString.length > 5 && 
+              listString.substr(listString.length - 5, listString.length) === "</ol>") {
+              pushObject = generateListObject(listString, "ol");
+              contentVal = contentVal.replace(listString, '');
+              listString = "";
+              objectList.push(pushObject);
+              break;
+            } 
+            if (p === contentVal.length) {
+              listString = "";
+              break;
+            } else {
+              listString = listString + contentVal.charAt(p);
+            }
+          }
+        }
+
+        // Links (I think I can only do paragraphs of links, but I'll try to play around with it)
+        if (contentVal.substring(i, i+2) === "<a") {
+          if (listString.length !== 0) {
+            pushObject = {text: listString, style: 'body'};
+            objectList.push(pushObject);
+            listString = "";
+          }
+          for (var p = i; p < contentVal.length; p++) {
+            if (listString.length > 4 && 
+              listString.substr(listString.length - 4, listString.length) === "</a>") {
+              pushObject = generateLinkObject(listString);
+              listString = "";
+              objectList.push(pushObject);
+
+              break;
+            } else {
+              listString = listString + contentVal.charAt(p);
+            }
+          }
+        }
+
+        // Pre Objects
+        if (contentVal.substring(i, i+5) === "<pre>") {
+          if (listString.length !== 0) {
+            pushObject = {text: listString, style: 'body'};
+            objectList.push(pushObject);
+            listString = "";
+          }
+          for (var q = i; q < contentVal.length; q++) {
+            if (listString.length > 6 && 
+              listString.substr(listString.length - 6, listString.length) === "</pre>") {
+              pushObject = generatePreObject(listString);
+              listString = "";
+              objectList.push(pushObject);
+              break;
+            } else {
+              listString = listString + contentVal.charAt(q);
+            }
+          }
+        }
+        
+        // The breaklines for the paragraphs
+        if (contentVal.substring(i, i+5) === "br />") {
+          contentVal = contentVal.replace("br />", "");
+        }
+        if (contentVal.substring(i, i+6) === "<br />") {
+          var listStringObject = {text: listString, style: 'body'};
+          objectList.push(listString);
+          listString = "";
+          contentVal = contentVal.replace("<br />", "");
+        } else {
+          listString = listString + contentVal.charAt(i);
+        }
+      }
+
+      return objectList;
+    };
+
+		function convert(JSONObj) {
+		  /* Eventually, once this is connected to the
+ 		   * website, use jQUERY to get the JSON file
+ 		   * if possible, the parse.
+ 		   * For right now, feed in a string version
+ 		   * of the JSON object, parse through it,
+ 		   * extract the content, title, author, metadata,
+  		 * citations, description, and so on.
+  		 * Then form a PDF out of it.
+ 		   */
+			/* Sooner or later, make this more general
+			 * Keep everything up until the / after the scalar
+			 * then everything after the title
+       * Ask Sasha regarding whether or not the first section
+       * (the section from 'dev' all the way to the title)
+       * will stay once things are in production
+       */
+      /* As for the process, we need to extract the title,
+       * author, description (if there is one, so MAKE THAT OPTIONAL),
+       * content, metadata (how are we adding that), and citations
+       * (this should be done in the form of a list).
+       * To do that, parse through the JSON object and the objects 
+       * within the JSON object. Then, separate the content by its 
+       * paragraphs (I'm assuming that the tag for paragraphs is just <br />),
+       * then form the PDF object, then run it through pdfmake.
+       * Right now, it just downloads the PDF, but we'll need it to also show the pdf.
+       */
+      /* As an aside, just in case, save the version number, and the
+       * date things went live. That might come in handy.
+       */
+
+
+      // Title, Description, and Content
+			var JSONDescAndCont = JSONObj["http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index.4"]; // The .# at the end needs to be changed at for each document
+			var JSONDescriptionList = JSONDescAndCont["http://purl.org/dc/terms/description"];
+
+			var JSONContentList = JSONDescAndCont["http://rdfs.org/sioc/ns#content"];
+			var descriptionIntermediary = JSONDescriptionList[0];
+			var contentIntermediary = JSONContentList[0];
+			var description = descriptionIntermediary["value"];
+			var content = contentIntermediary["value"];
+			var titleList = JSONDescAndCont["http://purl.org/dc/terms/title"];
+			var titleIntermediary = titleList[0];
+			var title = titleIntermediary["value"];
+
+      var contentList = filterContent(content);
+
+      // Version and Time It Went Live
+      var JSONTitleObject = JSONObj["http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index"];
+      var liveList = JSONTitleObject["http://purl.org/dc/terms/created"];
+      var liveIntermediary = liveList[0];
+      var wentLive = liveIntermediary["value"];
+      //console.log(wentLive); These work
+
+      var versionList = JSONDescAndCont["http://open.vocab.org/terms/versionnumber"];
+      var versionIntermediary = versionList[0];
+      var version = versionIntermediary["value"];
+      //console.log(version); These work
+
+      /* Creating the docDef object. Features:
+       * Letter paper with proper spacing
+       * Footer for the page number
+       * Name of Author...
+       * Then Title...
+       * Then Description (If there is one)...
+       * Then Content (Which will probably include references)
+       * Each section (and the paragraphs of the content section) will
+       * be separated by a little space for readability
+       */
+			var docDef = {
+        pageSize: 'LETTER',
+
+        pageMargins: [ 30, 30, 30, 30 ],
+
+        footer: function(currentPage, pageCount) { 
+          return "Page: " + currentPage.toString() + ' of ' + pageCount; 
+        },
+
+				content: [
+				// ACTUALLY GET THE NAME 
+				{ text: "Tester", style: "name" }, 
+        { text: " ", style: "spacing"},
+				{ text: title, style: "title" }, 
+        { text: " ", style: "spacing"},
+				{ text: "Description: " + description, style: "description" },
+        { text: " ", style: "spacing"} 
+				],
+
+				styles: {
+					title: {
+						fontSize: 22,
+						bold: true,
+						alignment: 'center'
+					},
+					name: {
+						fontSize: 14,
+						bold: true,
+						alignment: 'center'
+					},
+					description: {
+						fontSize: 12,
+						bold: false,
+						alignment: 'left'
+					},
+					body: {
+						fontSize: 16,
+						bold: false,
+						alignment: 'left'
+					},
+          spacing: {
+            fontSize: 6,
+            alignment: 'center'
+          }
+				}
+			};
+
+      // Create the paragraphs
+      for (var m = 0; m < contentList.length; m++) {
+        docDef.content.push(contentList[m]);
+        var spacingObject = { text: " ", style: "spacing"};
+        docDef.content.push(spacingObject);
+      }
+      // Is there a specific process for going to ScholarlyCommons?
+			pdfMake.createPdf(docDef).download('pdfVal.pdf');
+		};
+		var JSONTestVal = {
+  "http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [{ "value": "http://scalar.usc.edu/2012/01/scalar-ns#Composite", "type": "uri" }],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive": [{ "value": "1", "type": "literal" }],
+    "http://www.w3.org/ns/prov#wasAttributedTo": [{ "value": "http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/users/8", "type": "uri" }],
+    "http://purl.org/dc/terms/created": [{ "value": "2017-05-24T11:09:10-05:00", "type": "literal" }],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn": [{ "value": "urn:scalar:content:54", "type": "uri" }],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version": [{ "value": "http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index.4", "type": "uri" }],
+    "http://purl.org/dc/terms/hasVersion": [{ "value": "http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index.4", "type": "uri" }],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation": [{ "value": "method=instancesof/content;methodNumNodes=1;", "type": "literal" }]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index.4": {
+    "http://open.vocab.org/terms/versionnumber": [{ "value": "4", "type": "literal" }],
+    "http://purl.org/dc/terms/title": [{ "value": "Test", "type": "literal" }],
+    "http://purl.org/dc/terms/description": [{ "value": "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep No more; and by a sleep, to say we end the heart-ache, and the thousand natural shocks that Flesh is heir to?", "type": "literal" }],
+    "http://rdfs.org/sioc/ns#content": [{ "value": "Lorem ipsum dolor sit amet, modo noster aliquid an mea. Eu vim nominati democritum, has quando iisque cu. Id eos falli corrumpit disputando, mea ex vide delectus. Postea vocibus at vix, nullam forensibus est eu. Pri eu brute fuisset noluisse, ut vix assum complectitur. Nibh everti efficiantur ut duo, eum tale agam delicatissimi eu.<ol><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu.</span></li></ol>Est te sumo epicuri, ei vis exerci nonumes, ea mazim graece integre usu. Debet animal officiis nec te, nec atqui persius fuisset eu. Vel assum everti sententiae an. Diceret detracto voluptaria cu usu. At vis diam civibus suscipiantur.<ul><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Morbi consectetur, neque laoreet tristique maximus, turpis nulla mollis arcu, vel sagittis libero arcu nec nisl.&nbsp;</span></li></ul>At reque munere eam, ad evertitur comprehensam has. Pri altera labore in. Ius ea oratio dissentiunt. His ad etiam iudicabit, vim id falli nulla. Rebum nostro facilis ex sea, in enim volumus mel, ea vim tota legendos. Qui te nibh quodsi persequeris, cu viderer tacimates rationibus cum.<blockquote><p>This is a quote</p></blockquote>Etiam aperiam cum ei, pri oratio tamquam tacimates eu, erant omittam ex eos. Te his eros senserit. Dicunt inermis per ea, pri at vero mucius oportere. Delicata democritum in eum, novum voluptaria per ex.<br /><br /><a href=\"http://nintendo.com\">Link</a><br /><br /><strong>Velit sanctus suscipit ad vix, tibique assueverit referrentur ex his</strong>. <em>Amet vocent te mei, vis sapientem disputando et.</em> Ea has lorem <u>utroque consulatu, cu quis dico quo. Ne est modus vivendo dissentias</u>, per in atqui mucius noster, maiorum habemus eum an. No mei veniam prompta molestiae, per no quodsi minimum mentitum. Ad quod minim posidonium duo, legere eruditi habemus an vim, mel quod tibique ei.", "type": "literal" }],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView": [{ "value": "plain", "type": "literal" }],
+    "http://www.w3.org/ns/prov#wasAttributedTo": [{ "value": "http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/users/8", "type": "uri" }],
+    "http://purl.org/dc/terms/created": [{ "value": "2017-05-25T11:33:48-05:00", "type": "literal" }],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn": [{ "value": "urn:scalar:version:132", "type": "uri" }],
+    "http://purl.org/dc/terms/isVersionOf": [{ "value": "http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index", "type": "uri" }],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [{ "value": "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type": "uri" }]
+  },
+
+  "urn:scalar:tag:132:132": {
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn": [{ "value": "urn:scalar:tag:132:132", "type": "uri" }],
+    "http://www.openannotation.org/ns/hasBody": [{ "value": "http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index.4", "type": "uri" }],
+    "http://www.openannotation.org/ns/hasTarget": [{ "value": "http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/index.4", "type": "uri" }],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [{ "value": "http://www.openannotation.org/ns/Annotation", "type": "uri" }]
+  }
+};
+	$(':button').bind('click', function() {
+		convert(JSONTestVal);
+	});
+	</script>
+</html>
