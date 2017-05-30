@@ -225,44 +225,44 @@ return objectList;
 };
 
 function convert(JSONObj) {
-	  /* Eventually, once this is connected to the
-		   * website, use jQUERY to get the JSON file
-		   * if possible, the parse.
-		   * For right now, feed in a string version
-		   * of the JSON object, parse through it,
-		   * extract the content, title, author, metadata,
-		 * citations, description, and so on.
-		 * Then form a PDF out of it.
-		 */
-		/* Sooner or later, make this more general
-		 * Keep everything up until the / after the scalar
-		 * then everything after the title
-   * Ask Sasha regarding whether or not the first section
-   * (the section from 'dev' all the way to the title)
-   * will stay once things are in production
-   */
-  /* As for the process, we need to extract the title,
-   * author, description (if there is one, so MAKE THAT OPTIONAL),
-   * content, metadata (how are we adding that), and citations
-   * (this should be done in the form of a list).
-   * To do that, parse through the JSON object and the objects 
-   * within the JSON object. Then, separate the content by its 
-   * paragraphs (I'm assuming that the tag for paragraphs is just <br />),
-   * then form the PDF object, then run it through pdfmake.
-   * Right now, it just downloads the PDF, but we'll need it to also show the pdf.
-   */
-  /* As an aside, just in case, save the version number, and the
-   * date things went live. That might come in handy.
-   */
+	/* Eventually, once this is connected to the
+	 * website, use jQUERY to get the JSON file
+	 * if possible, the parse.
+	 * For right now, feed in a string version
+	 * of the JSON object, parse through it,
+	 * extract the content, title, author, metadata,
+  	 * citations, description, and so on.
+	 * Then form a PDF out of it.
+	 */
+	/* Sooner or later, make this more general
+	 * Keep everything up until the / after the scalar
+	 * then everything after the title
+     * Ask Sasha regarding whether or not the first section
+   	 * (the section from 'dev' all the way to the title)
+     * will stay once things are in production
+     */
+	/* As for the process, we need to extract the title,
+   	 * author, description (if there is one, so MAKE THAT OPTIONAL),
+   	 * content, metadata (how are we adding that), and citations
+   	 * (this should be done in the form of a list).
+     * To do that, parse through the JSON object and the objects 
+     * within the JSON object. Then, separate the content by its 
+     * paragraphs (I'm assuming that the tag for paragraphs is just <br />),
+     * then form the PDF object, then run it through pdfmake.
+     * Right now, it just downloads the PDF, but we'll need it to also show the pdf.
+     */
+    /* As an aside, just in case, save the version number, and the
+     * date things went live. That might come in handy.
+     */
 
-  /* Extract the title and author so I can actually access the JSON by string
-   * First get a stringified form of the JSON object
-   * Then remove the http://dev.upenndi... part until we get to the / 
-   * past the "scalar" part of the URL
-   * then, until we get to the point where the next section of the stringified
-   * JSON is "/index" (do that for right now and hope to God that no one has that in 
-   * their title), extract tht title
-   */
+    /* Extract the title and author so I can actually access the JSON by string
+     * First get a stringified form of the JSON object
+     * Then remove the http://dev.upenndi... part until we get to the / 
+     * past the "scalar" part of the URL
+     * then, until we get to the point where the next section of the stringified
+     * JSON is "/index" (do that for right now and hope to God that no one has that in 
+     * their title), extract tht title
+     */
    var JSONString = JSON.stringify(JSONObj);
    JSONString = JSONString.replace(`{"http://dev.upenndigitalscholarship.org/scalar/`, "");
    var titleAuthor = "";
@@ -401,6 +401,6 @@ function convert(JSONObj) {
 $(':button').bind('click', function() {
 	var jsonString = $("#jsonDIV").text();
 	var jsonObj = JSON.parse(jsonString);
-// After conversion to JSON, translate to pdf
-convertToPDFMain(jsonObj);
+	// After conversion to JSON, translate to pdf
+	convert(jsonObj);
 });

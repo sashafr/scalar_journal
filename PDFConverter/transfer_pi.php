@@ -79,7 +79,8 @@
 			} else {
 				echo '<div style="padding:10px; border:solid 1px #cccccc; background-color:#eeeeee;">The <b>'.$this->name.'</b> plugin can\'t be found.  Please contact a system administrator to install the plugin in a folder named <b>'.strtolower(get_class($this)).'</b> at <b>/system/application/plugins/</b>.</div>';
 			}
-?>	
+?>			
+				<script src="conversion.js"></script>
 				</div>
 				<div id="snippet_dialog" title="Importing" style="display:none;">
   				<p>
