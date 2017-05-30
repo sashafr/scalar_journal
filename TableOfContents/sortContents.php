@@ -1,4 +1,10 @@
 <?php
+	// For the extraction, set up some sql queries
+	function query() {
+        $query = ("SELECT book_id, title, subtitle, url_is_public, publisher, user, created, is_featured, description FROM scalar_db_books;");
+        $result = mysql_query($query);
+    }
+
 	// As a general note, all bools are represented as 0 or 1
 	class Content{
 		public $bookID;
@@ -23,7 +29,16 @@
 			this->$description = $description; // string
 		}
 	}
+	// Filter out the unpublished ones
+	function filterFunction($a) {
+		return ($a->isFeatured == 1);
+	}
 
+	function filterArr($contentsArray) {
+		return array_filter($contentsArray, 'filterFunction');
+	}
+
+	// Compare The Contents
 	function compare($a, $b) {
 		return strcmp($a->created, $b->created);
 	} 
