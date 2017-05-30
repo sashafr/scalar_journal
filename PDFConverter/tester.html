@@ -11,6 +11,14 @@
 		<button type="button">Click Me!</button>
 	</body>
 	<script>
+	/* Things to do (27 May 2017):
+	 * Find a way to extract the JSON file
+	 * Put Everything all together
+	 * If I have time:
+	 * Find a way to go from the parsing that I have to using regular expressions
+	 */
+
+   // When this is all done, all of these should be in a single function convertToPDFMain
     function generateListObject(tagString, tagType) {
       var listObject = {};
       var regex = /<span[^>]*>|<\/span>|<\/li>|<\/ol>|<\/ul>|<ol>|<ul>|&nbsp;/g;
