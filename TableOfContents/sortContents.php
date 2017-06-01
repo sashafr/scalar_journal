@@ -1,4 +1,9 @@
 <?php
+	/* Way to extract and sort published content
+	 * Just make sure that all published material was published
+	 * After December 31, 999
+	 */
+
 	// For the extraction, set up some sql queries
 
 	/* TODO - 30 May
@@ -12,7 +17,7 @@
     }*/
 
 	// As a general note, all bools are represented as 0 or 1
-	class Content{
+	class Content {
 		public $bookID;
 		public $title;
 		public $subtitle;
@@ -34,6 +39,10 @@
 			$this->isFeatured = $isFeatured; // bool
 			$this->description = $description; // string
 		}
+
+		public function getMessage() {
+			return "This is bookID " . $this->bookID;
+		}
 	}
 	// Filter out the unpublished ones
 	function filterFunction($a) {
@@ -45,43 +54,38 @@
 	}
 
 	// Compare The Contents
-	function compare($a, $b) {
+	function cmp($a, $b) {
 		return strcmp($a->created, $b->created);
 	} 
 
-	function sortContents($contentsArray) {
-		return usort($contentsArray, "compare");
-	}
-
 	// Test Cases
-	/*
 	$testTitle = "Test Title";
 	$testSubtitle = "Subtitle";
 	$testURLIsPublic = 1;
 	$testPublisher = "Jim Sterling";
 	$testUser = "Jim Sterling";
 	$testDescription = "Description";
+
 	$testObj1 = new Content(1, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "2017-09-11", 1, $testDescription);
 	$testObj2 = new Content(2, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "1821-11-11", 0, $testDescription);
 	$testObj3 = new Content(3, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "1921-09-11", 1, $testDescription);
 	$testObj4 = new Content(4, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "1491-09-11", 0, $testDescription);
 	$testObj5 = new Content(5, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "2000-09-11", 1, $testDescription);
 	$testObj6 = new Content(6, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "2001-09-11", 0, $testDescription);
-	$testObj7 = new Content(7, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "888-09-11", 1, $testDescription);
+	$testObj7 = new Content(7, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "1888-09-11", 1, $testDescription);
 	$testObj8 = new Content(8, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "1209-09-11", 0, $testDescription);
 	$testObj9 = new Content(9, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "1919-09-11", 1, $testDescription);
 	$testObj10 = new Content(10, $testTitle, $testSubtitle, $testURLIsPublic, $testPublisher, $testUser, "1789-09-11", 0, $testDescription);
+
 	$testArray = array($testObj1, $testObj2, $testObj3, $testObj4, $testObj5, $testObj6, $testObj7, $testObj8, $testObj9, $testObj10);
-	print("Hello\n");
+
 	$filteredArray = filterArr($testArray);
-	print(sizeof($filteredArray));
-	print("\n");
-	$sortedArray = sortContents($filteredArray);
-	for ($i = 0; $i < 5; $i++) {
-		print($sortedArray[i]);
-		print("\n");
 
-	}
-	*/
+	print_r($filteredArray);
+	print_r("\n");
 
+	usort($filteredArray, "cmp");
+
+	print_r($filteredArray);
+	print_r("\n");
 ?>
