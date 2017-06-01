@@ -1,3 +1,11 @@
+/*
+ *  conversion.js
+ *  File to parse and convert JSON objects produced by 
+ *  Scalar to PDF
+ *  Author - Joe Pires
+ *  Version - 0.0.0
+ */
+
 function generateListObject(tagString, tagType) {
 	var listObject = {};
 	var regex = /<span[^>]*>|<\/span>|<\/li>|<\/ol>|<\/ul>|<ol>|<ul>|&nbsp;/g;

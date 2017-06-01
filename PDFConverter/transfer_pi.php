@@ -27,13 +27,20 @@
 				/* Get the JSON string from the external page, and then put in
 	        	 * a div that is hidden. A JS file will take from the DIV and 
 	        	 * do the pdf conversion 
+	        	 * Joe Pires
 	        	 */
-				$content = file_get_contents($this->rdf_url_json);
-				$firstStep = explode( '<pre>' , $content );
-				$secondStep = explode("</pre>" , $firstStep[1] );
+				print_r($this->rdf_url_json);
+				//$contentURL = urlencode($this->rdf_url_json);
+				$content = file_get_contents("http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/rdf/instancesof/content?format=json&rec=1&ref=1");
+				print_r($content);
+				$firstStep = explode('<pre>', $content);
+				print_r($firstStep);
+				$secondStep = explode("</pre>", $firstStep[1]);
+				print_r($secondStep);
 				/* secondStep is the string we want
 			     * Now generate a hidden DIV, and put the JSON String there
 			     * So the client js file can extract it and convert
+			     * Joe Pires
 				 */
 				echo '<div id="jsonDIV" style="display: none;">';
 				echo $secondStep;
@@ -64,6 +71,7 @@
 	        	  <small>Or, <a href="<?=$this->rdf_url_xml?>" target="_blank">download as RDF-XML</a>.</small>
 	        	  
 	        	  <!--Adding button for the pdf conversion-->
+	        	  <!--Joe Pires-->
 	        	  <button type="button">Convert to PDF</button>
 	        	  
 	        	</p>
@@ -79,8 +87,9 @@
 			} else {
 				echo '<div style="padding:10px; border:solid 1px #cccccc; background-color:#eeeeee;">The <b>'.$this->name.'</b> plugin can\'t be found.  Please contact a system administrator to install the plugin in a folder named <b>'.strtolower(get_class($this)).'</b> at <b>/system/application/plugins/</b>.</div>';
 			}
-?>			
-				<script src="conversion.js"></script>
+?>				<!--Add the script link for conversion.js-->
+				<!--Joe Pires-->
+				<script src="js/conversion.js"></script>
 				</div>
 				<div id="snippet_dialog" title="Importing" style="display:none;">
   				<p>
