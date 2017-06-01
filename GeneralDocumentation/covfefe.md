@@ -12,9 +12,12 @@ Due to the libraries being used, some of the multimedia aspects of the article w
 
 For all of the books in the database, there will be a table of contents for all the published books. This will be done automatically.
 
--- Changes to Sturcture of Scalar --
+-- Changes to Structure of Scalar --
+
 
 -- Changes to Language in Scalar --
+
+To get closer to what we want to show in Scalar, the language throughout Scalar has changed to reflect the roles we wanted to utilize. Mainly, changes have been made to account for the Author, Reviewer, and Editor role. Authors have similar roles to what they have now. Editors now take the place of commenters, and have special privileges (since they're engaging in peer reviews). As for editors, those changes will have to be discussed and implemented. 
 
 -- Versioning --
 
@@ -25,3 +28,4 @@ This will be used in lieu of comments. Those with editor priveleges will be able
 -- If Updates to Scalar Need to be Made --
 
 I (Joe Pires) have commented all of the parts that I have edited. All of those comments have my name in them. To find the parts that I worked on, just search for 'Joe Pires' in the code.
+
