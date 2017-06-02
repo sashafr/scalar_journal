@@ -29,26 +29,10 @@
 	        	 * do the pdf conversion 
 	        	 * JP
 	        	 */
-	        	print_r($this->rdf_url_json);
-				//$contentURL = urlencode($this->rdf_url_json);
-				/* Seems like the best format for file_get_contents is like - 
-				 * http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/rdf/instancesof/content?format=json&rec=1&ref=1
-				 */
-				$content = file_get_contents("http://dev.upenndigitalscholarship.org/scalar/test---joe-pires/rdf/instancesof/content?format=json&rec=1&ref=1");
-				print_r($content);
-				echo "</pre>";
-				$firstStep = explode('<pre>', $content);
-				print_r($firstStep);
-				$secondStep = explode("</pre>", $firstStep[1]);
-				print_r($secondStep);
-				/* secondStep is the string we want
-			     * Now generate a hidden DIV, and put the JSON String there
-			     * So the client js file can extract it and convert
-			     * JP
-				 */
-				echo '<div id="jsonDIV" style="display: none;">';
-				echo $secondStep;
-				echo '</div>';
+				$content = file_get_contents($this->rdf_url_json);
+				echo '<div id="jsonDIV" style="display: none;">'; 
+				echo $content; 
+				echo "</div>";
 				/* Now it should go to the site, and the client can handle things from there*/
 			}
 
