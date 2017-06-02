@@ -77,7 +77,9 @@
 			}
 ?>				<!--Add the script link for conversion.js-->
 				<!--JP-->
-				<script src="js/conversion.js"></script>
+				<script src="application/plugins/transfer/js/conversion.js"></script>
+				<script src="application/plugins/transfer/js/pdfmake.js"></script>
+				<script src="application/plugins/transfer/js/vfs_fonts.js"></script>
 				</div>
 				<div id="snippet_dialog" title="Importing" style="display:none;">
   				<p>
