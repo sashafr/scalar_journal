@@ -8,6 +8,8 @@ It's a fairly simple process. There is a button (or link) labeled Convert To PDF
 
 Due to the libraries being used, some of the multimedia aspects of the article will not be shown. For instance, there will be no images or other forms of media aside from text. There will be links to external wabpages. 
 
+As of right now, basic text, unordered lists, ordered lists, blockquotes, preformatted text (like code), and links (if they're in their own paragraph) will be properly processed. Given the libraries that we're using (pdfmake, specifically), formatted text and links within paragraphs could not be done easily. Hopefully it should be up soon.
+
 -- Table of Contents --
 
 For all of the books in the database, there will be a table of contents for all the published books. This will be done automatically.
@@ -17,7 +19,7 @@ For all of the books in the database, there will be a table of contents for all 
 
 -- Changes to Language in Scalar --
 
-To get closer to what we want to show in Scalar, the language throughout Scalar has changed to reflect the roles we wanted to utilize. Mainly, changes have been made to account for the Author, Reviewer, and Editor role. Authors have similar roles to what they have now. Editors now take the place of commenters, and have special privileges (since they're engaging in peer reviews). As for editors, those changes will have to be discussed and implemented. 
+To get closer to what we want to show in Scalar, the language throughout Scalar has changed to reflect the roles we wanted to utilize. Mainly, changes have been made to account for the Author, Reviewer, and Editor role. Authors have similar roles to what they have now. Editors now take the place of commenters, and may have special privileges (since they're engaging in peer reviews). As for editors, those changes will have to be discussed and implemented. From what I can tell, editors will have super-admin priveleges once they register.
 
 -- Versioning --
 
@@ -28,4 +30,3 @@ This will be used in lieu of comments. Those with editor priveleges will be able
 -- If Updates to Scalar Need to be Made --
 
 I have commented all of the parts that I have edited. All of those comments have my name in them. To find the parts that I worked on, just search for 'JP' in the code.
-
