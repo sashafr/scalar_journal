@@ -27,5 +27,5 @@ This will be used in lieu of comments. Those with editor priveleges will be able
 
 -- If Updates to Scalar Need to be Made --
 
-I (Joe Pires) have commented all of the parts that I have edited. All of those comments have my name in them. To find the parts that I worked on, just search for 'Joe Pires' in the code.
+I have commented all of the parts that I have edited. All of those comments have my name in them. To find the parts that I worked on, just search for 'JP' in the code.
 
