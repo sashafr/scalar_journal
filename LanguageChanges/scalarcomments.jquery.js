@@ -58,7 +58,7 @@
 		var $modal = $('<div><div class="results"></div></div>').bootstrapModal({
 			// Originally, title was Comments
 			// This should change the title of the comment screen
-			// Joe Pires
+			// JP
 			title: 'Peer Reviews',
 			size_class: 'modal-lg'
 		}).appendTo(this.element);
@@ -69,11 +69,11 @@
 		this.modal = this.element.find('.modal');
 
 		// Changed the text in the divs to match the peer reviews
-		// Joe Pires
+		// JP
 		var queryVars = scalarapi.getQueryVars( document.location.href );
 		if ( queryVars.action == 'comment_saved' ) {
 			if (queryVars.moderated) {
-				this.bodyContent.prepend( '<div class="alert alert-success heading_font"><span class="heading_weight">Your peer review has been saved and is awaiting moderation.</span></div>' );
+				this.bodyContent.prepend( '<div class="alert alert-success heading_font"><span class="heading_weight">Your peer review has been saved and is awaiting moderation by an editor.</span></div>' );
 			} else {
 				this.bodyContent.prepend( '<div class="alert alert-success heading_font"><span class="heading_weight">Your peer review has been saved and is viewable below.</span></div>' );
 			}
@@ -160,12 +160,14 @@
 			currentNode = scalarapi.model.getCurrentPageNode();
 
 		this.userReply = $('<div class="comment_form"></div>').appendTo(this.bodyContent);
+		// For the line below, it originally was "Add your voice"
+		// JP
 		this.userReply.append('<h3 class="heading_font heading_weight">Add your voice</h3>');
 		this.userReply.append('<p id="checking_logged_in_status">Checking your signed in status…</p>');
 		/* Change language to account for the fact that comments are only for peer reviewers
-		 * Joe Pires 
+		 * JP 
 		 */
-		this.userReply.append('<p id="commenter_logged_in" style="display:none;">You are signed in as <a tabindex="'+(++this.tabIndex)+'" title="Your user page" href=""></a> (<a tabindex="'+(++this.tabIndex)+'" href="javascript:void(null);" title="Logout">Sign out</a>).<br />Enter your peer review below. Submissions are moderated. Please be respectful.</p>');
+		this.userReply.append('<p id="commenter_logged_in" style="display:none;">You are signed in as <a tabindex="'+(++this.tabIndex)+'" title="Your user page" href=""></a> (<a tabindex="'+(++this.tabIndex)+'" href="javascript:void(null);" title="Logout">Sign out</a>).<br />Enter your peer review below. Submissions are moderated by an editor. Please be respectful.</p>');
 		this.userReply.append('<p id="commenter_anonymous" style="display:none;">To enter your peer review, enter your name and text below (you can also <a tabindex="'+(++this.tabIndex)+'" href="'+addTemplateToURL(system_uri+'/login?redirect_url='+encodeURIComponent(currentNode.url), 'cantaloupe')+'">sign in</a> to use your Scalar account).<br />Peer reviews are moderated by an editor. Please be respectful.</p>');
 		
 		var commentFormWrapper = $('<div id="comment_form_wrapper" style="display:none;">').appendTo(this.userReply);

@@ -78,7 +78,7 @@ $type = ($page->type == 'composite') ? 'page' : 'media page';
 			<div class="mediaElementHeader mediaElementHeaderWithNavBar">
 				<ul class="nav_bar_options">
 					<!--Originally, "peer review" was comments-->
-					<!--Joe Pires-->
+					<!--JP-->
 					<span class="downArrow"><li id="max_desc_button" class="sel" title="Peer reviews for this page">Local Discussion</li></span>
 					<span class="noArrow"><li id="max_perm_button" title="Load peer reviews in a new browser window" onclick="popoutComments();">Popout</li></span>
 				</ul>
@@ -98,12 +98,12 @@ $type = ($page->type == 'composite') ? 'page' : 'media page';
 ?>
 				</div><!--discussion-->
 				<!--Change text to account for peer reviews-->
-				<!--Joe Pires-->
+				<!--JP-->
 	<div id="comment_contribute">
 		<h4 class="content_title">Add your peer review.</h4>
 		<p id="checking_logged_in_status">Checking your signed in status ...</p>
-		<p id="commenter_logged_in" style="display:none;">You are signed in as <a title="Your user page" href=""></a> (<a href="javascript:void(null);" title="Logout">Sign out</a>).&nbsp; Enter your peer review below. Submissions are moderated. Please be respectful.</p>
-		<p id="commenter_anonymous" style="display:none;">To post your peer review, enter your name and text below (you can also <a href="<?=confirm_slash(base_url())?>system/login?redirect_url=<?=urlencode(urlencode($_SERVER['REQUEST_URI'].'#comments'))?>">sign in</a> to use your Scalar account).<br />Peer reviews are moderated. Please be respectful.</p>
+		<p id="commenter_logged_in" style="display:none;">You are signed in as <a title="Your user page" href=""></a> (<a href="javascript:void(null);" title="Logout">Sign out</a>).&nbsp; Enter your peer review below. Submissions are moderated by an editor. Please be respectful.</p>
+		<p id="commenter_anonymous" style="display:none;">To post your peer review, enter your name and text below (you can also <a href="<?=confirm_slash(base_url())?>system/login?redirect_url=<?=urlencode(urlencode($_SERVER['REQUEST_URI'].'#comments'))?>">sign in</a> to use your Scalar account).<br />Peer reviews are moderated by an editor. Please be respectful.</p>
 		<div id="comment_form_wrapper" style="display:none;">
 			<form id="comment_contribute_form" method="post" action="<?=$base_uri.$page->slug?>#comments" onsubmit="ajaxComment();return false;">
 			<input type="hidden" name="action" value="ADD" />
