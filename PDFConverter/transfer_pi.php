@@ -30,6 +30,23 @@
 	        	 * JP
 	        	 */
 				$content = file_get_contents($this->rdf_url_json);
+				/* Because javascript won't let me do what I want to
+				 * do on the client end, make appropriate fixes on the 
+				 * server end. Namely, replace the tags, which get filtered
+				 * out in JS, with never-used character combinations
+				 * if it's possible
+				 * JP
+				 */
+				//str_replace("<ol>", "ololol", $content);
+				//str_replace("<ul>", "ululul", $content);
+				//str_replace("<li>", "lilili", $content);
+				//str_replace("</ol>", "/ol/ol/ol", $content);
+				//str_replace("</ul>", "/ul/ul/ul", $content);
+				//str_replace("</li>", "/li/li/li", $content);
+				//str_replace("<pre>", "preprepre", $content);
+				//str_replace("</pre>", "/pre/pre/pre", $content);
+				//str_replace("<br />", "br/br/br/", $content);
+				//print($content);
 				echo '<div id="jsonDIV" style="display: none;">'; 
 				echo $content; 
 				echo "</div>";
