@@ -1,19 +1,15 @@
 <?php
 	class Transfer {
-
 		public $name = 'Import/Export';
 		public $plugin_path = '';
 		public $plugin_dir = '';
 		public $plugin_exists = false;
-
 		protected $rdf_url_json;
 		protected $rdf_url_xml;
 		protected $dest_url;
 		protected $email;
 		protected $source_url;
-
 		public function __construct($data=array()) {
-
 			$this->plugin_path = strtolower(get_class($this)).'/index.html';
 			$this->plugin_dir = dirname(__FILE__).'/'.$this->plugin_path;
 			if (file_exists($this->plugin_dir)) $this->plugin_exists = true;
@@ -30,34 +26,28 @@
 	        	 * JP
 	        	 */
 				$content = file_get_contents($this->rdf_url_json);
-				/* Because javascript won't let me do what I want to
-				 * do on the client end, make appropriate fixes on the 
-				 * server end. Namely, replace the tags, which get filtered
-				 * out in JS, with never-used character combinations
-				 * if it's possible
-				 * JP
-				 */
-				$content = str_replace("<ol>", "ololol ", $content);
-				$content = str_replace("<ul>", "ululul ", $content);
-				$content = str_replace("<li>", "lilili ", $content);
-				$content = str_replace("</ol>", "/ol/ol/ol ", $content);
-				$content = str_replace("</ul>", "/ul/ul/ul ", $content);
-				$content = str_replace("</li>", "/li/li/li ", $content);
-				$content = str_replace("<pre>", "preprepre ", $content);
-				$content = str_replace("</pre>", "/pre/pre/pre ", $content);
-				$content = str_replace("<br />", "br/br/br/ ", $content);
-				$content = str_replace("<blockquote><p>", "bqbqbq ", $content);
-				$content = str_replace("</p></blockquote>", "/bq/bq/bq ", $content);
 				echo '<div id="jsonDIV" style="display: none;">'; 
 				echo $content; 
 				echo "</div>";
+				echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>';
+				echo '<script src="application/plugins/transfer/js/conversion.js"></script>';
+				echo '<script src="application/plugins/transfer/js/pdfmake.js"></script>';
+				echo '<script src="application/plugins/transfer/js/vfs_fonts.js"></script>';
 				/* Now it should go to the site, and the client can handle things from there*/
+				echo '<button type="button">Convert to PDF</button>';
+				echo '<script type="text/javascript">';
+
+				echo "$(':button').bind('click', function () { 
+						var authorName = $('.login').html();
+  						var whereToEnd = authorName.indexOf('&nbsp');
+  						var authorName = authorName.substr(0, whereToEnd);
+  						console.log('hello');
+  						convert(" . $content . ", authorName);
+					});";
+				echo '</script>';
 			}
-
 		}
-
 		public function get() {
-
 			if (!isset($this->dest_url)) {
 				echo 'Please select a book to manage using the pulldown menu above';
 				return;
@@ -78,7 +68,7 @@
 	        	  
 	        	  <!--Adding button for the pdf conversion-->
 	        	  <!--JP-->
-	        	  <button type="button">Convert to PDF</button>
+	        	  
 	        	  
 	        	</p>
 	        	<h3 style="margin-top:18px; margin-bottom:8px;">Import</h3>
@@ -93,11 +83,8 @@
 			} else {
 				echo '<div style="padding:10px; border:solid 1px #cccccc; background-color:#eeeeee;">The <b>'.$this->name.'</b> plugin can\'t be found.  Please contact a system administrator to install the plugin in a folder named <b>'.strtolower(get_class($this)).'</b> at <b>/system/application/plugins/</b>.</div>';
 			}
-?>				<!--Add the script link for conversion.js-->
-				<!--JP-->
-				<script src="application/plugins/transfer/js/conversion.js"></script>
-				<script src="application/plugins/transfer/js/pdfmake.js"></script>
-				<script src="application/plugins/transfer/js/vfs_fonts.js"></script>
+?>				
+
 				</div>
 				<div id="snippet_dialog" title="Importing" style="display:none;">
   				<p>
@@ -109,7 +96,6 @@
   				</p>
 				</div>
 <?php
-
 		}
 	}
 ?>

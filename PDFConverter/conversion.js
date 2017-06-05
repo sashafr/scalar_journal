@@ -21,12 +21,14 @@ function generateListObject(tagString, tagType) {
   }
   var listString = "";
   for (var a = 0; a < tagString.length; a++) {
-    if (tagString.substring(a, a + 6) == "lilili") {
+    if (tagString.substring(a, a + 4) == "<li>") {
       if (listString.length != 0) {
         if (tagType === "ol") {
+          listString = listString.replace("li>", "");
           listObject.ol.push(listString);
           listString = "";
         } else {
+          listString = listString.replace("li>", "");
           listObject.ul.push(listString);
           listString = "";
         }
@@ -36,17 +38,17 @@ function generateListObject(tagString, tagType) {
     }
   }
   if (tagType === "ol") {
-    //listString = listString.replace("li>", "");
+    listString = listString.replace("li>", "");
     listObject.ol.push(listString);
   } else {
-    //listString = listString.replace("li>", "");
+    listString = listString.replace("li>", "");
     listObject.ul.push(listString);
   }
   return listObject;
 };
 
 function generateBlockQuoteObject(tagString) {
-  var blockQuoteRegex = /bqbqbq|\/bq\/bq\/bq/g;
+  var blockQuoteRegex = /<blockquote>|<p>|<\/blockquote>|<\/p>|blockquote>/g;
   tagString = tagString.replace(blockQuoteRegex, '');
   var blockObject = {
     text: tagString,
@@ -56,7 +58,7 @@ function generateBlockQuoteObject(tagString) {
 };
 
 function generatePreObject(tagString) {
-  var regex = /preprepre|\/pre\/pre\/pre/g;
+  var regex = /<pre>|<\/pre>/g;
   tagString = tagString.replace(regex, '');
   var returnObject = { text: tagString, style: "pre" };
   return returnObject;
@@ -98,16 +100,15 @@ function filterContent(contentVal) {
     }
 
     // Unordered Lists
-    if (contentVal.substring(i, i + 6) === "ululul") {
+    if (contentVal.substring(i, i + 4) === "<ul>") {
       if (listString.length !== 0) {
-        listString = listString.replace('br/br/br/', '');
+        listString = listString.replace('br />', '');
         pushObject = { text: listString, style: 'body' };
         objectList.push(pushObject);
         listString = "";
       }
       for (var p = i; p <= contentVal.length; p++) {
-        if (listString.length > 5 && listString.substring(listString.length - 9, listString.length) === "/ul/ul/ul") {
-          listString = listString.replace("ululul ", "");
+        if (listString.length > 5 && listString.substring(listString.length - 5, listString.length) === "</ul>") {
           pushObject = generateListObject(listString, "ul");
           contentVal = contentVal.replace(listString, '');
           listString = "";
@@ -125,16 +126,15 @@ function filterContent(contentVal) {
     }
 
     // Ordered Lists
-    if (contentVal.substring(i, i + 6) === "ololol") {
+    if (contentVal.substring(i, i + 4) === "<ol>") {
       if (listString.length !== 0) {
-        listString = listString.replace('br/br/br/', '');
+        listString = listString.replace('br />', '');
         pushObject = { text: listString, style: 'body' };
         objectList.push(pushObject);
         listString = "";
       }
       for (var p = i; p <= contentVal.length; p++) {
-        if (listString.length > 9 && listString.substring(listString.length - 9, listString.length) === "/ol/ol/ol") {
-          listString = listString.replace("ololol ", "");
+        if (listString.length > 5 && listString.substring(listString.length - 5, listString.length) === "</ol>") {
           pushObject = generateListObject(listString, "ol");
           contentVal = contentVal.replace(listString, '');
           listString = "";
@@ -172,14 +172,14 @@ function filterContent(contentVal) {
     }
 
     // Blockquote Objects
-    if (contentVal.substring(i, i + 6) === "bqbqbq") {
+    if (contentVal.substring(i, i + 12) === "<blockquote>") {
       if (listString.length !== 0) {
         pushObject = { text: listString, style: 'body' };
         objectList.push(pushObject);
         listString = "";
       }
       for (var u = i; u < contentVal.length; u++) {
-        if (listString.length > 9 && listString.substring(listString.length - 9, listString.length) === "/br/br/br") {
+        if (listString.length > 17 && listString.substring(listString.length - 13, listString.length - 17) === "</p>") {
           pushObject = generateBlockQuoteObject(listString);
           contentVal = contentVal.replace(listString, '');
           listString = "";
@@ -192,14 +192,14 @@ function filterContent(contentVal) {
     }
 
     // Pre Objects
-    if (contentVal.substring(i, i + 9) === "preprepre") {
+    if (contentVal.substring(i, i + 5) === "<pre>") {
       if (listString.length !== 0) {
         pushObject = { text: listString, style: 'body' };
         objectList.push(pushObject);
         listString = "";
       }
       for (var q = i; q < contentVal.length; q++) {
-        if (listString.length > 6 && listString.substring(listString.length - 12, listString.length) === "/pre/pre/pre") {
+        if (listString.length > 6 && listString.substring(listString.length - 6, listString.length) === "</pre>") {
           pushObject = generatePreObject(listString);
           listString = "";
           objectList.push(pushObject);
@@ -211,13 +211,13 @@ function filterContent(contentVal) {
     }
 
     // The breaklines for the paragraphs
-    if (contentVal.substring(i, i + 9) === "br/br/br/") {
+    if (contentVal.substring(i, i + 6) === "<br />") {
       listString = listString.replace(filterRegex, '');
-      listString = listString.replace('br/br/br/', '');
+      listString = listString.replace('br />', '');
       var listStringObject = { text: listString, style: 'body' };
       objectList.push(listString);
       listString = "";
-      contentVal = contentVal.replace("br/br/br/", "");
+      contentVal = contentVal.replace("<br />", "");
     } else {
       listString = listString + contentVal.charAt(i);
     }
@@ -226,7 +226,7 @@ function filterContent(contentVal) {
   return objectList;
 };
 
-function convert(JSONObj, authorName) {
+function convert(JSONString, authorName) {
   /* As for the process, we need to extract the title,
    * author, description (if there is one, so MAKE THAT OPTIONAL),
    * content, metadata (how are we adding that), and citations
@@ -247,7 +247,9 @@ function convert(JSONObj, authorName) {
    * JSON is "/index" (do that for right now and hope to God that no one has that in 
    * their title), extract tht title
    */
-  var JSONString = JSON.stringify(JSONObj);
+  JSONString = JSON.stringify(JSONString);
+  var JSONObj = JSON.parse(JSONString);
+  console.log(JSONObj);
   JSONString = JSONString.replace("{\"http://dev.upenndigitalscholarship.org/scalar/", "");
   var titleAuthor = "";
   for (var w = 0; w < JSONString.length; w++) {
@@ -257,6 +259,7 @@ function convert(JSONObj, authorName) {
       titleAuthor = titleAuthor + JSONString.charAt(w);
     }
   }
+
 
   // Version and Time It Went Live (I'll Need The Version Number For The Next Part)
   var jsonTitleString = "http://dev.upenndigitalscholarship.org/scalar/" + titleAuthor + "/index";
@@ -379,7 +382,7 @@ function convert(JSONObj, authorName) {
   pdfMake.createPdf(docDef).download(fileString);
 };
 
-$(':button').bind('click', function () {
+/*$(':button').bind('click', function () {
   var jsonString = $("#jsonDIV").text();
   var authorName = $(".login").html();
   var whereToEnd = authorName.indexOf("&nbsp");
@@ -387,4 +390,4 @@ $(':button').bind('click', function () {
 
   var jsonObj = JSON.parse(jsonString);
   convert(jsonObj, authorName);
-});
+});*/
