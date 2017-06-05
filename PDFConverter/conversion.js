@@ -21,14 +21,12 @@ function generateListObject(tagString, tagType) {
   }
   var listString = "";
   for (var a = 0; a < tagString.length; a++) {
-    if (tagString.substring(a, a + 4) == "<li>") {
+    if (tagString.substring(a, a + 6) == "lilili") {
       if (listString.length != 0) {
         if (tagType === "ol") {
-          listString = listString.replace("li>", "");
           listObject.ol.push(listString);
           listString = "";
         } else {
-          listString = listString.replace("li>", "");
           listObject.ul.push(listString);
           listString = "";
         }
@@ -38,17 +36,17 @@ function generateListObject(tagString, tagType) {
     }
   }
   if (tagType === "ol") {
-    listString = listString.replace("li>", "");
+    //listString = listString.replace("li>", "");
     listObject.ol.push(listString);
   } else {
-    listString = listString.replace("li>", "");
+    //listString = listString.replace("li>", "");
     listObject.ul.push(listString);
   }
   return listObject;
 };
 
 function generateBlockQuoteObject(tagString) {
-  var blockQuoteRegex = /<blockquote>|<p>|<\/blockquote>|<\/p>|blockquote>/g;
+  var blockQuoteRegex = /bqbqbq|\/bq\/bq\/bq/g;
   tagString = tagString.replace(blockQuoteRegex, '');
   var blockObject = {
     text: tagString,
@@ -58,7 +56,7 @@ function generateBlockQuoteObject(tagString) {
 };
 
 function generatePreObject(tagString) {
-  var regex = /<pre>|<\/pre>/g;
+  var regex = /preprepre|\/pre\/pre\/pre/g;
   tagString = tagString.replace(regex, '');
   var returnObject = { text: tagString, style: "pre" };
   return returnObject;
@@ -100,15 +98,15 @@ function filterContent(contentVal) {
     }
 
     // Unordered Lists
-    if (contentVal.substring(i, i + 4) === "<ul>") {
+    if (contentVal.substring(i, i + 6) === "ululul") {
       if (listString.length !== 0) {
-        listString = listString.replace('br />', '');
+        listString = listString.replace('br/br/br/', '');
         pushObject = { text: listString, style: 'body' };
         objectList.push(pushObject);
         listString = "";
       }
       for (var p = i; p <= contentVal.length; p++) {
-        if (listString.length > 5 && listString.substring(listString.length - 5, listString.length) === "</ul>") {
+        if (listString.length > 5 && listString.substring(listString.length - 9, listString.length) === "/ul/ul/ul") {
           pushObject = generateListObject(listString, "ul");
           contentVal = contentVal.replace(listString, '');
           listString = "";
@@ -126,15 +124,15 @@ function filterContent(contentVal) {
     }
 
     // Ordered Lists
-    if (contentVal.substring(i, i + 4) === "<ol>") {
+    if (contentVal.substring(i, i + 6) === "ololol") {
       if (listString.length !== 0) {
-        listString = listString.replace('br />', '');
+        listString = listString.replace('br/br/br/', '');
         pushObject = { text: listString, style: 'body' };
         objectList.push(pushObject);
         listString = "";
       }
       for (var p = i; p <= contentVal.length; p++) {
-        if (listString.length > 5 && listString.substring(listString.length - 5, listString.length) === "</ol>") {
+        if (listString.length > 9 && listString.substring(listString.length - 9, listString.length) === "/ol/ol/ol") {
           pushObject = generateListObject(listString, "ol");
           contentVal = contentVal.replace(listString, '');
           listString = "";
@@ -172,14 +170,14 @@ function filterContent(contentVal) {
     }
 
     // Blockquote Objects
-    if (contentVal.substring(i, i + 12) === "<blockquote>") {
+    if (contentVal.substring(i, i + 6) === "bqbqbq") {
       if (listString.length !== 0) {
         pushObject = { text: listString, style: 'body' };
         objectList.push(pushObject);
         listString = "";
       }
       for (var u = i; u < contentVal.length; u++) {
-        if (listString.length > 17 && listString.substring(listString.length - 13, listString.length - 17) === "</p>") {
+        if (listString.length > 9 && listString.substring(listString.length - 9, listString.length) === "/br/br/br") {
           pushObject = generateBlockQuoteObject(listString);
           contentVal = contentVal.replace(listString, '');
           listString = "";
@@ -192,14 +190,14 @@ function filterContent(contentVal) {
     }
 
     // Pre Objects
-    if (contentVal.substring(i, i + 5) === "<pre>") {
+    if (contentVal.substring(i, i + 9) === "preprepre") {
       if (listString.length !== 0) {
         pushObject = { text: listString, style: 'body' };
         objectList.push(pushObject);
         listString = "";
       }
       for (var q = i; q < contentVal.length; q++) {
-        if (listString.length > 6 && listString.substring(listString.length - 6, listString.length) === "</pre>") {
+        if (listString.length > 6 && listString.substring(listString.length - 12, listString.length) === "/pre/pre/pre") {
           pushObject = generatePreObject(listString);
           listString = "";
           objectList.push(pushObject);
@@ -211,13 +209,13 @@ function filterContent(contentVal) {
     }
 
     // The breaklines for the paragraphs
-    if (contentVal.substring(i, i + 6) === "<br />") {
+    if (contentVal.substring(i, i + 9) === "br/br/br/") {
       listString = listString.replace(filterRegex, '');
-      listString = listString.replace('br />', '');
+      listString = listString.replace('br/br/br/', '');
       var listStringObject = { text: listString, style: 'body' };
       objectList.push(listString);
       listString = "";
-      contentVal = contentVal.replace("<br />", "");
+      contentVal = contentVal.replace("br/br/br/", "");
     } else {
       listString = listString + contentVal.charAt(i);
     }
