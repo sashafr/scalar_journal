@@ -37,17 +37,17 @@
 				 * if it's possible
 				 * JP
 				 */
-				$content = str_replace("<ol>", "ololol", $content);
-				$content = str_replace("<ul>", "ululul", $content);
-				$content = str_replace("<li>", "lilili", $content);
-				$content = str_replace("</ol>", "/ol/ol/ol", $content);
-				$content = str_replace("</ul>", "/ul/ul/ul", $content);
-				$content = str_replace("</li>", "/li/li/li", $content);
-				$content = str_replace("<pre>", "preprepre", $content);
-				$content = str_replace("</pre>", "/pre/pre/pre", $content);
-				$content = str_replace("<br />", "br/br/br/", $content);
-				$content = str_replace("<blockquote><p>", "bqbqbq", $content);
-				$content = str_replace("</p></blockquote>", "/bq/bq/bq", $content);
+				$content = str_replace("<ol>", "ololol ", $content);
+				$content = str_replace("<ul>", "ululul ", $content);
+				$content = str_replace("<li>", "lilili ", $content);
+				$content = str_replace("</ol>", "/ol/ol/ol ", $content);
+				$content = str_replace("</ul>", "/ul/ul/ul ", $content);
+				$content = str_replace("</li>", "/li/li/li ", $content);
+				$content = str_replace("<pre>", "preprepre ", $content);
+				$content = str_replace("</pre>", "/pre/pre/pre ", $content);
+				$content = str_replace("<br />", "br/br/br/ ", $content);
+				$content = str_replace("<blockquote><p>", "bqbqbq ", $content);
+				$content = str_replace("</p></blockquote>", "/bq/bq/bq ", $content);
 				echo '<div id="jsonDIV" style="display: none;">'; 
 				echo $content; 
 				echo "</div>";

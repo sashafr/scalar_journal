@@ -107,6 +107,7 @@ function filterContent(contentVal) {
       }
       for (var p = i; p <= contentVal.length; p++) {
         if (listString.length > 5 && listString.substring(listString.length - 9, listString.length) === "/ul/ul/ul") {
+          listString = listString.replace("ululul ", "");
           pushObject = generateListObject(listString, "ul");
           contentVal = contentVal.replace(listString, '');
           listString = "";
@@ -133,6 +134,7 @@ function filterContent(contentVal) {
       }
       for (var p = i; p <= contentVal.length; p++) {
         if (listString.length > 9 && listString.substring(listString.length - 9, listString.length) === "/ol/ol/ol") {
+          listString = listString.replace("ololol ", "");
           pushObject = generateListObject(listString, "ol");
           contentVal = contentVal.replace(listString, '');
           listString = "";
