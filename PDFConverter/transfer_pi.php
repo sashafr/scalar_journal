@@ -4,6 +4,7 @@
 		public $plugin_path = '';
 		public $plugin_dir = '';
 		public $plugin_exists = false;
+		public $contentVal;
 		protected $rdf_url_json;
 		protected $rdf_url_xml;
 		protected $dest_url;
@@ -26,6 +27,7 @@
 	        	 * JP
 	        	 */
 				$content = file_get_contents($this->rdf_url_json);
+				$this->contentVal = $content;
 				echo '<div id="jsonDIV" style="display: none;">'; 
 				echo $content; 
 				echo "</div>";
@@ -33,18 +35,6 @@
 				echo '<script src="application/plugins/transfer/js/conversion.js"></script>';
 				echo '<script src="application/plugins/transfer/js/pdfmake.js"></script>';
 				echo '<script src="application/plugins/transfer/js/vfs_fonts.js"></script>';
-				/* Now it should go to the site, and the client can handle things from there*/
-				echo '<button type="button">Convert to PDF</button>';
-				echo '<script type="text/javascript">';
-
-				echo "$(':button').bind('click', function () { 
-						var authorName = $('.login').html();
-  						var whereToEnd = authorName.indexOf('&nbsp');
-  						var authorName = authorName.substr(0, whereToEnd);
-  						console.log('hello');
-  						convert(" . $content . ", authorName);
-					});";
-				echo '</script>';
 			}
 		}
 		public function get() {
@@ -68,7 +58,8 @@
 	        	  
 	        	  <!--Adding button for the pdf conversion-->
 	        	  <!--JP-->
-	        	  
+	        	  <button type="button">Convert to PDF</button>
+
 	        	  
 	        	</p>
 	        	<h3 style="margin-top:18px; margin-bottom:8px;">Import</h3>
@@ -83,6 +74,16 @@
 			} else {
 				echo '<div style="padding:10px; border:solid 1px #cccccc; background-color:#eeeeee;">The <b>'.$this->name.'</b> plugin can\'t be found.  Please contact a system administrator to install the plugin in a folder named <b>'.strtolower(get_class($this)).'</b> at <b>/system/application/plugins/</b>.</div>';
 			}
+			echo '<script type="text/javascript">';
+
+			echo "$(':button').bind('click', function () { 
+					var authorName = $('.login').html();
+  					var whereToEnd = authorName.indexOf('&nbsp');
+  					var authorName = authorName.substr(0, whereToEnd);
+  					console.log('hello');
+  					convert(" . $this->contentVal . ", authorName);
+				});";
+			echo '</script>';
 ?>				
 
 				</div>

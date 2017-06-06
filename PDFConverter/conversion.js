@@ -83,15 +83,20 @@ function filterContent(contentVal) {
   // I don't think you can have a mix of underlined, bold, and italic
   // text in the same paragraph
   // so I'll just filter it out for right now :(
-  var filterRegex = /<\/u>|<u>|<em>|<\/em>|<strong>|<\/strong>/g;
+  var filterRegex = /<\/u>|<u>|<em>|<\/em>|<strong>|<\/strong>|&nbsp;|\n/g;
+  contentVal = contentVal.replace(filterRegex, '');
   var objectList = [];
   var listString = "";
   var pushObject;
   for (var i = 0; i <= contentVal.length; i++) {
     // Add final element to list and break if i === contentVal.length
     if (i === contentVal.length && listString !== "") {
+      listString = listString.replace(/\n/g, '');
+      listString = listString.replace(/pre>|<\/pre>/, '');
       listString = listString.replace('br />', '');
       listString = listString.replace(filterRegex, '');
+      console.log(listString);
+      listString = listString.replace(/<\/pre>/g, '');
       pushObject = { text: listString, style: 'body' };
       objectList.push(pushObject);
       break;
@@ -200,6 +205,7 @@ function filterContent(contentVal) {
       }
       for (var q = i; q < contentVal.length; q++) {
         if (listString.length > 6 && listString.substring(listString.length - 6, listString.length) === "</pre>") {
+          listString = listString.replace(/<pre>|<\/pre>/g, '');
           pushObject = generatePreObject(listString);
           listString = "";
           objectList.push(pushObject);
@@ -321,7 +327,6 @@ function convert(JSONString, authorName) {
     },
 
     content: [
-    // ACTUALLY GET THE NAME 
     { text: authorName, style: "name" }, 
     { text: " ", style: "spacing" }, 
     { text: title, style: "title" }, 
@@ -381,13 +386,3 @@ function convert(JSONString, authorName) {
   var fileString = authorName + " - " + title + ".pdf";
   pdfMake.createPdf(docDef).download(fileString);
 };
-
-/*$(':button').bind('click', function () {
-  var jsonString = $("#jsonDIV").text();
-  var authorName = $(".login").html();
-  var whereToEnd = authorName.indexOf("&nbsp");
-  var authorName = authorName.substr(0, whereToEnd);
-
-  var jsonObj = JSON.parse(jsonString);
-  convert(jsonObj, authorName);
-});*/
