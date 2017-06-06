@@ -6,6 +6,8 @@
  *  Version - 1.0.0
  */
 
+
+// TODO: WHAT IF THE END OBJECT ISN'T BODY TEXT?
 function generateListObject(tagString, tagType) {
   var listObject = {};
   var regex = /<span[^>]*>|<\/span>|<\/li>|<\/ol>|<\/ul>|<ol>|<ul>|&nbsp;/g;
@@ -207,6 +209,7 @@ function filterContent(contentVal) {
         if (listString.length > 6 && listString.substring(listString.length - 6, listString.length) === "</pre>") {
           listString = listString.replace(/<pre>|<\/pre>/g, '');
           pushObject = generatePreObject(listString);
+          contentVal = contentVal.replace(listString, '');
           listString = "";
           objectList.push(pushObject);
           break;
