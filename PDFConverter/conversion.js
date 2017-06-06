@@ -6,8 +6,17 @@
  *  Version - 1.0.0
  */
 
+// Should work, and all but articles ending with preformatted text (need to test)
+// should work.
+// For now, it's pretty basic
 
-// TODO: WHAT IF THE END OBJECT ISN'T BODY TEXT?
+/* As a general overview, all of the generate... classes follow
+ * the same pattern:
+ * Generate the object to put into docDef
+ * Filter the text appropriately
+ * Fill out the object
+ */
+
 function generateListObject(tagString, tagType) {
   var listObject = {};
   var regex = /<span[^>]*>|<\/span>|<\/li>|<\/ol>|<\/ul>|<ol>|<ul>|&nbsp;/g;
@@ -93,14 +102,28 @@ function filterContent(contentVal) {
   for (var i = 0; i <= contentVal.length; i++) {
     // Add final element to list and break if i === contentVal.length
     if (i === contentVal.length && listString !== "") {
-      listString = listString.replace(/\n/g, '');
-      listString = listString.replace(/pre>|<\/pre>/, '');
-      listString = listString.replace('br />', '');
-      listString = listString.replace(filterRegex, '');
-      console.log(listString);
-      listString = listString.replace(/<\/pre>/g, '');
-      pushObject = { text: listString, style: 'body' };
-      objectList.push(pushObject);
+      if (listString.substring(0, 4) === "<ul>") {
+        pushObject = generateListObject(listString, "ul");
+        objectList.push(pushObject);
+      } else if (listString.substring(0, 4) === "<ol>") {
+        pushObject = generateListObject(listString, "ol");
+        objectList.push(pushObject);
+      } else if (listString.substring(0, 7) === "<a href") {
+        pushObject = generateLinkObject(listString);
+        objectList.push(pushObject);
+      } else if (listString.substring(0, 12) === "<blockquote>") {
+          pushObject = generateBlockQuoteObject(listString);
+          objectList.push(pushObject);
+      } else if (listString.substring(0, 5) === "<pre>") {
+          listString = listString.replace(/<pre>|<\/pre>/g, '');
+          pushObject = generatePreObject(listString);
+          objectList.push(pushObject);
+      } else {
+        listString = listString.replace(filterRegex, '');
+        listString = listString.replace('br />', '');
+        var listStringObject = { text: listString, style: 'body' };
+        objectList.push(listStringObject);
+      }
       break;
     } else if (i === contentVal.length && listString === "") {
       break;
@@ -224,7 +247,7 @@ function filterContent(contentVal) {
       listString = listString.replace(filterRegex, '');
       listString = listString.replace('br />', '');
       var listStringObject = { text: listString, style: 'body' };
-      objectList.push(listString);
+      objectList.push(listStringObject);
       listString = "";
       contentVal = contentVal.replace("<br />", "");
     } else {
@@ -385,6 +408,7 @@ function convert(JSONString, authorName) {
     var spacingObject = { text: " ", style: "spacing" };
     docDef.content.push(spacingObject);
   }
+  console.log(docDef);
   // Is there a specific process for going to ScholarlyCommons?
   var fileString = authorName + " - " + title + ".pdf";
   pdfMake.createPdf(docDef).download(fileString);

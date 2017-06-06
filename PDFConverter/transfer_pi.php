@@ -74,6 +74,9 @@
 			} else {
 				echo '<div style="padding:10px; border:solid 1px #cccccc; background-color:#eeeeee;">The <b>'.$this->name.'</b> plugin can\'t be found.  Please contact a system administrator to install the plugin in a folder named <b>'.strtolower(get_class($this)).'</b> at <b>/system/application/plugins/</b>.</div>';
 			}
+			// Add the javascript for the button
+			// Once clicked, PDF gets produced
+			// JP
 			echo '<script type="text/javascript">';
 
 			echo "$(':button').bind('click', function () { 
