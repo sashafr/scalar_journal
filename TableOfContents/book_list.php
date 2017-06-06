@@ -4,6 +4,23 @@
 <?$this->template->add_css(path_from_file(__FILE__).'book_list.css')?>
 
 <?
+/* Simple, linear time algorithm to search for
+ * an array object with the correct title
+ * JP
+ */
+function checkIfThere($books, $titleToFind) {
+	$returnVal = False;
+	$titleToFind = trim($titleToFind);
+	foreach($books as $bookVal) {
+		$trimmedTitle = trim($bookVal->title);
+		if (strcmp($titleToFind, $trimmedTitle) == 0) {
+			$returnVal = True;
+		}
+	}
+	return $returnVal;
+}
+
+
 function print_books($books, $is_large=false) {
 	echo '<ul class="book_icons">';
 	foreach ($books as $row) {
@@ -80,13 +97,19 @@ if (isset($book_list_search_error)) {
 if ($login->is_logged_in) {
 	echo '<div id="user_books"><h3>Your Books</h3>';
 	if (count($user_books) > 0) {
+		//print_r($user_books);
 		echo '<ul class="book_icons">';
 		print_books($user_books, true);
 		/* Generate the link to the Table of Contents
+		 * Tested. If there is no Table of Contents 
+		 * book created, it won't show (so no one will)
+		 * accidently click a link to a nonexistent page
 		 * JP
 		 */
-		echo '<li><a href="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"><img class="book_icon" src="http://dev.upenndigitalscholarship.org/scalar/system/application/views/modules/book_list/default_book_logo.png"></a>';
-		echo '<h4><a href="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"><span data-hypothesis="true" data-auto-approve="true" data-email-authors="true" data-joinable="true">Table Of Contents</span></a></h4></li>';
+		if (checkIfThere($user_books, "Table Of Contents")) {
+			echo '<li><a href="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"><img class="book_icon" src="http://dev.upenndigitalscholarship.org/scalar/system/application/views/modules/book_list/default_book_logo.png"></a>';
+			echo '<h4><a href="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"><span data-hypothesis="true" data-auto-approve="true" data-email-authors="true" data-joinable="true">Table Of Contents</span></a></h4></li>';
+		}
 	} else {
 		echo '<p>You haven\'t created any books yet.</p>';
 	}
