@@ -4,6 +4,19 @@
 <?$this->template->add_css(path_from_file(__FILE__).'book_list.css')?>
 
 <?
+/* Filter out the Table Of Contents Page.
+ * This will alloy my link to be shown
+ * JP
+ */
+function filterFunction($a) {
+	$trimmedTitle = trim($a->title);
+	$trimmedTitle = strtolower($trimmedTitle);
+	return ($trimmedTitle == "table of contents");
+}
+function filterTableOfContents($books) {
+	return array_filter($books, 'filterFunction');
+}
+
 /* Simple, linear time algorithm to search for
  * an array object with the correct title
  * JP
@@ -99,6 +112,7 @@ if ($login->is_logged_in) {
 	if (count($user_books) > 0) {
 		//print_r($user_books);
 		echo '<ul class="book_icons">';
+		$user_books = filterTableOfContents($user_books);
 		print_books($user_books, true);
 		/* Generate the link to the Table of Contents
 		 * Tested. If there is no Table of Contents 

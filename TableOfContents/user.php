@@ -147,12 +147,22 @@ $(window).ready(function() {
 		<button type="button" id="tableOfContents" class="generic_button">Generate Table Of Contents</button>
 		</form>
 	</td>
-</tr>    
-<script type="text/javascript">
-$("#tableOfContents").bind("click", function() {
-	$("#tableOfContentsSubmit").submit();
-});
-</script>
+</tr>   
+<?
+	if (!(checkIfThere($my_books, "Table Of Contents"))) {
+		echo '<script type="text/javascript">';
+		echo '$("#tableOfContents").bind("click", function() {
+				$("#tableOfContentsSubmit").submit();
+				});';
+		echo '</script>';
+	} else {
+		echo '<script type="text/javascript">';
+		echo '$("#tableOfContents").bind("click", function() {
+				alert("There already is a table of contents");
+				});';
+		echo '</script>';
+	}
+?> 
 <!-- End Edits -->
 <tr>
 	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Duplicate a book</td>
