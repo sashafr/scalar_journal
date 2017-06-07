@@ -126,9 +126,6 @@ $(window).ready(function() {
 <tr>
 	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Create new book</td>
 	<td style="vertical-align:middle;">
-		<!-- Submit a form so that if there is no Table of Contents page,
-			 Generate one 
-			 JP-->
 		<form action="<?=confirm_slash(base_url())?>system/dashboard" method="post" onsubmit="if (!this.title.value.length||this.title.value=='New book title') {alert('Please enter a book title');return false;}">
 		<input type="hidden" name="action" value="do_add_book" />
 		<input type="hidden" name="user_id" value="<?=$login->user_id?>" />
@@ -137,6 +134,26 @@ $(window).ready(function() {
 		</form>
 	</td>
 </tr>
+<!-- Generate The Javascript To Send Out Form To Generate 
+     Table of Contents
+     JP -->
+<tr>
+	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Generate Table of Contents</td>
+	<td style="vertical-align:middle;">
+		<form action="<?=confirm_slash(base_url())?>system/dashboard" method="post" id="tableOfContentsSubmit" onsubmit="if (!this.title.value.length||this.title.value=='New book title') {alert('Please enter a book title');return false;}">
+		<input type="hidden" name="action" value="do_add_book" />
+		<input type="hidden" name="user_id" value="<?=$login->user_id?>" />
+		<input name="title" type="hidden" value="Table Of Contents"/>
+		<button type="button" id="tableOfContents" class="generic_button">Generate Table Of Contents</button>
+		</form>
+	</td>
+</tr>    
+<script type="text/javascript">
+$("#tableOfContents").bind("click", function() {
+	$("#tableOfContentsSubmit").submit();
+});
+</script>
+<!-- End Edits -->
 <tr>
 	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Duplicate a book</td>
 	<td style="vertical-align:middle;">
