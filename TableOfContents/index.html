@@ -106,18 +106,12 @@
       					<form id="rdfform">
                				<div class="row">
 	                			<div class="adaptive-padding col-lg-6 col-md-6 col-sm-6 col-xs-12">
-	                				<h3></span>Paste Text</h3>
-	                				<p>Place text into the area below of type: Scalar-formatted RDF-JSON, individual RDF-JSON nodes, or
-	                				CSV with header fields from Scalar ontologies &mdash; see 
-	                				<a target="_blank" href="http://scalar.usc.edu/features/open-api/">Scalar's API Reference</a>.</p>
-	                				<textarea class="form-control source_rdf" rows="8" placeholder="Paste text" required></textarea>
+	                				<h3></span>Generate Table of Contents Page</h3>
+	                				<textarea style="display:none;" class="form-control source_rdf" rows="8" placeholder="Paste text" required></textarea>
 	                			</div>									
 	                			<div class="adaptive-padding col-lg-6 col-md-6 col-sm-6 col-xs-12">
-	                				<h3><span class="scalar-logo"></span>Destination Scalar Book</h3>
-	                				<p>Enter the URL to the destination book below. <i>You
-	                				need to be logged in to this book already</i>, so we'll also need your login email address.</p>
-	                				<input type="text" class="form-control dest_url" placeholder="Destination book URL" required />
-	                				<input type="email" class="form-control dest_id" placeholder="Login email address" required />
+	                				<input type="hidden" class="form-control dest_url" placeholder="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"/>
+	                				<input type="hidden" class="form-control dest_id" placeholder="Login email address" required />
 	                			</div>								
                   			</div> 
                   			<div class="row">
@@ -140,6 +134,7 @@
 								</div>
 				            </div> 
                 		</form>
+                		<!--End Edits-->
               		</div>
               		<!--  Import by uploaded file -->
               		<div role="tabpanel" class="tab-pane fade" id="file" aria-labelledby="file-tab">

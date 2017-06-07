@@ -11,6 +11,7 @@ function checkIfThere($books, $titleToFind) {
 		$trimmedTitle = trim($bookVal->title);
 		if (strcmp($titleToFind, $trimmedTitle) == 0) {
 			$returnVal = True;
+			break;
 		}
 	}
 	return $returnVal;
