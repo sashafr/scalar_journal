@@ -8,11 +8,21 @@ It's a fairly simple process. There is a button (or link) labeled Convert To PDF
 
 Due to the libraries being used, some of the multimedia aspects of the article will not be shown. For instance, there will be no images or other forms of media aside from text. There will be links to external wabpages. 
 
-As of right now, basic text, unordered lists, ordered lists, blockquotes, preformatted text (like code), and links (if they're in their own paragraph) will be properly processed. Given the libraries that we're using (pdfmake, specifically), formatted text and links within paragraphs could not be done easily. Hopefully it should be up soon.
+As of right now, basic text, unordered lists, ordered lists, blockquotes, preformatted text (like code), and links (if they're in their own paragraph) will be properly processed. Given the libraries that we're using (pdfmake, specifically), formatted text and links within paragraphs could not be done easily. 
+
+There also needs to be some testing, especially with multi-page books.
+
+Hopefully it should be up soon.
 
 -- Table of Contents --
 
-For all of the books in the database, there will be a table of contents for all the published books. This will be done automatically.
+For all of the books in the database, there will be a table of contents for all the published books. This, like the articles themselves, will be in book form.
+
+If there isn't a Table of Contents already, go to the dashboard and create one (there will be a button that says "Generate Table of Contents." This will generate the book for the table of contents, as well as the contents for what's published.
+
+If you wish to update it, go to the dashboard and update it there.
+
+To generate 
 
 -- Changes to Structure of Scalar --
 
@@ -30,3 +40,4 @@ This will be used in lieu of comments. Those with editor priveleges will be able
 -- If Updates to Scalar Need to be Made --
 
 I have commented all of the parts that I have edited. All of those comments have my name in them. To find the parts that I worked on, just search for 'JP' in the code.
+
