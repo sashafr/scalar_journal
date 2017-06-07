@@ -11,7 +11,7 @@
 function filterFunction($a) {
 	$trimmedTitle = trim($a->title);
 	$trimmedTitle = strtolower($trimmedTitle);
-	return ($trimmedTitle == "table of contents");
+	return ($trimmedTitle != "table of contents");
 }
 function filterTableOfContents($books) {
 	return array_filter($books, 'filterFunction');
@@ -112,8 +112,8 @@ if ($login->is_logged_in) {
 	if (count($user_books) > 0) {
 		//print_r($user_books);
 		echo '<ul class="book_icons">';
-		$user_books = filterTableOfContents($user_books);
-		print_books($user_books, true);
+		$newUserBooks = filterTableOfContents($user_books);
+		print_books($newUserBooks, true);
 		/* Generate the link to the Table of Contents
 		 * Tested. If there is no Table of Contents 
 		 * book created, it won't show (so no one will)
