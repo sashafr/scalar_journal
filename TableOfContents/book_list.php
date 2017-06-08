@@ -5,7 +5,8 @@
 
 <?
 /* Filter out the Table Of Contents Page.
- * This will alloy my link to be shown
+ * This will allow my link for the Table of Contents to be shown
+ * However, since we're not doing 
  * JP
  */
 function filterFunction($a) {
@@ -28,6 +29,7 @@ function checkIfThere($books, $titleToFind) {
 		$trimmedTitle = trim($bookVal->title);
 		if (strcmp($titleToFind, $trimmedTitle) == 0) {
 			$returnVal = True;
+			break;
 		}
 	}
 	return $returnVal;
@@ -120,10 +122,15 @@ if ($login->is_logged_in) {
 		 * accidently click a link to a nonexistent page
 		 * JP
 		 */
+		/* Since we're not doing a book version of the
+		 * Table of Contents book, this is largely unnecessary.
+		 * Just in case we want to go back to it, it will only be commented
+		 * out
+		 * JP
 		if (checkIfThere($user_books, "Table Of Contents")) {
 			echo '<li><a href="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"><img class="book_icon" src="http://dev.upenndigitalscholarship.org/scalar/system/application/views/modules/book_list/default_book_logo.png"></a>';
 			echo '<h4><a href="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"><span data-hypothesis="true" data-auto-approve="true" data-email-authors="true" data-joinable="true">Table Of Contents</span></a></h4></li>';
-		}
+		} */
 	} else {
 		echo '<p>You haven\'t created any books yet.</p>';
 	}

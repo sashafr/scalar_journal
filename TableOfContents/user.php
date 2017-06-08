@@ -2,6 +2,8 @@
 <?
 /* When cleaning up the objects in the $my_books array, this is the new 
  * class to put stuff in
+ * Since we're forgoing the book version of the Table of Contents,
+ * all of these classes and functions won't matter much.
  * JP
  */
 class modBook {
@@ -14,18 +16,20 @@ class modBook {
 	public $description;
 
 	public function __construct($title, $subtitle, $urlIsPublic, $user, $created, $isFeatured, $description) {
-		$this->title = $title; // string
-		$this->subtitle = $subtitle; // string
-		$this->urlIsPublic = $urlIsPublic; // bool
-		$this->user = $user; // string
-		$this->created = $created; // dateTime/string
-		$this->isFeatured = $isFeatured; // bool
-		$this->description = $description; // string
+		$this->title = $title; 
+		$this->subtitle = $subtitle; 
+		$this->urlIsPublic = $urlIsPublic; 
+		$this->user = $user; 
+		$this->created = $created; 
+		$this->isFeatured = $isFeatured; 
+		$this->description = $description; 
 	}
 }
 
 /* Generate function to check if there is a 
  * Table of Contents
+ * Since we're forgoing the book version of the Table of Contents,
+ * all of these classes and functions won't matter much.
  * JP
  */
 function checkIfThere($books, $titleToFind) {
@@ -193,7 +197,10 @@ $(window).ready(function() {
 </tr>
 <!-- Generate The Javascript To Send Out Form To Generate 
      Table of Contents
-     JP -->
+     As of right now, we're not doing the book version of 
+     the table of contents.
+     That'll be put on hold.
+     JP 
 <tr>
 	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Generate Table of Contents</td>
 	<td style="vertical-align:middle;">
@@ -204,8 +211,9 @@ $(window).ready(function() {
 		<button type="button" id="tableOfContents" class="generic_button">Generate Table Of Contents</button>
 		</form>
 	</td>
-</tr>   
+</tr> 
 <?
+	/*
 	if (!(checkIfThere($my_books, "Table Of Contents"))) {
 		echo '<script type="text/javascript">';
 		echo '$("#tableOfContents").bind("click", function() {
@@ -219,7 +227,8 @@ $(window).ready(function() {
 				});';
 		echo '</script>';
 	}
-?> 
+	*/
+?>  -->
 <!-- End Edits -->
 <tr>
 	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Duplicate a book</td>
@@ -253,6 +262,8 @@ $(window).ready(function() {
 -->
 </table>
 <!-- Put the $my_books array into a hidden div
+	 Since we're not doing a book version of the Table of Contents,
+	 this won't matter much
 	 JP-->
 <?
 	$newBooks = cleanArrayObjects($my_books);
