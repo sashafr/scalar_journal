@@ -22,10 +22,13 @@ If there isn't a Table of Contents already, go to the dashboard and create one (
 
 If you wish to update it, go to the dashboard and update it there.
 
-To generate 
+To generate the page for the table of contents, go to the import/export tab in the dashboard and click the bottom button to generate the page.
 
 -- Changes to Structure of Scalar --
 
+For our implementation of Scalar, instead of a series of articles per book, each book will have one article in it, and the collection of books will form a volume.
+
+In all honesty, in terms of functionality, is this a good idea?
 
 -- Changes to Language in Scalar --
 
@@ -40,4 +43,8 @@ This will be used in lieu of comments. Those with editor priveleges will be able
 -- If Updates to Scalar Need to be Made --
 
 I have commented all of the parts that I have edited. All of those comments have my name in them. To find the parts that I worked on, just search for 'JP' in the code.
+
+For the exact files, feel free to to look at the github repository. The files that I edited
+
+Also, since there are some files that I thought would need editing (but didn't), 
 
