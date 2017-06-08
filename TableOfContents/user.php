@@ -180,17 +180,6 @@ $(window).ready(function() {
 		</form>
 	</td>
 </tr>
-<!-- Put the $my_books array into a hidden div
-	 JP-->
-<?
-	$newBooks = cleanArrayObjects($my_books);
-	usort($newBooks, "cmp");
-	$JSONString = json_encode($newBooks);
-	echo '<pre id="bookArrayPre" style="display:none;">';
-	echo $JSONString;
-	echo '</pre>';
-?>
-<!--End Edits-->
 <tr>
 	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Create new book</td>
 	<td style="vertical-align:middle;">
@@ -263,3 +252,14 @@ $(window).ready(function() {
 </tr>
 -->
 </table>
+<!-- Put the $my_books array into a hidden div
+	 JP-->
+<?
+	$newBooks = cleanArrayObjects($my_books);
+	usort($newBooks, "cmp");
+	$JSONString = json_encode($newBooks);
+	echo '<pre id="bookArrayPre" style="display:none;">';
+	echo $JSONString;
+	echo '</pre>';
+?>
+<!--End Edits-->
