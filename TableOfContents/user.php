@@ -1,5 +1,29 @@
 <?if (!defined('BASEPATH')) exit('No direct script access allowed')?>
 <?
+/* When cleaning up the objects in the $my_books array, this is the new 
+ * class to put stuff in
+ * JP
+ */
+class modBook {
+	public $title;
+	public $subtitle;
+	public $urlIsPublic;
+	public $user;
+	public $created;
+	public $isFeatured;
+	public $description;
+
+	public function __construct($title, $subtitle, $urlIsPublic, $user, $created, $isFeatured, $description) {
+		$this->title = $title; // string
+		$this->subtitle = $subtitle; // string
+		$this->urlIsPublic = $urlIsPublic; // bool
+		$this->user = $user; // string
+		$this->created = $created; // dateTime/string
+		$this->isFeatured = $isFeatured; // bool
+		$this->description = $description; // string
+	}
+}
+
 /* Generate function to check if there is a 
  * Table of Contents
  * JP
@@ -15,6 +39,38 @@ function checkIfThere($books, $titleToFind) {
 		}
 	}
 	return $returnVal;
+}
+
+// Filter out the unpublished ones
+function filterFunction($a) {
+	return ($a->display_in_index == 1);
+}
+
+function filterArr($contentsArray) {
+	return array_filter($contentsArray, 'filterFunction');
+}
+
+// Compare The Contents
+function cmp($a, $b) {
+	return strcmp($a->created, $b->created);
+} 
+
+// Clean up objects, the return new array
+function cleanArrayObjects($originalArray) {
+	$returnArray = array();
+	foreach($originalArray as $originalArrayVal) {
+		$inputTitle = $originalArrayVal->title;
+		$inputSubtitle = $originalArrayVal->subtitle;
+		$inputPublic = $originalArrayVal->url_is_public;
+		$inputUser = $originalArrayVal->user;
+		$inputCreated = $originalArrayVal->created;
+		$inputFeature = $originalArrayVal->is_featured;
+		$inputDescription = $originalArrayVal->description;
+
+		$pushObject = new modBook($inputTitle, $inputSubtitle, $inputPublic, $inputUser, $inputCreated, $inputFeature, $inputDescription);
+		array_push($returnArray, $pushObject);
+	}
+	return $returnArray;
 }
 ?>
 
@@ -124,6 +180,17 @@ $(window).ready(function() {
 		</form>
 	</td>
 </tr>
+<!-- Put the $my_books array into a hidden div
+	 JP-->
+<?
+	$newBooks = cleanArrayObjects($my_books);
+	usort($newBooks, "cmp");
+	$JSONString = json_encode($newBooks);
+	echo '<pre id="bookArrayPre" style="display:none;">';
+	echo $JSONString;
+	echo '</pre>';
+?>
+<!--End Edits-->
 <tr>
 	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Create new book</td>
 	<td style="vertical-align:middle;">
