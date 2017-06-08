@@ -24,6 +24,8 @@ If you wish to update it, go to the dashboard and update it there.
 
 To generate the page for the table of contents, go to the import/export tab in the dashboard and click the bottom button to generate the page.
 
+UPDATE 8 JUNE 2017 - Instead of a book form of the table of contents, the table of contents will only be on the index page of scalar. There, all books made public will be shown there, along with the date created, the author, and the description. All of the code for the book version will be commented out. If someone would like to bring that functionality back, they are more than welcome to do so.
+
 -- Changes to Structure of Scalar --
 
 For our implementation of Scalar, instead of a series of articles per book, each book will have one article in it, and the collection of books will form a volume.
