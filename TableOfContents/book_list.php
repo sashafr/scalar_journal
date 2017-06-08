@@ -91,14 +91,27 @@ if (count($featured_books) > 0) {
 	echo '<br clear="both" />';
 }
 ?>
+<!-- Remove The View All Button, So It Can Be Done Automatically 
+	 JP -->
 <h3><?=lang('welcome.other_books')?></h3>
 <form action="<?=base_url()?>" id="book_list_search">
 <div>
 <div><input type="text" name="sq" class="generic_text_input" value="<?=(isset($_REQUEST['sq'])?trim(htmlspecialchars($_REQUEST['sq'])):'')?>" /></div>
 <div><input type="submit" class="generic_button" value="Search" /></div>
-<div><button type="submit" class="generic_button" value="1" name="view_all" >View All</button></div>
 </div>
 </form>
+
+<!-- Generate hidden form so View All is a default. Then 
+	 Use Javascript to send the form 
+	 JP -->
+<form action="<?=base_url()?>" id="autoViewAll">
+<div>
+<div><input type="submit" style="display:none;" class="generic_button" value="1" name="view_all" ></input></div>
+</div>
+</form>
+
+
+
 <?
 if (isset($book_list_search_error)) {
 	echo '<p class="error">'.$book_list_search_error.'</p>';
@@ -138,3 +151,12 @@ if ($login->is_logged_in) {
 }
 ?>
 <br clear="both" />
+<script type="text/javascript">
+var urlVal = document.URL;
+if (!(urlVal.includes("?"))) {
+	$(document).ready(function() {
+		//alert("Hello");
+    	$("#autoViewAll").submit();
+	});
+}
+</script>
