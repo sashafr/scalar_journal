@@ -1,8 +1,13 @@
 <!-- Edit for the table of contents -->
+<!-- Note: In order to get the actual description of the book,
+	 you have to go to another link. I'll speak with Sasha and see what 
+	 I can do.
+
+	 There might be a way to get the description via other means...
+	 let's see -->
 
 <?if (!defined('BASEPATH')) exit('No direct script access allowed')?>
 <?$this->template->add_css(path_from_file(__FILE__).'book_list.css')?>
-
 <?
 /* Filter out the Table Of Contents Page.
  * This will allow my link for the Table of Contents to be shown
@@ -37,8 +42,11 @@ function checkIfThere($books, $titleToFind) {
 
 
 function print_books($books, $is_large=false) {
+	//print_r($books);
 	echo '<ul class="book_icons">';
 	foreach ($books as $row) {
+		$description   = $row->description;
+		$created       = $row->created;
 		$uri 		   = confirm_slash(base_url()).$row->slug;
 		$title		   = trim($row->title);
 		$book_id       = (int) $row->book_id;
@@ -56,6 +64,10 @@ function print_books($books, $is_large=false) {
 			echo implode(', ',$authors);
 			echo "<br />";
 		}
+		echo "\n";
+		echo $description;
+		echo "\n";
+		echo $created;
 		echo '</li>';
 	}
 	echo '</ul>';
@@ -93,6 +105,7 @@ if (count($featured_books) > 0) {
 ?>
 <!-- Remove The View All Button, So It Can Be Done Automatically 
 	 JP -->
+
 <h3><?=lang('welcome.other_books')?></h3>
 <form action="<?=base_url()?>" id="book_list_search">
 <div>
@@ -102,11 +115,11 @@ if (count($featured_books) > 0) {
 </form>
 
 <!-- Generate hidden form so View All is a default. Then 
-	 Use Javascript to send the form 
+	 Use Javascript to send the form  style="display:none;"
 	 JP -->
-<form action="<?=base_url()?>" id="autoViewAll">
+<form action="<?=base_url()?>" id="autoViewAll" name="autoViewAll">
 <div>
-<div><input type="submit" style="display:none;" class="generic_button" value="1" name="view_all" ></input></div>
+<div><input type="submit"  class="generic_button" value="1" name="view_all" ></input></div>
 </div>
 </form>
 
@@ -125,7 +138,7 @@ if (isset($book_list_search_error)) {
 if ($login->is_logged_in) {
 	echo '<div id="user_books"><h3>Your Books</h3>';
 	if (count($user_books) > 0) {
-		//print_r($user_books);
+		
 		echo '<ul class="book_icons">';
 		$newUserBooks = filterTableOfContents($user_books);
 		print_books($newUserBooks, true);
@@ -151,12 +164,12 @@ if ($login->is_logged_in) {
 }
 ?>
 <br clear="both" />
-<script type="text/javascript">
-var urlVal = document.URL;
-if (!(urlVal.includes("?"))) {
-	$(document).ready(function() {
-		//alert("Hello");
-    	$("#autoViewAll").submit();
-	});
-}
+<input type="hidden" name="AMOUNT" id="amt" value="<?=$amount?>">
+<!-- Try to automatically have things load -->
+<script>
+ $(document).ready(function() { 
+   if( $("#amt").val() > 0) {
+     $("#autoViewAll").trigger("click");
+    }
+ });
 </script>
