@@ -9,6 +9,31 @@
 <?if (!defined('BASEPATH')) exit('No direct script access allowed')?>
 <?$this->template->add_css(path_from_file(__FILE__).'book_list.css')?>
 <?
+/* Make the date and time prettier in the table of contents
+ */
+function changeLookDateTime($dateTimeString) {
+	// As of right now, just get rid of the timestamp
+	// If more needs to be done, I would like a Day-Month-Year
+	// Date Structure (talk to Sasha about this)
+	$newDateTimeString = preg_replace('/[0-9]{2}:[0-9]{2}:[0-9]{2}/', '', $dateTimeString);
+	return $newDateTimeString;
+}
+
+/* Filter the html to get the description
+ */
+function getDescription($htmlVal) {
+	$descArray = array();
+	preg_match_all('/\<meta.name="(\w*)".content="(.*)"/', $htmlVal, $descArray);
+	$arrayValA = $descArray[0];
+	$arrayValB = $arrayValA[0];
+	//print_r($arrayValB);
+	$finalResult = preg_replace('/<meta name="description" content="/', '', $arrayValB);
+	$finalResult = substr($finalResult, 0, strlen($finalResult)-1);
+	//print_r($finalResult);
+	return $finalResult;
+}
+
+
 /* Filter out the Table Of Contents Page.
  * This will allow my link for the Table of Contents to be shown
  * However, since we're not doing 
@@ -43,10 +68,13 @@ function checkIfThere($books, $titleToFind) {
 
 function print_books($books, $is_large=false) {
 	echo '<ul class="book_icons">';
+	//print_r($books);
 	foreach ($books as $row) {
-		$description   = $row->description;
 		$created       = $row->created;
 		$uri 		   = confirm_slash(base_url()).$row->slug;
+		$content = file_get_contents($uri);
+		$description = getDescription($content);
+		//$this->contentVal = $content;
 		$title		   = trim($row->title);
 		$book_id       = (int) $row->book_id;
 		$thumbnail     = (!empty($row->thumbnail)) ? confirm_slash($row->slug).$row->thumbnail : null;
@@ -64,9 +92,10 @@ function print_books($books, $is_large=false) {
 			echo "<br />";
 		}
 		echo "\n";
+		echo "Description: ";
 		echo $description;
 		echo "\n";
-		echo $created;
+		echo changeLookDateTime($created);
 		echo '</li>';
 	}
 	echo '</ul>';
@@ -97,7 +126,6 @@ if(!$login_is_super) {
 <?
 // Generate the table of contents here
 if (count($featured_books) > 0) {
-	print("HELLO");
 	echo '<h3>'.lang('welcome.featured_books').'</h3>';
 	print_books($featured_books);
 	echo '<br clear="both" />';

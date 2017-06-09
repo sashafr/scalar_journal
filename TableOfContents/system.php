@@ -61,6 +61,8 @@ class System extends MY_Controller {
 			$this->data['book_list_search_error'] = 'Please enter a search term';
 		} else {
 			// This will allow the public books to be shown automatically
+			// To go back to how things worse, delete this else section,
+			// and uncomment the view all button in book_list.php
 			// JP
 			$this->data['other_books'] = $this->books->get_index_books(false);
 		}
@@ -93,7 +95,7 @@ class System extends MY_Controller {
 		foreach ($this->data['content'] as $prefix => $values) {
 			$this->data['content'][$prefix] = array_values($values);
 		}
-
+		print_r($this->data['content']);
 		$this->template->set_template('blank');
 		$this->template->write_view('content', 'modules/data/json', $this->data);
 		$this->template->render();
