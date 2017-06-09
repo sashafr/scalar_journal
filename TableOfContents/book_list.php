@@ -72,9 +72,9 @@ function print_books($books, $is_large=false) {
 	foreach ($books as $row) {
 		$created       = $row->created;
 		$uri 		   = confirm_slash(base_url()).$row->slug;
+		// Go to the article page to get the description
 		$content = file_get_contents($uri);
 		$description = getDescription($content);
-		//$this->contentVal = $content;
 		$title		   = trim($row->title);
 		$book_id       = (int) $row->book_id;
 		$thumbnail     = (!empty($row->thumbnail)) ? confirm_slash($row->slug).$row->thumbnail : null;
@@ -88,14 +88,26 @@ function print_books($books, $is_large=false) {
 		}
 		echo '<li><a href="'.$uri.'"><img class="book_icon'.(($is_large)?'':' small').'" src="'.confirm_base($thumbnail).'" /></a><h4><a href="'.$uri.'">'.$title.'</a></h4>';
 		if (count($authors)) {
-			echo implode(', ',$authors);
+			$printString = '';
+			foreach($authors as $authorVal) {
+				if(count($authors) == 1) {
+					$printString = $printString.$authorVal;
+				} else {
+					$printString = $printString.$authorVal.', ';
+				}
+			}
+			$printString = '<strong>'.$printString.'</strong>';
+			echo $printString;
 			echo "<br />";
 		}
-		echo "\n";
-		echo "Description: ";
+		// Add the data appropriately
+		echo "<strong>Description:</strong> ";
 		echo $description;
 		echo "\n";
-		echo changeLookDateTime($created);
+		echo '<br />';
+		$dateVal = changeLookDateTime($created);
+		$dateVal = '<strong>'.$dateVal.'</strong>';
+		echo $dateVal;
 		echo '</li>';
 	}
 	echo '</ul>';
