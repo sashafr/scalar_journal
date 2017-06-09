@@ -59,6 +59,10 @@ class System extends MY_Controller {
 			$this->data['other_books'] = $this->books->get_index_books(false);
 		} elseif (isset($_REQUEST['sq'])) {
 			$this->data['book_list_search_error'] = 'Please enter a search term';
+		} else {
+			// This will allow the public books to be shown automatically
+			// JP
+			$this->data['other_books'] = $this->books->get_index_books(false);
 		}
 
 		$this->data['user_books'] = array();

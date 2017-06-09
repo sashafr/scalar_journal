@@ -42,7 +42,6 @@ function checkIfThere($books, $titleToFind) {
 
 
 function print_books($books, $is_large=false) {
-	//print_r($books);
 	echo '<ul class="book_icons">';
 	foreach ($books as $row) {
 		$description   = $row->description;
@@ -98,6 +97,7 @@ if(!$login_is_super) {
 <?
 // Generate the table of contents here
 if (count($featured_books) > 0) {
+	print("HELLO");
 	echo '<h3>'.lang('welcome.featured_books').'</h3>';
 	print_books($featured_books);
 	echo '<br clear="both" />';
@@ -111,17 +111,14 @@ if (count($featured_books) > 0) {
 <div>
 <div><input type="text" name="sq" class="generic_text_input" value="<?=(isset($_REQUEST['sq'])?trim(htmlspecialchars($_REQUEST['sq'])):'')?>" /></div>
 <div><input type="submit" class="generic_button" value="Search" /></div>
+<!--<div><button type="submit" class="generic_button" value="1" name="view_all" >View All</button></div>-->
 </div>
 </form>
+
 
 <!-- Generate hidden form so View All is a default. Then 
 	 Use Javascript to send the form  style="display:none;"
 	 JP -->
-<form action="<?=base_url()?>" id="autoViewAll" name="autoViewAll">
-<div>
-<div><input type="submit"  class="generic_button" value="1" name="view_all" ></input></div>
-</div>
-</form>
 
 
 
@@ -164,12 +161,5 @@ if ($login->is_logged_in) {
 }
 ?>
 <br clear="both" />
-<input type="hidden" name="AMOUNT" id="amt" value="<?=$amount?>">
+
 <!-- Try to automatically have things load -->
-<script>
- $(document).ready(function() { 
-   if( $("#amt").val() > 0) {
-     $("#autoViewAll").trigger("click");
-    }
- });
-</script>
