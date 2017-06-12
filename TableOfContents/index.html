@@ -3,6 +3,7 @@
 <title>Scalar RDF-JSON Transfer Tool</title>
 <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="css/transfer.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="lib/jquery/jquery-1.11.2.min.js"></script>
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <script src="js/jquery.csv.min.js"></script>
@@ -58,7 +59,7 @@
                   				<br />
                   				<div style="text-align:right;" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:right;">
                   					  <span class="complete_msg alert alert-success">Transfer is complete! <a href="javascript:void(null);">start over</a></span>
-									  <button type="submit" class="btn btn-primary" id="urlImportButton">Continue</button>
+									  <button type="submit" class="btn btn-primary" id="urlImportButton">B</button>
 								</div>
 				            </div>                   			
                 		</form>              		
@@ -98,7 +99,7 @@
                   				<br />
                   				<div style="text-align:right;" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:right;">
                   					  <span class="complete_msg alert alert-success">Transfer is complete! <a href="javascript:void(null);">start over</a></span>
-									  <button type="submit" class="btn btn-primary" id="importSourceButton">Continue</button>
+									  <button type="submit" class="btn btn-primary" id="importSourceButton">C</button>
 								</div>
 				            </div> 
                 		</form>
@@ -188,7 +189,7 @@
                   				<br />
                   				<div style="text-align:right;" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:right;">
                   					  <span class="complete_msg alert alert-success">Transfer is complete! <a href="javascript:void(null);">start over</a></span>
-									  <button type="submit" class="btn btn-primary" id="fileTransferButton">Continue</button>
+									  <button type="submit" class="btn btn-primary" id="fileTransferButton">A</button>
 								</div>
 				            </div> 
                 		</form>
@@ -198,29 +199,7 @@
       	</div><!-- /col -->
 	</div><!-- /row -->
 </div><!-- /container -->
-<!-- See if we can actually transfer 
-	 Assume files, urls, and objects are also one page only 
-	 JP -->
-<script>
-	var objectStringVal = $("#jsonPreTag").html();
-	var objectVal = JSON.parse(objectStringVal);
-	
-	$("#urlImportButton").('click', function(event) {
-		if(!(jQuery.isEmptyObject(objectVal))) {
-			event.preventDefault();
-		}
-	});
-	$("#importSourceButton").bind('click', function(event) {
-		if(!(jQuery.isEmptyObject(objectVal))) {
-			event.preventDefault();
-		}
-	});
-	$("#fileTransferButton").bind('click', function(event) {
-		if(!(jQuery.isEmptyObject(objectVal))) {
-			event.preventDefault();
-		}
-	});
-</script>
+
 
 <div id="commit" class="modal fade">
   <div class="modal-dialog">
@@ -307,3 +286,22 @@
 </div>
 </body>
 </html>
+<!-- See if we can actually transfer 
+	 Assume files, urls, and objects are also one page only 
+	 JP -->
+<script>
+	var objectStringVal = $("#jsonPreTag").html();
+	var objectVal = JSON.parse(objectStringVal);
+
+	$("#urlImportButton").click(function(event)) {
+		alert("HELLO");
+	}
+	$("#importSourceButton").click(function(event)) {
+		alert("HELLO");
+	}
+	$("#fileTransferButton").click(function(event)) {
+		alert("HELLO");
+	}
+	
+	
+</script>
