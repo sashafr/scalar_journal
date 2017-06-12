@@ -28,13 +28,12 @@
 	        	 */
 				$content = file_get_contents($this->rdf_url_json);
 				$this->contentVal = $content;
-				echo '<div id="jsonDIV" style="display: none;">'; 
-				echo $content; 
-				echo "</div>";
-				echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>';
 				echo '<script src="application/plugins/transfer/js/conversion.js"></script>';
 				echo '<script src="application/plugins/transfer/js/pdfmake.js"></script>';
 				echo '<script src="application/plugins/transfer/js/vfs_fonts.js"></script>';
+				echo '<pre id="jsonPreTag">';
+				echo $content;
+				echo '</pre>';
 			}
 		}
 		public function get() {
