@@ -1,2 +1,0 @@
-10 PRINT "MOO"
-20 GOTO 10
