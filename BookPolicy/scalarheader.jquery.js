@@ -1,4 +1,4 @@
-//getComputedStyle Polyfill - needed for IE<=8
+x//getComputedStyle Polyfill - needed for IE<=8
 "getComputedStyle"in this||(this.getComputedStyle=function(){function g(a,b,c,e){var d=b[c];b=parseFloat(d);d=d.split(/\d/)[0];e=null!=e?e:/%|em/.test(d)&&a.parentElement?g(a.parentElement,a.parentElement.currentStyle,"fontSize",null):16;a="fontSize"==c?e:/width/i.test(c)?a.clientWidth:a.clientHeight;return"em"==d?b*e:"in"==d?96*b:"pt"==d?96*b/72:"%"==d?b/100*a:b}function h(a,b){var c="border"==b?"Width":"",e=b+"Top"+c,d=b+"Right"+c,f=b+"Bottom"+c,c=b+"Left"+c;a[b]=(a[e]==a[d]==a[f]==a[c]?[a[e]]:
 a[e]==a[f]&&a[c]==a[d]?[a[e],a[d]]:a[c]==a[d]?[a[e],a[d],a[f]]:[a[e],a[d],a[f],a[c]]).join(" ")}function k(a){var b=a.currentStyle,c=g(a,b,"fontSize",null);for(property in b)/width|height|margin.|padding.|border.+W/.test(property)&&"auto"!==this[property]?this[property]=g(a,b,property,c)+"px":"styleFloat"===property?this["float"]=b[property]:this[property]=b[property];h(this,"margin");h(this,"padding");h(this,"border");this.fontSize=c+"px";return this}k.prototype={constructor:k,getPropertyPriority:function(){},
 getPropertyValue:function(a){return this[a]||""},item:function(){},removeProperty:function(){},setProperty:function(){},getPropertyCSSValue:function(){}};return function(a){return new k(a)}}(this));
@@ -191,7 +191,7 @@ getPropertyValue:function(a){return this[a]||""},item:function(){},removePropert
                                             ((base.is_author||base.is_commentator)?
                                                 // JP
                                                 // Edit this to prevent more than one article per book
-                                                '<li id="ScalarHeaderNew"><a class="headerIcon" href="' + base.get_param(scalarapi.model.urlPrefix + 'new.edit')+'" id="newIcon" title="New page button. Click to create a new page."><span class="visible-xs">New page</span></a></li>'
+                                                '<li id="ScalarHeaderNew"><a class="headerIcon" href="' + base.get_param(scalarapi.model.urlPrefix + 'new.edit')+'" id="newIcon" title="New page button. Click to create a new page."><span class="visible-xs" id="newSpan">New page</span></a></li>'
                                                 :'')+
                                             ((base.is_author||base.is_commentator||base.is_reviewer)?
                                                 '<li id="ScalarHeaderEdit"><a class="headerIcon" href="' + scalarapi.stripAllExtensions(scalarapi.model.urlPrefix + base.current_slug) + '.edit" id="editIcon" title="Edit button. Click to edit the current page or media."><span class="visible-xs">Edit page</span></a></li>'
@@ -249,12 +249,6 @@ getPropertyValue:function(a){return this[a]||""},item:function(){},removePropert
                                         '</ul>'+
                                     '</div>'+
                                 '</div>';
-            // I think I can add it here
-            // JP
-            $("#newIcon").click(function (event) {
-                event.preventDefault();
-                alert("Sorry. One page per book only.");
-            });
             
             base.mobileTOCMenu = $('<div id="mobileMainMenuSubmenus" class="heading_font tocMenu"><div class="toc"><header class="mainMenu"><a class="headerIcon"><span class="visible-xs">Table of Contents</span></a></header><footer><div class="footer_content"><button class="btn back text-center"></button><button class="btn close_menu text-center"><span class="menuIcon closeIcon"></span></button></div></footer></div><div class="pages"></div></div>').appendTo('body');
             base.mobileTOCMenu.find('.close_menu, header>a').click(function(e){
@@ -1508,5 +1502,19 @@ getPropertyValue:function(a){return this[a]||""},item:function(){},removePropert
             (new $.scalarheader(this, options));
         });
     };
+
+    // I think I can add it here
+    // This should work, I don't know why it isn't
+    // JP
+    $("#newIcon").click(function (event) {
+        alert("HELLO");
+        event.preventDefault();
+        alert("Sorry. One page per book only.");
+    });
+    $("#newSpan").click(function (event) {
+        alert("HELLO");
+        event.preventDefault();
+        alert("Sorry. One page per book only.");
+    });
 
 })(jQuery);
