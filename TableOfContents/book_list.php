@@ -9,6 +9,15 @@
 <?if (!defined('BASEPATH')) exit('No direct script access allowed')?>
 <?$this->template->add_css(path_from_file(__FILE__).'book_list.css')?>
 <?
+
+/* Extract the version of the article, much like we did for the description
+ */
+function getVersionNumber($htmlVal) {
+	$checkVal = preg_match('/\<base href=\"(.*)\"\>/', $htmlVal);
+	print($checkVal);
+	return "A";
+}
+
 /* Make the date and time prettier in the table of contents
  */
 function changeLookDateTime($dateTimeString) {
@@ -66,15 +75,17 @@ function checkIfThere($books, $titleToFind) {
 }
 
 
-function print_books($books, $is_large=false) {
+function print_books($books, $is_large=false, $public=false) {
 	echo '<ul class="book_icons">';
-	//print_r($books);
 	foreach ($books as $row) {
 		$created       = $row->created;
 		$uri 		   = confirm_slash(base_url()).$row->slug;
 		// Go to the article page to get the description
 		$content = file_get_contents($uri);
 		$description = getDescription($content);
+		//print("\n");
+		//print("Description: ".$description);
+		//print(strlen($description));
 		$title		   = trim($row->title);
 		$book_id       = (int) $row->book_id;
 		$thumbnail     = (!empty($row->thumbnail)) ? confirm_slash($row->slug).$row->thumbnail : null;
@@ -101,9 +112,11 @@ function print_books($books, $is_large=false) {
 			echo "<br />";
 		}
 		// Add the data appropriately
-		echo "<strong>Description:</strong> ";
-		echo $description;
-		echo "\n";
+		if ($public) {
+			echo "<strong>Description:</strong> ";
+			echo $description;
+		}
+		//echo $description;
 		echo '<br />';
 		$dateVal = changeLookDateTime($created);
 		$dateVal = '<strong>'.$dateVal.'</strong>';
@@ -168,16 +181,15 @@ if (isset($book_list_search_error)) {
 }
 ?>
 <br clear="both" />
-<? if (count($other_books) > 0) print_books($other_books) ?>
+<? if (count($other_books) > 0) print_books($other_books, true, true) ?>
 </div>
 
 <?
 if ($login->is_logged_in) {
 	echo '<div id="user_books"><h3>Your Books</h3>';
-	if (count($user_books) > 0) {
-		
+	$newUserBooks = filterTableOfContents($user_books);
+	if (count($newUserBooks) > 0) {
 		echo '<ul class="book_icons">';
-		$newUserBooks = filterTableOfContents($user_books);
 		print_books($newUserBooks, true);
 		/* Generate the link to the Table of Contents
 		 * Tested. If there is no Table of Contents 

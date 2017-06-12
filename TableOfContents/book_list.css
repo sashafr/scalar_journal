@@ -1,7 +1,7 @@
 
 .system_wrapper { min-width: 950px; max-width: 1050px; }
 
-#user_books {
+#user_books{
 	background-color: white;
 	padding: 5px 20px 0 20px;
 	border: solid 1px #e7e5e0;
@@ -9,6 +9,18 @@
 }
 
 #other_books {
+	background-color: white;
+	padding: 5px 20px 0 20px;
+	border: solid 1px #e7e5e0;
+	position: absolute;
+	margin-left: 420px;
+	max-width: 630px;
+}
+/* Originally the design for the other_books tag
+ * JP
+ */
+
+/*#other_books {
 	position: absolute;
 	padding-top: 5px;
 	border-top: solid 1px #e7e5e0;
@@ -20,7 +32,7 @@
 	float: none;
 	margin-left: 0;
 	max-width: inherit;
-}
+} */
 
 h3 {
 	color: #aaa;
@@ -85,7 +97,11 @@ h3 {
 #book_list_search button {margin-left:8px;	}
 #book_list_search .error {padding:4px 8px 4px 8px; margin:0px 0px 10px 0px;}
 
-#other_books .book_icons {
+/* This was commented out to get the achieved blog-roll design
+ * JP
+ */
+
+/*#other_books .book_icons {
 	font-size: 80%;
 }
 
@@ -95,11 +111,11 @@ h3 {
 
 #other_books .book_icons img {
 	margin-bottom: 15px;
-}
+} */
 
-#other_books .book_icons li { 
+/*#other_books .book_icons li { 
 	width: 300px;
-	/*This was originally 60px*/
+	This was originally 60px
 	height: auto;
 	border-bottom: solid 1px #eee;
 	margin-right: 10px;
@@ -107,16 +123,23 @@ h3 {
 	clear: none;
 	margin-bottom: 20px;
 	background: -moz-linear-gradient(top,  rgba(255,255,255,0) 50%, rgba(238,238,238,1) 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,rgba(255,255,255,0)), color-stop(100%,rgba(238,238,238,1))); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  rgba(255,255,255,0) 50%,rgba(238,238,238,1) 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  rgba(255,255,255,0) 50%,rgba(238,238,238,1) 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  rgba(255,255,255,0) 50%,rgba(238,238,238,1) 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  rgba(255,255,255,0) 50%,rgba(238,238,238,1) 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#eeeeee',GradientType=0 ); /* IE6-9 */
-}
+	/*background: -webkit-gradient(linear, left top, left bottom, color-stop(50%,rgba(255,255,255,0)), color-stop(100%,rgba(238,238,238,1))); /* Chrome,Safari4+ */
+	/*background: -webkit-linear-gradient(top,  rgba(255,255,255,0) 50%,rgba(238,238,238,1) 100%); /* Chrome10+,Safari5.1+ */
+	/*background: -o-linear-gradient(top,  rgba(255,255,255,0) 50%,rgba(238,238,238,1) 100%); /* Opera 11.10+ */
+	/*background: -ms-linear-gradient(top,  rgba(255,255,255,0) 50%,rgba(238,238,238,1) 100%); /* IE10+ */
+	/*background: linear-gradient(to bottom,  rgba(255,255,255,0) 50%,rgba(238,238,238,1) 100%); /* W3C */
+	/*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#eeeeee',GradientType=0 ); /* IE6-9 */
+/*} */
 
-#other_books.wide .book_icons li { 
+/*#other_books.wide .book_icons li { 
 	width: 340px;
+} */
+
+/* Added so that you can see all of the description text
+ * JP
+ */
+#other_books .book_icons li {
+	height: auto;
 }
 
 .msg {
