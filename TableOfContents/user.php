@@ -177,15 +177,11 @@ $(window).ready(function() {
 					if ($book->users[$j]->user_id == $login->user_id) $role = ucwords($book->users[$j]->relationship);
 				}
 				$user_page_link = confirm_slash(base_url()).confirm_slash($book->slug).'users/'.$login->user_id;
-				echo '<tr><td width="200px"><a href="'.confirm_slash(base_url()).$book->slug.'">'.$book->title.'</a></td><td width="150px">Role: '.$role.'</td><td>Bio page: <a href="'.$user_page_link.'">'.$user_page_link.'</a></td> <td><form action="<?confirm_slash(base_url())?>system/dashboard" method="post"><input type="hidden" name="action" value="do_add_book" /><input type="hidden" name="user_id" value="<?=$login->user_id?>" /><input name="title" type="hidden" value="<?=$book->title?>"/><input id="newVersionButton" type="submit"></form></td></tr>';
 				// Add a button to create a new version of the book
+				// All of the form stuff was the extra stuff
 				// JP
-				/*echo '<form action="<?=confirm_slash(base_url())?>system/dashboard" method="post" id="newVersionSubmit" onsubmit="if (!this.title.value.length||this.title.value=="New book title") {alert("Please enter a book title");return false;}">
-					<input type="hidden" name="action" value="do_add_book" />
-					<input type="hidden" name="user_id" value="<?=$login->user_id?>" />
-					<input name="title" type="hidden" value="Test A"/>
-					<button type="button" id="newVersionButton" class="generic_button">Generate New Version</button>
-					</form>'; */
+				echo '<tr><td width="200px"><a href="'.confirm_slash(base_url()).$book->slug.'">'.$book->title.'</a></td><td width="150px">Role: '.$role.'</td><td>Bio page: <a href="'.$user_page_link.'">'.$user_page_link.'</a></td> <td><form action="'.confirm_slash(base_url()).'"system/dashboard" method="post"><input type="hidden" name="action" value="do_add_book" /><input type="hidden" name="user_id" value="'.$login->user_id.'" /><input name="title" type="hidden" value="MOO"/><input id="newVersionButton" type="submit" value="New Version"></form></td></tr>';
+				
 			}
 			?>
 		</table>
@@ -269,16 +265,3 @@ $(window).ready(function() {
 </tr>
 -->
 </table>
-<!-- Put the $my_books array into a hidden div
-	 Since we're not doing a book version of the Table of Contents,
-	 this won't matter much
-	 JP-->
-<?
-	$newBooks = cleanArrayObjects($my_books);
-	usort($newBooks, "cmp");
-	$JSONString = json_encode($newBooks);
-	echo '<pre id="bookArrayPre" style="display:none;">';
-	echo $JSONString;
-	echo '</pre>';
-?>
-<!--End Edits-->

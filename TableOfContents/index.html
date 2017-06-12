@@ -10,6 +10,10 @@
 <script src="js/jquery.importrdf.js"></script>
 <script src="js/main.js"></script>
 </head>
+
+
+
+
 <body>
 
 
@@ -59,10 +63,44 @@
                   				<br />
                   				<div style="text-align:right;" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:right;">
                   					  <span class="complete_msg alert alert-success">Transfer is complete! <a href="javascript:void(null);">start over</a></span>
-									  <button type="submit" class="btn btn-primary" id="urlImportButton">B</button>
+									  <button type="submit" class="btn btn-primary" id="urlImportButton">Continue</button>
 								</div>
 				            </div>                   			
-                		</form>              		
+                		</form>  
+                		<!-- Generate button to automatically import
+                			 JP -->
+      					<form id="rdfform">
+               				<div class="row">
+	                			<div class="adaptive-padding col-lg-6 col-md-6 col-sm-6 col-xs-12">
+	                				<h3></span>Import For New Version</h3>
+	                				<textarea style="display:none;" class="form-control source_rdf" rows="8" placeholder="Paste text" required></textarea>
+	                			</div>									
+	                			<div class="adaptive-padding col-lg-6 col-md-6 col-sm-6 col-xs-12">
+	                				<input type="hidden" class="form-control dest_url" placeholder="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"/>
+	                				<input type="hidden" class="form-control dest_id" placeholder="Login email address" required />
+	                			</div>								
+                  			</div> 
+                  			<div class="row">
+                  				<div class="adaptive-padding col-lg-6 col-md-6 col-sm-6 col-xs-12">
+									<div class="alert alert-success" role="alert" style="display:none;">
+										<span class="source_msg"></span>
+									</div>                  				
+                  				</div>
+                  				<div class="adaptive-padding col-lg-6 col-md-6 col-sm-6 col-xs-12">
+									<div class="alert alert-success" role="alert" style="display:none;">
+										<span class="dest_msg"></span>
+									</div>                  				
+                  				</div>
+                  			</div>                  			           			
+                  			<div class="row">
+                  				<br />
+                  				<div style="text-align:right;" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:right;">
+                  					  <span class="complete_msg alert alert-success">Transfer is complete! <a href="javascript:void(null);">start over</a></span>
+									  <button type="submit" class="btn btn-primary">Continue</button>
+								</div>
+				            </div> 
+                		</form> -->
+                		<!--End Edits-->            		
               		</div>
               		<!--  Import by source -->
               		<div role="tabpanel" class="tab-pane fade" id="rdf" aria-labelledby="rdf-tab">
@@ -99,7 +137,7 @@
                   				<br />
                   				<div style="text-align:right;" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:right;">
                   					  <span class="complete_msg alert alert-success">Transfer is complete! <a href="javascript:void(null);">start over</a></span>
-									  <button type="submit" class="btn btn-primary" id="importSourceButton">C</button>
+									  <button type="submit" class="btn btn-primary" id="importSourceButton">Continue</button>
 								</div>
 				            </div> 
                 		</form>
@@ -189,7 +227,7 @@
                   				<br />
                   				<div style="text-align:right;" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="text-align:right;">
                   					  <span class="complete_msg alert alert-success">Transfer is complete! <a href="javascript:void(null);">start over</a></span>
-									  <button type="submit" class="btn btn-primary" id="fileTransferButton">A</button>
+									  <button type="submit" class="btn btn-primary" id="fileTransferButton">Continue</button>
 								</div>
 				            </div> 
                 		</form>
@@ -289,19 +327,19 @@
 <!-- See if we can actually transfer 
 	 Assume files, urls, and objects are also one page only 
 	 JP -->
-<script>
-	var objectStringVal = $("#jsonPreTag").html();
-	var objectVal = JSON.parse(objectStringVal);
+<script type="text/javascript">
+	var objectStringVal = $("#jsonPreTag").text();
 
-	$("#urlImportButton").click(function(event)) {
-		alert("HELLO");
-	}
-	$("#importSourceButton").click(function(event)) {
-		alert("HELLO");
-	}
-	$("#fileTransferButton").click(function(event)) {
-		alert("HELLO");
-	}
-	
-	
+	$("#urlImportButton").click(function(event) {
+		event.preventDefault();
+		alert("Sorry. Policy dictates only one article per book");
+	});
+	$("#importSourceButton").click(function(event) {
+		event.preventDefault();
+		alert("Sorry. Policy dictates only one article per book");
+	});
+	$("#fileTransferButton").click(function(event) {
+		event.preventDefault();
+		alert("Sorry. Policy dictates only one article per book");
+	});
 </script>
