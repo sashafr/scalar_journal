@@ -28,7 +28,12 @@ UPDATE 8 JUNE 2017 - Instead of a book form of the table of contents, the table 
 
 -- Changes to Structure of Scalar --
 
-For our implementation of Scalar, instead of a series of articles per book, each book will have one article in it, and the collection of books will form a volume.
+For our implementation of Scalar, instead of a series of articles per book, each book will have one article in it, and the collection of books will form a volume. When new page buttons are clicked, they won't do anything, other than give a message saying that there can only be one page (article) per book.
+
+Places Where This Is Implemented:
+	- Adding a new page when editing the book
+	- Adding a new page in the dashboard
+	- Importing from another book, if your book isn't empty (if it has content, the JSON object for the book will not be empty and importing will add another page)
 
 In all honesty, in terms of functionality, is this a good idea?
 
@@ -37,6 +42,10 @@ In all honesty, in terms of functionality, is this a good idea?
 To get closer to what we want to show in Scalar, the language throughout Scalar has changed to reflect the roles we wanted to utilize. Mainly, changes have been made to account for the Author, Reviewer, and Editor role. Authors have similar roles to what they have now. Editors now take the place of commenters, and may have special privileges (since they're engaging in peer reviews). As for editors, those changes will have to be discussed and implemented. From what I can tell, editors will have super-admin priveleges once they register.
 
 -- Versioning --
+
+You can create a new version of your article, and keep the old version. In the dashboard (in the My Account tab specifically), you can generate a new version of the article you were working on by clicking on the "Generate New Version" button associated with the article.
+
+Given Scalar's structure right now, this will have to be done in two parts. The first part is the autogeneration of the articles (this is in the My Account part of the dashboard). The second part is the transferral from the original article to the new version (this is in the transfer tab).
 
 -- Peer Reviews --
 
@@ -48,5 +57,5 @@ I have commented all of the parts that I have edited. All of those comments have
 
 For the exact files, feel free to to look at the github repository. The files that I edited
 
-Also, since there are some files that I thought would need editing (but didn't), 
+Also, since there are some files that I thought would need editing (but didn't), at the end of all of this (late June), I'll have a list of files that I edited for each feature, and a description of what I did.
 
