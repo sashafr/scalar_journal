@@ -10,10 +10,6 @@
 <script src="js/jquery.importrdf.js"></script>
 <script src="js/main.js"></script>
 </head>
-
-
-
-
 <body>
 
 
@@ -69,15 +65,15 @@
                 		</form>  
                 		<!-- Generate button to automatically import
                 			 JP -->
-      					<form id="rdfform">
+      					<form id="autoForm" >
                				<div class="row">
 	                			<div class="adaptive-padding col-lg-6 col-md-6 col-sm-6 col-xs-12">
 	                				<h3></span>Import For New Version</h3>
-	                				<textarea style="display:none;" class="form-control source_rdf" rows="8" placeholder="Paste text" required></textarea>
+	                				<textarea style="display:none;" class="form-control source_rdf" rows="8" value="http://dev.upenndigitalscholarship.org/scalar/test---joe-pires" ></textarea>
 	                			</div>									
 	                			<div class="adaptive-padding col-lg-6 col-md-6 col-sm-6 col-xs-12">
-	                				<input type="hidden" class="form-control dest_url" placeholder="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"/>
-	                				<input type="hidden" class="form-control dest_id" placeholder="Login email address" required />
+	                				<input type="hidden" class="form-control dest_url" value="Desitination book URL"/>
+	                				<input type="hidden" class="form-control dest_id" value="Login email address"/>
 	                			</div>								
                   			</div> 
                   			<div class="row">
@@ -99,7 +95,7 @@
 									  <button type="submit" class="btn btn-primary">Continue</button>
 								</div>
 				            </div> 
-                		</form> -->
+                		</form> 
                 		<!--End Edits-->            		
               		</div>
               		<!--  Import by source -->
@@ -328,8 +324,6 @@
 	 Assume files, urls, and objects are also one page only 
 	 JP -->
 <script type="text/javascript">
-	var objectStringVal = $("#jsonPreTag").text();
-
 	$("#urlImportButton").click(function(event) {
 		event.preventDefault();
 		alert("Sorry. Policy dictates only one article per book");
@@ -342,4 +336,4 @@
 		event.preventDefault();
 		alert("Sorry. Policy dictates only one article per book");
 	});
-</script>
+</script> 
