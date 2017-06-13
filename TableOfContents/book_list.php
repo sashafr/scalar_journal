@@ -109,15 +109,19 @@ function print_books($books, $is_large=false, $public=false) {
 			}
 			$printString = '<strong>'.$printString.'</strong>';
 			echo $printString;
-			echo "<br />";
+			
 		}
 		// Add the data appropriately
 		if ($public) {
+			if (count($authors)) {
+				echo "<br />";
+			}
 			echo "<strong>Description:</strong> ";
 			echo $description;
 		}
-		//echo $description;
-		echo '<br />';
+		if (count($authors) || $public) {
+			echo '<br />';
+		}
 		$dateVal = changeLookDateTime($created);
 		$dateVal = '<strong>'.$dateVal.'</strong>';
 		echo $dateVal;
