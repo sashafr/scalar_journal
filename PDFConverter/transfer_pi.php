@@ -28,10 +28,12 @@
 	        	 */
 				$content = file_get_contents($this->rdf_url_json);
 				$this->contentVal = $content;
+				//echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>';
 				echo '<script src="application/plugins/transfer/js/conversion.js"></script>';
 				echo '<script src="application/plugins/transfer/js/pdfmake.js"></script>';
 				echo '<script src="application/plugins/transfer/js/vfs_fonts.js"></script>';
-				echo '<pre id="jsonPreTag">';
+				echo '<script src="application/plugins/transfer/js/bookPolicy.js"></script>';
+				//echo '<pre id="jsonPreTag" style="display:none;">';
 				echo $content;
 				echo '</pre>';
 			}
@@ -52,7 +54,7 @@
 	        	depending on the amount of content.
 	        	</p>
 	        	<p>
-	        	  <a href="<?=$this->rdf_url_json?>" target="_blank"><?=$this->rdf_url_json?></a><br />
+	        	  <a href="<?=$this->rdf_url_json?>" id="linkID" target="_blank"><?=$this->rdf_url_json?></a><br />
 	        	  <small>Or, <a href="<?=$this->rdf_url_xml?>" target="_blank">download as RDF-XML</a>.</small>
 	        	  
 	        	  <!--Adding button for the pdf conversion-->
