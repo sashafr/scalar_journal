@@ -181,7 +181,7 @@ $(window).ready(function() {
 				// All of the form stuff was the extra stuff
 				// <form action="'.confirm_slash(base_url()).'"system/dashboard" method="post">
 				// JP
-				echo '<tr><td width="200px"><a href="'.confirm_slash(base_url()).$book->slug.'">'.$book->title.'</a></td><td width="150px">Role: '.$role.'</td><td>Bio page: <a href="'.$user_page_link.'">'.$user_page_link.'</a></td> <td><form action="'.confirm_slash(base_url()).'"system/dashboard" method="post" onsubmit="if (!this.title.value.length) {return false;}"><input type="hidden" name="action" value="do_add_book" /><input type="hidden" name="user_id" value="'.$login->user_id.'" /><input name="title" type="hidden" value="'.strip_tags($book->title).'"/><input type="submit" id="submitVal" name="'.strip_tags($book->title).'/'.$login->user_id.'" value="New Version"></form></td></tr>';
+				echo '<tr><td width="200px"><a href="'.confirm_slash(base_url()).$book->slug.'">'.$book->title.'</a></td><td width="150px">Role: '.$role.'</td><td>Bio page: <a href="'.$user_page_link.'">'.$user_page_link.'</a></td></tr>';
 			}
 			?>
 		</table>
