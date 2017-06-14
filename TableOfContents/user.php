@@ -206,6 +206,8 @@ $(window).ready(function() {
      That'll be put on hold.
      JP-->
 <!-- End Edits -->
+<!-- Change duplicatable_books to my_books
+     JP-->
 <tr>
 	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Duplicate a book</td>
 	<td style="vertical-align:middle;">
@@ -214,12 +216,13 @@ $(window).ready(function() {
 		<input type="hidden" name="user_id" value="<?=$login->user_id?>" />
 		<select name="book_to_duplicate" style="width:200px;">
 <?
-		if (!isset($duplicatable_books) || empty($duplicatable_books)):
+		print_r($my_books);
+		if (!isset($my_books) || empty($my_books)):
 			echo '<option value="0">There are no books with proper permissions</option>'."\n";
 		else:
 			echo '<option value="0">Please select a book</option>'."\n";
-			foreach ($duplicatable_books as $duplicatable_book) {
-				echo '<option value="'.$duplicatable_book->book_id.'">'.$duplicatable_book->title.'</option>'."\n";
+			foreach ($my_books as $book) {
+				echo '<option value="'.$book->book_id.'">'.$book->title.'</option>'."\n";
 			}
 		endif;
 ?>
