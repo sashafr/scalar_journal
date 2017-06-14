@@ -179,9 +179,9 @@ $(window).ready(function() {
 				$user_page_link = confirm_slash(base_url()).confirm_slash($book->slug).'users/'.$login->user_id;
 				// Add a button to create a new version of the book
 				// All of the form stuff was the extra stuff
+				// <form action="'.confirm_slash(base_url()).'"system/dashboard" method="post">
 				// JP
-				echo '<tr><td width="200px"><a href="'.confirm_slash(base_url()).$book->slug.'">'.$book->title.'</a></td><td width="150px">Role: '.$role.'</td><td>Bio page: <a href="'.$user_page_link.'">'.$user_page_link.'</a></td> <td><form action="'.confirm_slash(base_url()).'"system/dashboard" method="post"><input type="hidden" name="action" value="do_add_book" /><input type="hidden" name="user_id" value="'.$login->user_id.'" /><input name="title" type="hidden" value="MOO"/><input id="newVersionButton" type="submit" value="New Version"></form></td></tr>';
-				
+				echo '<tr><td width="200px"><a href="'.confirm_slash(base_url()).$book->slug.'">'.$book->title.'</a></td><td width="150px">Role: '.$role.'</td><td>Bio page: <a href="'.$user_page_link.'">'.$user_page_link.'</a></td> <td><form action="'.confirm_slash(base_url()).'"system/dashboard" method="post" onsubmit="if (!this.title.value.length) {return false;}"><input type="hidden" name="action" value="do_add_book" /><input type="hidden" name="user_id" value="'.$login->user_id.'" /><input name="title" type="hidden" value="'.strip_tags($book->title).'"/><input type="submit" id="submitVal" name="'.strip_tags($book->title).'/'.$login->user_id.'" value="New Version"></form></td></tr>';
 			}
 			?>
 		</table>
@@ -204,35 +204,7 @@ $(window).ready(function() {
      As of right now, we're not doing the book version of 
      the table of contents.
      That'll be put on hold.
-     JP 
-<tr>
-	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Generate Table of Contents</td>
-	<td style="vertical-align:middle;">
-		<form action="<?=confirm_slash(base_url())?>system/dashboard" method="post" id="tableOfContentsSubmit" onsubmit="if (!this.title.value.length||this.title.value=='New book title') {alert('Please enter a book title');return false;}">
-		<input type="hidden" name="action" value="do_add_book" />
-		<input type="hidden" name="user_id" value="<?=$login->user_id?>" />
-		<input name="title" type="hidden" value="Table Of Contents"/>
-		<button type="button" id="tableOfContents" class="generic_button">Generate Table Of Contents</button>
-		</form>
-	</td>
-</tr> 
-<? 
-	/*
-	if (!(checkIfThere($my_books, "Table Of Contents"))) {
-		echo '<script type="text/javascript">';
-		echo '$("#tableOfContents").bind("click", function() {
-				$("#tableOfContentsSubmit").submit();
-				});';
-		echo '</script>';
-	} else {
-		echo '<script type="text/javascript">';
-		echo '$("#tableOfContents").bind("click", function() {
-				alert("There already is a table of contents");
-				});';
-		echo '</script>';
-	}
-	*/
-?> -->
+     JP-->
 <!-- End Edits -->
 <tr>
 	<td style="vertical-align:middle;white-space:nowrap;" width="200px">Duplicate a book</td>
