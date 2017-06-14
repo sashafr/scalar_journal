@@ -25,8 +25,9 @@
  - user.php - Originally, we had the idea of creating a book form of the Table of Contents. This turned out to be a process that couldn't be done in one action. The first part was the generation of a Table of Contents book. Code for the My Account tab of the Dashboard was modified to allow that to happen.
 
 -- Versions of Books --
- - user.php - The idea for book versioning is to generate a new version of a book while keeping the old book. To do this, we decided to allow for books to be generated on the click of a button. Code for the My Account tab in the dashboard has been modified accordingly.
- - index.html - Unfortunately, we can't transfer the book at the same time. So, there will be a button to transfer the data from the old version to the new version. There are also checks to ensure that there is an old version to begin with.
+ - user.php - The dashboard actually allows for duplicating books, which is the lynchpin for how Dr. Cobb wants versioning (at least based on what I heard). However, now you can duplicate all of your books, and not just books that can be duplicatable. I might want to go back and add this feature for all public books as well. 
+ - sharing.php - Commented out the part of the sharing tab website pertaining to duplicating a book
+ - user_book.pho - Commented out section that checked to see if a book could be duplicated, allowing for all of the user's books to be duplicated with ease.
 
 -- Structural Changes (Book Policy) --
  - Based on what Dr. Cobb wanted, books cannot have more than one article in them.
