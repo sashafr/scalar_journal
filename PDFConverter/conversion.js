@@ -281,7 +281,6 @@ function convert(JSONString, authorName) {
    */
   JSONString = JSON.stringify(JSONString);
   var JSONObj = JSON.parse(JSONString);
-  console.log(JSONObj);
   JSONString = JSONString.replace("{\"http://dev.upenndigitalscholarship.org/scalar/", "");
   var titleAuthor = "";
   for (var w = 0; w < JSONString.length; w++) {
@@ -408,7 +407,6 @@ function convert(JSONString, authorName) {
     var spacingObject = { text: " ", style: "spacing" };
     docDef.content.push(spacingObject);
   }
-  console.log(docDef);
   // Is there a specific process for going to ScholarlyCommons?
   var fileString = authorName + " - " + title + ".pdf";
   pdfMake.createPdf(docDef).download(fileString);
