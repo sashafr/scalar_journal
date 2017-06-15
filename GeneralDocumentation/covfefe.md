@@ -47,11 +47,24 @@ You can create a new version of your article, and keep the old version. In the d
 
 Given Scalar's structure right now, this will have to be done in two parts. The first part is the autogeneration of the articles (this is in the My Account part of the dashboard). The second part is the transferral from the original article to the new version (this is in the transfer tab).
 
-EDIT 14 JUNE 2017 - Actually, Scalar has that functionality, so we're good with what we have. Unless Peter wants something different.
+EDIT 14 JUNE 2017 - Actually, Scalar has that functionality, so we're good with what we have. Unless Peter wants something different. 
+
+I did do some modifications to the dashboard code, however. Things are commented appropriately.
 
 -- Peer Reviews --
 
 This will be used in lieu of comments. Those with editor priveleges will be able to comment. These will be the bases for the peer reviews. In regard to implementation, I haven't gotten there yet.
+
+-- Filterning By Tags --
+
+
+-- Known Issues --
+
+Although not much of a concern given the one-article-per-book policy, multi-page books have not been tested for PDF conversion. Based of the code, they will only do the first page of a book.
+
+Don't put html tags in the custom CSS box. It will cause issue for the import/export tab in the dashboard and to the PDF conversion. If you don't follow warnings and do it anyway, don't be surprised if things get wonky.
+
+For one reason or another, parts of the code enforcing the one-article-per-book policy just don't work. Those will hopefully be fixed by the end of June.
 
 -- If Updates to Scalar Need to be Made --
 
