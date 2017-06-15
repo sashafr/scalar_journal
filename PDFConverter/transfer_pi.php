@@ -1,4 +1,14 @@
 <?php
+	/* If the book has no content, then a warning will
+	 * pop up (empty books cause 404 errors).
+	 * Since that's the only warning produced (at least
+	 * after hours of testing), and since it's expected,
+	 * it won't be reported. However, if anyone is debugging,
+	 * PLEASE COMMENT OUT THE NEXT LINE
+	 * JP
+	 */
+	error_reporting(E_ERROR | E_PARSE | E_NOTICE);
+	// End edits
 	class Transfer {
 		public $name = 'Import/Export';
 		public $plugin_path = '';
@@ -21,21 +31,18 @@
 				$this->dest_url = confirm_slash(base_url()).$data['book']->slug;
 				$this->email = $data['login']->email;
 				$this->source_url = (isset($_REQUEST['source_url']) && !empty($_REQUEST['source_url'])) ? $_REQUEST['source_url'] : '';
-				/* Get the JSON string from the external page, and then put in
-	        	 * a div that is hidden. A JS file will take from the DIV and 
-	        	 * do the pdf conversion 
+				/* Get the JSON string from the external page, run it through conversion.js
+				 * immediately after 
 	        	 * JP
 	        	 */
+				/* I do need to find a way to handle the 404 without an error showing
+				 */
 				$content = file_get_contents($this->rdf_url_json);
 				$this->contentVal = $content;
-				//echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>';
+				echo '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>';
 				echo '<script src="application/plugins/transfer/js/conversion.js"></script>';
 				echo '<script src="application/plugins/transfer/js/pdfmake.js"></script>';
 				echo '<script src="application/plugins/transfer/js/vfs_fonts.js"></script>';
-				echo '<script src="application/plugins/transfer/js/bookPolicy.js"></script>';
-				//echo '<pre id="jsonPreTag" style="display:none;">';
-				echo $content;
-				echo '</pre>';
 			}
 		}
 		public function get() {
@@ -84,7 +91,6 @@
 					var authorName = $('.login').html();
   					var whereToEnd = authorName.indexOf('&nbsp');
   					var authorName = authorName.substr(0, whereToEnd);
-  					console.log('hello');
   					convert(" . $this->contentVal . ", authorName);
 				});";
 			echo '</script>';
