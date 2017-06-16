@@ -283,13 +283,17 @@ function convert(JSONString, authorName) {
   var JSONObj = JSON.parse(JSONString);
   JSONString = JSONString.replace("{\"http://dev.upenndigitalscholarship.org/scalar/", "");
   var titleAuthor = "";
+  // This is not a good way to access the title and author
+  // Needs to be more detailed
+  // JP
   for (var w = 0; w < JSONString.length; w++) {
-    if (JSONString.charAt(w) === '/' && JSONString.charAt(w + 1) === 'i') {
+    if (JSONString.charAt(w) === '/') {
       break;
     } else {
       titleAuthor = titleAuthor + JSONString.charAt(w);
     }
   }
+
 
 
   // Version and Time It Went Live (I'll Need The Version Number For The Next Part)
