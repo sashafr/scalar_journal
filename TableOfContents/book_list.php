@@ -37,10 +37,8 @@ function getDescription($htmlVal) {
 	preg_match_all('/\<meta.name="(\w*)".content="(.*)"/', $htmlVal, $descArray);
 	$arrayValA = $descArray[0];
 	$arrayValB = $arrayValA[0];
-	//print_r($arrayValB);
 	$finalResult = preg_replace('/<meta name="description" content="/', '', $arrayValB);
 	$finalResult = substr($finalResult, 0, strlen($finalResult)-1);
-	//print_r($finalResult);
 	return $finalResult;
 }
 
