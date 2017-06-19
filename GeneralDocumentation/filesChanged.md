@@ -1,8 +1,4 @@
-/**************************************************************/
-/                                                              /
-/                     List of Files Changed                    /
-/                                                              /
-/**************************************************************/
+List of Files Changed
 
 -- PDF Conversion --
  - conversion.js - New file, converts RDF-JSON object to a workable PDF for Scholarly Commons
@@ -34,3 +30,12 @@
  - pages.php - There's a button to create a new page. That has been disabled.
  - scalarheader.jquery.js - Tried to prevent a new page when editing the book.
  - index.html - Made changes so that if you're importing, you can only import to an empty book. Otherwise, there will be multiple pages, and that goes against the policy that I wanted.
+
+-- Filtering By Tags (Description Search Tags) --
+ - book_model.php - Get description from each book, get the tags from the description, and filter accordingly
+ - book_list.php - If we're doing this through the description, then the description tags section needs to be filtered out (it'd be unsightly if we kept it in). So, it's filtered out. 
+
+-- Filtering By Tags (Scalar Tags) --
+
+-- Account Stuff --
+ - all_users.php - Autogenerate complex passwords

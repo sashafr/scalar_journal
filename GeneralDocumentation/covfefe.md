@@ -49,14 +49,22 @@ Given Scalar's structure right now, this will have to be done in two parts. The 
 
 EDIT 14 JUNE 2017 - Actually, Scalar has that functionality, so we're good with what we have. Unless Peter wants something different. 
 
-I did do some modifications to the dashboard code, however. Things are commented appropriately.
+I did do some modifications to the dashboard code, however. This is mainly to ensure that all of a user's books (and not just all duplicatable books) can be duplicated. Things are commented appropriately.
 
 -- Peer Reviews --
 
 This will be used in lieu of comments. Those with editor priveleges will be able to comment. These will be the bases for the peer reviews. In regard to implementation, I haven't gotten there yet.
 
--- Filterning By Tags --
+-- Filtering By Tags (Description) --
+To increase the search capabilities of Scalar, and to keep in line with the blog style that Peter wants, we've implemented the use of search tags. For sake of getting things to work, you put the tags at the end of the description, and while searching, Scalar looks at any article with that tag (or if the article's title has that keyword)
+ 
 
+-- Filtering By Tags (Scalar Tags) --
+In Scalar, there are elements called tags, which handle content
+
+-- Passwords --
+
+We're assuming that Peter will have to create the accounts. We're also assuming that he wants secure passwords. We're also assuming that he won't want to create those passwords. So, we automated the password generation process. Since they're randomized, make sure that the user writes down the password.
 
 -- Known Issues --
 
@@ -65,6 +73,12 @@ Although not much of a concern given the one-article-per-book policy, multi-page
 Don't put html tags in the custom CSS box. It will cause issue for the import/export tab in the dashboard and to the PDF conversion. If you don't follow warnings and do it anyway, don't be surprised if things get wonky.
 
 For one reason or another, parts of the code enforcing the one-article-per-book policy just don't work. Those will hopefully be fixed by the end of June.
+
+For now, let's not have any of the titles have a forward slash "/." I need to go back in to the pdf conversion file (conversion.js) and make that more robust. Sorry :(
+
+Speaking of PDF conversion, I know that not all tags are being handled. Those will be handled promptly. If you encounter any issues with tags, contact me at piresjo@seas.upenn.edu
+
+I don't expect this to happen (and that's why I designed the filtering by description tags this way), but if you do write a description, don't put in "DescTags:" unless you're adding search tags
 
 -- If Updates to Scalar Need to be Made --
 
