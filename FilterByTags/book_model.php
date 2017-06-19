@@ -56,8 +56,7 @@ class SearchTag {
 	private $titleArray;
 	public function __construct($tagName, $title) {
 		$this->tagName = $tagName;
-		$this->titleArray = array();
-		array_push($this->titleArray, $title);
+		$this->titleArray = array($title);
 	}
 
 	public function getTagName() {
@@ -401,7 +400,6 @@ class Book_model extends MY_Model {
 	public function getDescTags($isolatedTagSection) {
 		$isolatedTagSection = strtolower($isolatedTagSection);
 		$tagArray = explode(", ", $isolatedTagSection);
-		print_r($tagArray);
 		return $tagArray;
 	}
 
@@ -411,9 +409,8 @@ class Book_model extends MY_Model {
 	 */
 
 	public function inTagObjectArray($array, $tag) {
-		$checkTagName = $tag->getTagName();
 		foreach ($array as $arrVal) {
-			if ($arrVal->getTagName() == $checkTagName) {
+			if ($arrVal->getTagName() == $tag) {
 				return True;
 			}
 		}
@@ -482,28 +479,30 @@ class Book_model extends MY_Model {
      * JP
      */
     public function get_index_books_desc_tags($is_featured=true, $sq='', $orderby='title', $orderdir='asc') {
-    	$searchBooksVal = get_index_books(false, $sq);
-        $allBooksVal = get_index_books(false);
+    	$searchBooksVal = $this->get_index_books(false, $sq);
+        $allBooksVal = $this->get_index_books(false);
         $tagObjectArray = array();
-        for ($allBooksVal as $bookVal) {
+        foreach ($allBooksVal as $bookVal) {
         	$url = confirm_slash(base_url()).$bookVal->slug;
         	$content = file_get_contents($url);
-        	$descriptionVal = getDescription($content);
-        	$isolatedTagVal = isolateDescTags($descriptionVal);
-        	$isolatedTagArray = getDescTags($isolatedTagVal);
-        	foreach ($isolatedTagArray as $isoTag) {
-        		if (inTagObjectArray($tagObjectArray, $isoTag)) {
-        			foreach ($tagObjectArray as $checkIsoTag) {
-        				if ($checkIsoTag->getTagName() == $isoTag->getTagName()) {
-        					$checkIsoTag->addTitle($bookVal->title);
-        					break;
-        				}
-        			}
-        		} else {
-        			$newVal = new SearchTag($bookVal->title);
-        			array_push($tagObjectArray, $newVal);
-        		}
-        	}
+        	$descriptionVal = $this->getDescription($content);
+            if (strpos($descriptionVal, "DescTags")) {
+                $isolatedTagVal = $this->isolateDescTags($descriptionVal);
+                $isolatedTagArray = $this->getDescTags($isolatedTagVal);
+                foreach ($isolatedTagArray as $isoTag) {
+                    if ($this->inTagObjectArray($tagObjectArray, $isoTag)) {
+                        foreach ($tagObjectArray as $checkIsoTag) {
+                            if ($checkIsoTag->getTagName() == $isoTag) {
+                                $checkIsoTag->addTitle($bookVal->title);
+                                break;
+                            }
+                        }
+                    } else {
+                        $newVal = new SearchTag($isoTag, $bookVal->title);
+                        array_push($tagObjectArray, $newVal);
+                    }
+                }  
+            }
         }
         $newSearchQuery = strtolower($sq);
         $titlesToAdd = array();
@@ -517,7 +516,7 @@ class Book_model extends MY_Model {
         	return $titlesToAdd;
         }
         foreach ($allBooksVal as $bookArrayVal) {
-        	if (titleInArray($bookArrayVal->title, $titlesToAdd) && !(inBookObjectArray($searchBooksVal, $bookArrayVal->title))) {
+        	if ($this->titleInArray($bookArrayVal, $titlesToAdd) && !($this->inBookObjectArray($searchBooksVal, $bookArrayVal->title))) {
         		array_push($searchBooksVal, $bookArrayVal);
         	}
         }
