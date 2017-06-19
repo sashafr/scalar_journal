@@ -1,21 +1,23 @@
 <!-- Edit for the table of contents -->
-<!-- Note: In order to get the actual description of the book,
-	 you have to go to another link. I'll speak with Sasha and see what 
-	 I can do.
-
-	 There might be a way to get the description via other means...
-	 let's see -->
 
 <?if (!defined('BASEPATH')) exit('No direct script access allowed')?>
 <?$this->template->add_css(path_from_file(__FILE__).'book_list.css')?>
 <?
 
 /* Extract the version of the article, much like we did for the description
- */
+   I'll need to get back to this later.
 function getVersionNumber($htmlVal) {
 	$checkVal = preg_match('/\<base href=\"(.*)\"\>/', $htmlVal);
 	print($checkVal);
 	return "A";
+} */
+
+/* Filter out the description tags, so that it doesn't get shown in the index page
+   JP
+ */
+function filterOutDescTags($description) {
+	$description = preg_replace('/DescTags: .*/', "", $description);
+	return $description;
 }
 
 /* Make the date and time prettier in the table of contents
@@ -83,9 +85,7 @@ function print_books($books, $is_large=false, $public=false) {
 		// Go to the article page to get the description
 		$content = file_get_contents($uri);
 		$description = getDescription($content);
-		//print("\n");
-		//print("Description: ".$description);
-		//print(strlen($description));
+		$description = filterOutDescTags($description);
 		$title		   = trim($row->title);
 		$book_id       = (int) $row->book_id;
 		$thumbnail     = (!empty($row->thumbnail)) ? confirm_slash($row->slug).$row->thumbnail : null;
@@ -171,14 +171,6 @@ if (count($featured_books) > 0) {
 <!--<div><button type="submit" class="generic_button" value="1" name="view_all" >View All</button></div>-->
 </div>
 </form>
-
-
-<!-- Generate hidden form so View All is a default. Then 
-	 Use Javascript to send the form  style="display:none;"
-	 JP -->
-
-
-
 <?
 if (isset($book_list_search_error)) {
 	echo '<p class="error">'.$book_list_search_error.'</p>';
@@ -195,21 +187,6 @@ if ($login->is_logged_in) {
 	if (count($newUserBooks) > 0) {
 		echo '<ul class="book_icons">';
 		print_books($newUserBooks, true);
-		/* Generate the link to the Table of Contents
-		 * Tested. If there is no Table of Contents 
-		 * book created, it won't show (so no one will)
-		 * accidently click a link to a nonexistent page
-		 * JP
-		 */
-		/* Since we're not doing a book version of the
-		 * Table of Contents book, this is largely unnecessary.
-		 * Just in case we want to go back to it, it will only be commented
-		 * out
-		 * JP
-		if (checkIfThere($user_books, "Table Of Contents")) {
-			echo '<li><a href="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"><img class="book_icon" src="http://dev.upenndigitalscholarship.org/scalar/system/application/views/modules/book_list/default_book_logo.png"></a>';
-			echo '<h4><a href="http://dev.upenndigitalscholarship.org/scalar/table-of-contents"><span data-hypothesis="true" data-auto-approve="true" data-email-authors="true" data-joinable="true">Table Of Contents</span></a></h4></li>';
-		} */
 	} else {
 		echo '<p>You haven\'t created any books yet.</p>';
 	}
@@ -217,5 +194,3 @@ if ($login->is_logged_in) {
 }
 ?>
 <br clear="both" />
-
-<!-- Try to automatically have things load -->
