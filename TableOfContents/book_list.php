@@ -1,19 +1,9 @@
-<!-- Edit for the table of contents -->
-
 <?if (!defined('BASEPATH')) exit('No direct script access allowed')?>
 <?$this->template->add_css(path_from_file(__FILE__).'book_list.css')?>
 <?
 
-/* Extract the version of the article, much like we did for the description
-   I'll need to get back to this later.
-function getVersionNumber($htmlVal) {
-	$checkVal = preg_match('/\<base href=\"(.*)\"\>/', $htmlVal);
-	print($checkVal);
-	return "A";
-} */
-
 /* Filter out the description tags, so that it doesn't get shown in the index page
-   JP
+ * JP
  */
 function filterOutDescTags($description) {
 	$description = preg_replace('/DescTags: .*/', "", $description);
@@ -21,6 +11,7 @@ function filterOutDescTags($description) {
 }
 
 /* Make the date and time prettier in the table of contents
+ * JP
  */
 function changeLookDateTime($dateTimeString) {
 	// As of right now, just get rid of the timestamp
@@ -31,6 +22,7 @@ function changeLookDateTime($dateTimeString) {
 }
 
 /* Filter the html to get the description
+ * JP
  */
 function getDescription($htmlVal) {
 	$descArray = array();
@@ -45,7 +37,8 @@ function getDescription($htmlVal) {
 
 /* Filter out the Table Of Contents Page.
  * This will allow my link for the Table of Contents to be shown
- * However, since we're not doing 
+ * However, since we're not doing a book version of the table
+ * of contents, we'll just leave this
  * JP
  */
 function filterFunction($a) {
@@ -80,8 +73,9 @@ function print_books($books, $is_large=false, $public=false) {
 	foreach ($books as $row) {
 		$created       = $row->created;
 		$uri 		   = confirm_slash(base_url()).$row->slug;
-		// Go to the article page to get the description
+		// Go to the article page to get the description JP
 		$content = file_get_contents($uri);
+		// Get description, and filter JP
 		$description = getDescription($content);
 		$description = filterOutDescTags($description);
 		$title		   = trim($row->title);
@@ -109,7 +103,7 @@ function print_books($books, $is_large=false, $public=false) {
 			echo $printString;
 			
 		}
-		// Add the data appropriately
+		// Add the data appropriately JP
 		if ($public) {
 			if (count($authors)) {
 				echo "<br />";
