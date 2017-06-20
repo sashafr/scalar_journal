@@ -23,13 +23,14 @@ List of Files Changed
 -- Versions of Books --
  - user.php - The dashboard actually allows for duplicating books, which is the lynchpin for how Dr. Cobb wants versioning (at least based on what I heard). However, now you can duplicate all of your books, and not just books that can be duplicatable. I might want to go back and add this feature for all public books as well. 
  - sharing.php - Commented out the part of the sharing tab website pertaining to duplicating a book
- - user_book.pho - Commented out section that checked to see if a book could be duplicated, allowing for all of the user's books to be duplicated with ease.
+ - user_book.php - Commented out section that checked to see if a book could be duplicated, allowing for all of the user's books to be duplicated with ease.
 
 -- Structural Changes (Book Policy) --
  - Based on what Dr. Cobb wanted, books cannot have more than one article in them.
  - pages.php - There's a button to create a new page. That has been disabled.
- - scalarheader.jquery.js - Tried to prevent a new page when editing the book.
- - index.html - Made changes so that if you're importing, you can only import to an empty book. Otherwise, there will be multiple pages, and that goes against the policy that I wanted.
+ - scalarheader.jquery.js - Tried to prevent a new page when editing the book. 
+ - scalarheader.jquery.js (aclsworkbench folder) - Disabled ability to add new page 
+ - index.html (transfer folder) - Made changes so that if you're importing, you can only import to an empty book. Otherwise, there will be multiple pages, and that goes against the policy that I wanted.
 
 -- Filtering By Tags (Description Search Tags) --
  - book_model.php - Get description from each book, get the tags from the description, and filter accordingly
