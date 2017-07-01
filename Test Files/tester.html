@@ -1,0 +1,1310 @@
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="pdfmake.js"></script>
+<script src="vfs_fonts.js"></script>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test Site</title>
+	</head>
+	<body>
+		<button type="button">Click Me!</button>
+	</body>
+	<script>
+	function fixUpText(titleText) {
+		titleText = titleText.replace(/-/g, " ");
+		titleText = titleText.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+		return titleText;
+	}
+
+    function filterOut(descriptionString) {
+      if (descriptionString.includes("DescTags:")) {
+        descriptionString = descriptionString.replace(/DescTags: .*/, "");
+      } else if (descriptionString.includes("Desc Tags:")) {
+        descriptionString = descriptionString.replace(/Desc Tags: .*/, "");
+      } else if (descriptionString.includes("Description Tags:")) {
+        descriptionString = descriptionString.replace(/Description Tags: .*/, "");
+      } else if (descriptionString.includes("Tags:")) {
+        descriptionString = descriptionString.replace(/Tags: .*/, "");
+      } else {
+        
+      }
+      return descriptionString;
+    }
+
+
+   function generateBoldParagraphElement(tagString) {
+    tagString = tagString.replace("ong>", "");
+    pushObject = {text: tagString, style: "boldBody"};
+    return pushObject;
+   }
+
+   function generateItalicParagraphElement(tagString) {
+    tagString = tagString.replace("m>", "");
+    pushObject = {text: tagString, style: "italicBody"};
+    return pushObject;
+   }
+
+   function generateUnderlineParagraphElement(tagString) {
+    tagString = tagString.replace(">", "");
+    tagString = tagString.replace("</", "");
+    pushObject = {text: tagString, style: "underlineBody"};
+    return pushObject;
+   }
+
+   function generateYoutubeLinkElement(paragraphString) {
+   	var hrefMatch = paragraphString.match(/href=".*"/)[0];
+   	var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
+   	textMatch = textMatch.replace(/resource="/, "");
+   	textMatch = textMatch.replace(/".*/, "");
+   	hrefMatch = hrefMatch.replace(/href="|"/g, "");
+   	hrefMatch = hrefMatch.replace(/v\//, "watch?v=");
+   	textMatch = fixUpText(textMatch);
+   	var returnObject = {text: textMatch, link: hrefMatch, style: "linkBody"};
+   	return returnObject;	
+   }
+
+   function generateCriticalCommonsVideoLinkElement(paragraphString) {
+   	var linkMatch = paragraphString.match(/http:\/\/.*"|http:\/\/.*" r/)[0];
+   	linkMatch = linkMatch.replace(/" r|"/, "");
+   	var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
+   	textMatch = textMatch.replace(/resource="|" data-size/g, "");
+   	textMatch = fixUpText(textMatch);
+   	var returnObject = {text: textMatch, link: linkMatch, style: "linkBody"};
+   	return returnObject;
+   }
+
+   function generateInternetArchiveLinkElement(paragraphString) {
+   	console.log(paragraphString);
+   	var linkMatch = paragraphString.match(/http:\/\/.*" r|http:\/\/.*">|http:\/\/.*" data-size/)[0];
+   	linkMatch = linkMatch.replace(/" r|" data-size|">/, "");
+   	var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
+   	textMatch = textMatch.replace(/resource="|" data-size/g, "");
+   	textMatch = fixUpText(textMatch);
+   	var returnObject = {text: textMatch, link: linkMatch, style: "linkBody"};
+   	console.log(returnObject);
+   	return returnObject;
+   }
+
+   function generateMetImageLinkElement(paragraphString) {
+   	console.log(paragraphString);
+   	var linkMatch = paragraphString.match(/http:\/\/.*"|http:\/\/.*" r/)[0];
+   	linkMatch = linkMatch.replace(/" r|"/, "");
+   	var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
+   	textMatch = textMatch.replace(/resource="|" data-size/g, "");
+   	textMatch = fixUpText(textMatch);
+   	var returnObject = {text: textMatch, link: linkMatch, style: "linkBody"};
+   	return returnObject;
+   }
+
+   function generateVimeoLinkElement(paragraphString) {
+   	var hrefMatch = paragraphString.match(/href=".*"/)[0];
+   	var textMatch = paragraphString.match(/resource=".*"/)[0];
+   	textMatch = textMatch.replace(/resource="/, "");
+   	textMatch = textMatch.replace(/".*/, "");
+   	hrefMatch = hrefMatch.replace(/href="|"/g, "");
+   	textMatch = fixUpText(textMatch);
+   	var returnObject = {text: textMatch, link: hrefMatch, style: "linkBody"};
+   	return returnObject;
+   }
+
+   function generateScalarImage(paragraphString) {
+   	// For now, just do the link
+   	var linkMatch = paragraphString.match(/http:\/\/.*"/)[0];
+   	linkMatch = linkMatch.slice(0, linkMatch.length - 1);
+   	var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
+   	return returnObject;
+   }
+
+   function generateLinkParagraphElement(paragraphString) {
+   	var linkString = paragraphString.match(/.*">/)[0];
+   	var textString = paragraphString.match(/>.*/)[0];
+   	linkString = linkString.slice(0, linkString.length - 2);
+   	textString = textString.slice(1, textString.length);
+   	var returnObject = {text: textString, link: linkString, style: "linkBody"};
+   	return returnObject;
+   }
+
+   function generateBothColorParagraphElement(paragraphString) {
+    var backgroundColorStringVal = (paragraphString.match(/background-color:#.*;/))[0];
+    paragraphString = paragraphString.replace(backgroundColorStringVal, "");
+    var colorStringVal = (paragraphString.match(/color:#.*;/))[0];
+    var colorNumberVal = colorStringVal.replace(/color:|;/g, "");
+    var backgroundColorNumberVal = backgroundColorStringVal.replace(/background-color:|;/g, "");
+    paragraphString = paragraphString.replace(/.*>/g, "");
+    var pushObject = {text: paragraphString, style: "body", background: backgroundColorNumberVal, color: colorNumberVal};
+    return pushObject;
+   }
+
+   function generateColorParagraphElement(paragraphString) {
+    var matchValArray;
+    var matchVal;
+    var removeString;
+    var isBackgroundColor = false;
+    if (paragraphString.includes("background-color")) {
+      isBackgroundColor = true;
+      matchValArray = paragraphString.match(/background-color:#.*;/);
+      removeString = ' style="background-color:#';
+    } else {
+      matchValArray = paragraphString.match(/color:#.*;/);
+      removeString = ' style="color:#';
+    }
+    matchVal = matchValArray[0];
+    var matchValRegex = /color:|;/g;
+    matchVal = matchVal.replace(matchValRegex, "");
+    var removeString = removeString + matchVal + ';"'
+    paragraphString = paragraphString.replace(removeString, "");
+    paragraphString = paragraphString.replace(">", "");
+    var pushObject = {};
+    if (isBackgroundColor) {
+      matchVal = matchVal.replace("background-", "");
+
+      paragraphString = paragraphString.replace(' style="background-color:'+matchVal+';"', "");
+      pushObject = {text: paragraphString, background: matchVal, style: "body"};
+    } else {
+      paragraphString = paragraphString.replace(' style="color:'+matchVal+';"', "");
+      pushObject = {text: paragraphString, color: matchVal, style: "body"};
+    }
+    return pushObject;
+   }
+
+   function analyzeParagraph(paragraphString, siteURL) {
+    var splitRegex = /<str|<\/strong>|<e|<\/em>|<u|u>|<\/span><\/span>|<span|<\/span>|<a h|<\/a>|<a cl/g;
+    paragraphStringMatches = paragraphString.split(splitRegex);
+    console.log(paragraphStringMatches);
+    var textList = [];
+    var pushObject = {};
+    for (var i = 0; i < paragraphStringMatches.length; i++) {
+      if (paragraphStringMatches[i].includes("ong>")) {
+        pushObject = generateBoldParagraphElement(paragraphStringMatches[i]);
+        textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes('ass="') && (paragraphStringMatches[i].includes('youtube.com')) && !(paragraphStringMatches[i].includes('archive.org'))) {
+      	pushObject = generateYoutubeLinkElement(paragraphStringMatches[i]);
+      	textList.push(pushObject);
+      }	else if (paragraphStringMatches[i].includes('ass="') && (paragraphStringMatches[i].includes('archive.org'))) {
+      	pushObject = generateInternetArchiveLinkElement(paragraphStringMatches[i]);
+      	textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes('ass="') && (paragraphStringMatches[i].includes('images.metmuseum.org'))) {
+      	pushObject = generateMetImageLinkElement(paragraphStringMatches[i]);
+      	textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes('name="') && (paragraphStringMatches[i].includes('vimeo.com'))) {
+      	pushObject = generateVimeoLinkElement(paragraphStringMatches[i]);
+      	textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes('name="') && (paragraphStringMatches[i].includes('videos.criticalcommons.org'))) {
+      	pushObject = generateCriticalCommonsVideoLinkElement(paragraphStringMatches[i]);
+      	textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes('name="') && (paragraphStringMatches[i].includes(siteURL))) {
+      	pushObject = generateScalarImage(paragraphStringMatches[i]);
+      	textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes("m>")) {
+        pushObject = generateItalicParagraphElement(paragraphStringMatches[i]);
+        textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes(">") && paragraphStringMatches[i].includes("</")) {
+        pushObject = generateUnderlineParagraphElement(paragraphStringMatches[i]);
+        textList.push(pushObject);
+      } else if (paragraphStringMatches[i] === "") {
+        continue;
+      } else if (paragraphStringMatches[i].includes('ref="')) {
+      	paragraphStringMatches[i] = paragraphStringMatches[i].replace('ref="', "");
+      	pushObject = generateLinkParagraphElement(paragraphStringMatches[i]);
+      	textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes("style")) {
+        var spanMatch = paragraphStringMatches[i].match(/ style=.*>/);
+        var spanMatchString = spanMatch[0];
+        if (spanMatchString === paragraphStringMatches[i]) {
+          var nextVal = paragraphStringMatches[i+1];
+          paragraphStringMatches[i] = paragraphStringMatches[i] + nextVal
+          paragraphStringMatches.splice(i+1, 1);
+          pushObject = generateBothColorParagraphElement(paragraphStringMatches[i]);
+        } else {
+          var newString = paragraphStringMatches[i].replace(spanMatchString, "");
+          pushObject = generateColorParagraphElement(paragraphStringMatches[i]);
+        }
+        
+        
+        textList.push(pushObject);
+      } else {
+        textList.push({text: paragraphStringMatches[i], style: "body"});
+      }
+    }
+    var returnObject = {text: textList};
+    return returnObject;
+   }
+
+   function analyzeListContent(listTextVal) {
+   	listTextVal = listTextVal.replace(/<u>/, "<underline>");
+   	listTextVal = listTextVal.replace(/<\/u/, "<underline>");
+   	listArray = listTextVal.split(/<under|<str|<e|<\/strong>|<\/em>/);
+   	var pushObject = {};
+   	var objectList = [];
+   	console.log("8");
+   	console.log(listArray);
+   	for (var i = 0; i < listArray.length; i++) {
+      if (listArray[i].includes("ong>")) {
+      	listArray[i] = listArray[i].replace("ong>", "");
+        pushObject = generateBoldParagraphElement(listArray[i]);
+        objectList.push(pushObject);
+      } else if (listArray[i].includes("line>")) {
+      	listArray[i] = listArray[i].replace(/line>|>/g, "");
+      	pushObject = generateUnderlineParagraphElement(listArray[i]);
+        objectList.push(pushObject);
+      } else if (listArray[i].includes("m>")) {
+      	listArray[i] = listArray[i].replace(/m>/, "");
+      	pushObject = generateItalicParagraphElement(listArray[i]);
+        objectList.push(pushObject);
+      } else if (listArray[i] === "") {
+      	continue;
+   	  } else {
+      	objectList.push({text: listArray[i]});
+      }
+   	}
+   	console.log("9");
+   	console.log(objectList);
+   	return objectList;
+   }
+
+    function generateListObject(tagString, tagType) {
+      splitArray = tagString.split(/<\/li>/);
+      var listObject = {};
+      if (tagType === "ul") {
+        listObject = {
+          ul: []
+        };
+      } else {
+        listObject = {
+          ol: []
+        };
+      }
+      for (var i = 0; i < splitArray.length; i++) {
+        if (splitArray[i] === "") {
+          continue;
+        } else {
+          // For now, filter out span related stuff
+          splitArray[i] = splitArray[i].replace(/<\/span>|<span style=.*">|<li>/g, "");
+          var listTextList = analyzeListContent(splitArray[i]);
+          var listObjVal = {text: listTextList, style: "listVal"};
+          if (tagType === "ul") {
+            listObject["ul"].push(listObjVal);
+          } else {
+            listObject["ol"].push(listObjVal);
+          }
+
+        }
+      }
+      return listObject;
+    };
+
+    function generateBlockQuoteObject(tagString) {
+      var blockQuoteRegex = /quote>/g;
+      tagString = tagString.replace(blockQuoteRegex, '');
+      var paragraphRegex = /<p>|<\/p>/;
+      blockQuoteMatches = tagString.split(paragraphRegex);
+      var blockObjectList = [];
+      var pushObject = {};
+      for (var i = 0; i < blockQuoteMatches.length; i++) {
+        if (blockQuoteMatches[i] === "") {
+          continue;
+        } else {
+          pushObject = {text: blockQuoteMatches[i], style: "quoteFormat"};
+          blockObjectList.push(pushObject);
+        }
+      }
+      return blockObjectList;
+    };
+
+    function generatePreObject(tagString) {
+      var regex = /&nbsp;|<pre>|<\/pre>/g;
+      tagString = tagString.replace(regex, '');
+      tagStringValArray = tagString.split("\n");
+      returnList = [];
+      for (var i = 0; i < tagStringValArray.length; i++) {
+        var pushObject = {text: tagStringValArray[i], style: "preFormat"};
+        returnList.push(pushObject);
+      }
+      return returnList;
+    };
+
+    function filterContent(contentArray, siteURL) {
+      var contentList = [];
+      var pushObject = {};
+      for (var i = 0; i < contentArray.length; i++) {
+        contentArray[i] = contentArray[i].replace(/&nbsp;/g, "");
+        if (contentArray[i].includes("1>")) {
+          contentArray[i] = contentArray[i].replace("1>", "");
+          pushObject = {text: contentArray[i], style: "h1"};
+          contentList.push(pushObject);
+        } else if (contentArray[i].includes("2>")) {
+          contentArray[i] = contentArray[i].replace("2>", "");
+          pushObject = {text: contentArray[i], style: "h2"};
+          contentList.push(pushObject);
+        } else if (contentArray[i].includes("3>")) {
+          contentArray[i] = contentArray[i].replace("3>", "");
+          pushObject = {text: contentArray[i], style: "h3"};
+          contentList.push(pushObject);
+        } else if (contentArray[i].includes("4>")) {
+          contentArray[i] = contentArray[i].replace("4>", "");
+          pushObject = {text: contentArray[i], style: "h4"};
+          contentList.push(pushObject);
+        } else if (contentArray[i].includes("5>")) {
+          contentArray[i] = contentArray[i].replace("5>", "");
+          pushObject = {text: contentArray[i], style: "h5"};
+          contentList.push(pushObject);
+        } else if (contentArray[i].includes("<li>")) {
+          if (contentArray[i].includes("</o")) {
+            contentArray[i] = contentArray[i].replace("</o", "");
+            pushObject = generateListObject(contentArray[i], 'ol');
+          } else {
+          	contentArray[i] = contentArray[i].replace("list>", "");
+            contentArray[i] = contentArray[i].replace("</u", "");
+            pushObject = generateListObject(contentArray[i], 'ul');
+          }
+          contentList.push(pushObject);
+          
+        } else if (contentArray[i] === "") {
+          continue;
+        } else if (contentArray[i].includes("quote>")) {
+          var pushObjectList = generateBlockQuoteObject(contentArray[i]);
+          contentList = contentList.concat(pushObjectList);
+        } else if (contentArray[i].includes("<pre>")) {
+          var pushObjectList = generatePreObject(contentArray[i]);
+          contentList = contentList.concat(pushObjectList);
+        } else {
+          if (contentArray[i].includes("<strong>") || contentArray[i].includes("<em>") || contentArray[i].includes("<u>") || contentArray[i].includes("<span style") || contentArray[i].includes("<a href") || contentArray[i].includes("<a class") || contentArray[i].includes("<a name")) {
+            pushObject = analyzeParagraph(contentArray[i], siteURL);
+            contentList.push(pushObject);
+          } else {
+            pushObject = {text: contentArray[i], style: "body"};
+            contentList.push(pushObject);
+          }
+        }
+        var spacingObject = { text: " ", style: "spacing"};
+        contentList.push(spacingObject);
+      }
+      return contentList;
+    };
+
+		function convert(JSONObj, authorName, siteURL, titleVal) {
+      var JSONString = JSON.stringify(JSONObj);
+      var linkString = siteURL + titleVal + "/index.";
+      var matchNumber = JSONString.match(/\/index\.[0-9]{1,3}/);
+      var numberToUse = matchNumber[0].replace(/\/index\./, "");
+
+      // Title, Description, and Content
+      var descAndContString = linkString + numberToUse;
+	  var JSONDescAndCont = JSONObj[descAndContString]; 
+	  var JSONDescriptionList = JSONDescAndCont["http://purl.org/dc/terms/description"];
+
+			var JSONContentList = JSONDescAndCont["http://rdfs.org/sioc/ns#content"];
+			var descriptionIntermediary = JSONDescriptionList[0];
+			var contentIntermediary = JSONContentList[0];
+			var description = descriptionIntermediary["value"];
+      description = filterOut(description);
+			var content = contentIntermediary["value"];
+	  content = content.replace(/<ul>/g, "<unlist>");
+      var contentParagraphMatches = content.split(/<br \/>|<ol>|<un|l>|<\/h1>|<\/h2>|<\/h3>|<\/h4>|<\/h5>|<\/pre>|<block|<\/blockquote>|<h/);
+      var titleList = JSONDescAndCont["http://purl.org/dc/terms/title"];
+			var titleIntermediary = titleList[0];
+			var title = titleIntermediary["value"];
+		console.log(contentParagraphMatches);
+      var contentList = filterContent(contentParagraphMatches, siteURL);
+			var docDef = {
+        pageSize: 'LETTER',
+
+        pageMargins: [ 50, 50, 50, 50 ],
+
+        footer: function(currentPage, pageCount) { 
+          return "Page: " + currentPage.toString() + ' of ' + pageCount; 
+        },
+
+				content: [
+				// ACTUALLY GET THE NAME 
+				{ text: authorName, style: "name" }, 
+        { text: " ", style: "spacing"},
+				{ text: title, style: "title" }, 
+        { text: " ", style: "spacing"},
+				{ text: "Description: " + description, style: "description" },
+        { text: " ", style: "spacing"} 
+				],
+
+				styles: {
+          /* Need to speak with Sasha regrding the design of the pdf
+           * These are just baseline things, just so I could quickly
+           * get to the PDF generation part of my work
+           */
+					title: {
+						fontSize: 26,
+						bold: true,
+						alignment: 'center'
+					},
+					name: {
+						fontSize: 14,
+						bold: true,
+						alignment: 'center'
+					},
+					description: {
+						fontSize: 12,
+						bold: false,
+						alignment: 'left'
+					},
+          listVal: {
+            fontSize: 12,
+          },
+					body: {
+						fontSize: 16,
+						bold: false,
+						alignment: 'left'
+					},
+          boldBody: {
+            fontSize: 16,
+            bold: true,
+            alignment: 'left'
+          },
+          italicBody: {
+            fontSize: 16,
+            bold: false,
+            italics: true,
+            alignment: 'left'
+          },
+          linkBody: {
+          	fontSize: 16,
+          	underline: true,
+          	color: "#99ccff"
+          },
+          underlineBody: {
+            fontSize: 16,
+            bold: false,
+            decoration: 'underline',
+            alignment: 'left'
+          },
+          strikethroughBody: {
+            fontSize: 16,
+            bold: false,
+            decoration: 'lineThrough',
+            alignment: 'left'
+          },
+          spacing: {
+            fontSize: 6,
+            alignment: 'center'
+          },
+          preFormat: {
+            fontSize: 10,
+            alignment: 'center',
+            bold: false
+          },
+          quoteFormat: {
+            fontSize: 12,
+            alignment: 'center',
+            bold: true
+          },
+          h1: {
+            fontSize: 20,
+            alignment: 'left',
+            bold: true
+          },
+          h2: {
+            fontSize: 18,
+            alignment: 'left',
+            bold: true
+          },
+          h3: {
+            fontSize: 16,
+            alignment: 'left',
+            bold: true
+          },
+          h4: {
+            fontSize: 14,
+            alignment: 'left',
+            bold: true
+          },
+          h5: {
+            fontSize: 12,
+            alignment: 'left',
+            bold: true
+          },
+          h6: {
+            fontSize: 10,
+            alignment: 'left',
+            bold: true
+          }
+				}
+			};
+
+      // Create the paragraphs
+      for (var m = 0; m < contentList.length; m++) {
+        docDef.content.push(contentList[m]);
+      }
+      // Is there a specific process for going to ScholarlyCommons?
+			pdfMake.createPdf(docDef).download(authorName + ' - ' + 'pdfVal.pdf');
+		};
+		var JSONTestVal = {
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "http://www.archive.org/download/Computer_Chronicles/format=Thumbnail", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T15:52:46-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:75", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Computer Chronicles", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "Computer Chronicles \u00a0is an American half-hour television series, broadcast from 1983 to 2002\u00a0 on\u00a0 Public Broadcasting Service \u00a0(PBS)\u00a0 public television , which documented the rise of the\u00a0 personal computer \u00a0from its infancy to the immense market at the turn of the 21st century. The series was created in 1983 by\u00a0 Stewart Cheifet \u00a0(later the show's co-host), who was then the station manager of the College of San Mateo's\u00a0 KCSM-TV . The show was initially broadcast as a local weekly series. The show was co-produced by\u00a0 WITF-TV \u00a0in Harrisburg, Pennsylvania. It became a national series on PBS from fall 1983.\u00a0 Jim Warren \u00a0was the show's founding host for the 1981\u20131982 season. It aired continuously from 1981 to 2002, with Cheifet co-hosting most of the later seasons.\u00a0 Gary Kildall \u00a0served as co-host from 1983 to 1990, providing insights and commentary on products, as well as discussions on the future of the ever-expanding personal computer sphere. During the 1980s, the show had many supporting presenters, including: George Morrow : Presenter and commentator who for a time headed the\u00a0 Morrow Design \u00a0company, Morrow was a well-known face on the Chronicles until the 1990s. Morrow died in 2003. Paul Schindler : Featured predominantly in software reviews, Schindler contributed to the series until the early 1990s. Wendy Woods : Provided reports for many software and hardware products, as well as talking with the main presenters in the studio about specific topics. The\u00a0 Computer Chronicles \u00a0format remained relatively unchanged throughout its run, except perhaps with the noticeable difference in presenting style; originally formal it evolved into a more relaxed, casual style. From 1984 onward the last five minutes or so featured\u00a0 Random Access , a segment that gave the viewer the latest computer news from the home and business markets. Stewart Cheifet, Janelle Stelson and various other individuals presented the segment.\u00a0 Random Access \u00a0was discontinued in 1997. The\u00a0 Online Minute , introduced in 1995 and lasting until 1997, gave the viewers certain websites that dealt with the episode's topic. It featured Giles Bateman, who designed the show's \"web page\" opening sequence that was used from that period up until the show's end. The graphics were changed in 1989, and the title \"The Computer Chronicles\" was renamed to omit the word \"The\". The graphics were redesigned again in 1995, with the \"Web page\" graphics designed by Giles Bateman, and redesigned again in 1998 to show clips from the show in a \"multiple window\" format. Another feature on the show is Stewart's \"Pick of the Week\", in which he details a popular piece of software or gadget on the market that appeals to him and may appeal to the home audience. From 1994 to 1997, the show was produced by PCTV, based in New Hampshire in cooperation with KCSM-TV. Starting in the Fall of 1997 and continuing to its end, the show was produced by\u00a0 KTEH \u00a0San Jose and Stewart Cheifet Productions. Despite receiving adequate ratings in the United States and being broadcast throughout the world,\u00a0 Computer Chronicles was cancelled in 2002. Almost all episodes of\u00a0 Computer Chronicles \u00a0have been made available for free download at the\u00a0 Internet Archive . Many episodes of the show have been dubbed into other languages, including\u00a0 Arabic , French and Spanish. ======================================== This collection was sourced from https://archive.org/details/computerchronicles \u00a0 The naming of files and correction of metadata on TheTVDB.com is based on information gathered from:\u00a0 * https://archive.org/details/computerchronicles\u00a0 * Archive.org backups of http://computerchronicles.org [0]\u00a0 * Archive.org backups of http://stquantum.com [1] \u00a0 While care was taken in naming and ordering episodes there is conflicting information in the above sources. Known repeated shows are included explicitly. Some of them are literal file duplicates while others are separate rips. To save space run a file dedup application on the directory. In some cases there are multiple versions of the same episode and those are included just in case. As are episodes featuring Arabic, Spanish, and French translations.\u00a0 [0] https://web.archive.org/web/20020605063650/http://computerchronicles.org:80/episodes/index.asp [1] https://web.archive.org/web/20150227222349/http://www.stquantum.com/", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://www.archive.org/download/Computer_Chronicles/format=MPEG4", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T15:52:46-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:189", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "Internet Archive", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/type" : [
+      { "value" : "movies", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/identifier" : [
+      { "value" : "Computer_Chronicles", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/subject" : [
+      { "value" : "computer", "type" : "literal" },
+      { "value" : "Apple", "type" : "literal" },
+      { "value" : "IBM", "type" : "literal" },
+      { "value" : "Intel", "type" : "literal" },
+      { "value" : "Bill Gates", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Composite", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#category" : [
+      { "value" : "term", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-12T08:51:26-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:60", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "20", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Test", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep No more; and by a sleep, to say we end the heart-ache, and the thousand natural shocks that Flesh is heir to? DescTags: moo, oink", "type" : "literal" }
+    ],
+    "http://rdfs.org/sioc/ns#content" : [
+      { "value" : "<h1>This Is The First Heading</h1><h2>Second Heading</h2><h3>Third Heading</h3><h4>Fourth Heading</h4><h5>Fifth Heading</h5>Lorem ipsum dolor sit amet, modo noster aliquid an mea. Eu vim nominati democritum, has quando iisque cu.<br /><br /><a name=\"scalar-inline-media\" class=\"inline\" href=\"http://www.archive.org/download/Computer_Chronicles/format=MPEG4\" resource=\"computer-chronicles\" data-size=\"small\" data-align=\"left\" data-caption=\"description\"></a><br /><br /><a name=\"scalar-inline-media\" class=\"inline\" href=\"http://www.archive.org/download/youtube-m-DHVClSvTo/format=JPEG\" resource=\"computer-chronicles-home-pcs-1990\" data-size=\"small\" data-align=\"left\" data-caption=\"description\"></a><br /><br />Id eos falli corrumpit disputando, mea ex vide delectus. Postea vocibus at vix, nullam forensibus est eu.<br /><br /><a class=\"inline\" resource=\"media/puppy\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/c7c9063c6d7884b40eefe1f70df69f03--baby-beagle-beagle-puppies.jpg\"></a><br /><br />Pri eu brute fuisset noluisse, ut vix assum complectitur. Nibh everti efficiantur ut duo, eum tale agam delicatissimi eu.<ol><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu.</span></li></ol>Est te sumo epicuri, ei vis exerci nonumes, ea mazim graece integre usu. Debet animal officiis nec te, nec atqui persius fuisset eu. Vel assum everti sententiae an. Diceret detracto voluptaria cu usu. At vis diam civibus suscipiantur.<ul><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Morbi consectetur, neque laoreet tristique maximus, turpis nulla mollis arcu, vel sagittis libero arcu nec nisl.&nbsp;</span></li></ul>At reque munere eam, ad evertitur comprehensam has. Pri altera labore in. Ius ea oratio dissentiunt. His ad etiam iudicabit, vim id falli nulla. Rebum nostro facilis ex sea, in enim volumus mel, ea vim tota legendos. Qui te nibh quodsi persequeris, cu viderer tacimates rationibus cum.<blockquote><p>This is a quote</p></blockquote>Etiam aperiam cum ei, pri oratio tamquam tacimates eu, erant omittam ex eos. Te his eros senserit. Dicunt inermis per ea, pri at vero mucius oportere. Delicata democritum in eum, novum voluptaria per ex.<br />&nbsp;<pre>Hello World\nThis is code\n</pre><br /><a href=\"http://nintendo.com\">Link</a><br /><br /><a class=\"inline\" resource=\"computer-chronicles---the-macintosh-computer-1985\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/youtube-iiuP-HYySNQ/format=JPEG\"></a><br /><br /><a class=\"inline\" resource=\"imax-encode-demo-using-premiere-pro\" data-size=\"small\" data-align=\"right\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://player.vimeo.com/video/206345057\"></a><br /><br /><strong>Velit sanctus suscipit ad vix, tibique assueverit referrentur ex his</strong>. <em>Amet vocent te mei, vis sapientem disputando et.</em> Ea has lorem <u>utroque consulatu, cu quis dico quo. Ne est modus vivendo dissentias</u>, per in atqui mucius noster, <a href=\"http://nytimes.com\">maiorum</a> habemus&nbsp;an. No mei veniam prompta molestiae, per no quodsi minimum mentitum. <span style=\"background-color:#008000;\">Ad quod minim posidonium duo</span><span style=\"color:#800000;\">, legere eruditi habemus an vim,</span> <span style=\"color:#2F4F4F;\"><span style=\"background-color:#800000;\">mel quod tibique ei.</span></span><ul><li><u>This</u> <em>is part</em> of <strong>a list</strong></li><li><em>Ditto</em></li></ul><br /><a class=\"inline\" resource=\"portrait-of-napoleon-i\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://images.metmuseum.org/CRDImages/es/web-large/DT5157.jpg\"></a><a class=\"inline\" resource=\"star-wars-and-trailers\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://videos.criticalcommons.org/transcoded/http/www.criticalcommons.org/Members/MCIMR/clips/star-wars-and-trailers/video_file/mp4-high/star-wars-the-force-awakens-trailer-official-mp4.mp4\"></a><br /><br /><a class=\"inline\" resource=\"impossibly-cute-husky-puppy-wolfies-first-week\" data-size=\"small\" data-align=\"left\" data-caption=\"none\" name=\"scalar-inline-media\" href=\"http://www.youtube.com/v/32yJSz9j4XY\"></a>", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T15:57:25-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:191", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/references" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/impossibly-cute-husky-puppy-wolfies-first-week", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/portrait-of-napoleon-i", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/star-wars-and-trailers", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles-home-pcs-1990", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#category" : [
+      { "value" : "term", "type" : "literal" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ]
+  },
+
+  "urn:scalar:term:191" : {
+    "http://www.openannotation.org/ns/hasBody" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+    ],
+    "http://www.openannotation.org/ns/hasTarget" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals#datetime=2017-06-30T15:57:25-05:00&type=term", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://www.openannotation.org/ns/Annotation", "type" : "uri" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "http://www.archive.org/download/youtube-iiuP-HYySNQ/format=JPEG", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T09:43:25-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:70", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Computer Chronicles - The Macintosh Computer (1985)", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "Computer Chronicles - The Macintosh Computer (1985) Source: https://www.youtube.com/watch?v=iiuP-HYySNQ Uploader: TheCanadianToast Upload date: 2013-04-21", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://www.archive.org/download/youtube-iiuP-HYySNQ/format=JPEG", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T09:43:25-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:179", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "Internet Archive", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/type" : [
+      { "value" : "movies", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/identifier" : [
+      { "value" : "youtube-iiuP-HYySNQ", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/subject" : [
+      { "value" : "Youtube", "type" : "literal" },
+      { "value" : "video", "type" : "literal" },
+      { "value" : "Science & Technology", "type" : "literal" },
+      { "value" : "Computer", "type" : "literal" },
+      { "value" : "Chronicles", "type" : "literal" },
+      { "value" : "Technology", "type" : "literal" },
+      { "value" : "Company", "type" : "literal" },
+      { "value" : "Hardware", "type" : "literal" },
+      { "value" : "Software", "type" : "literal" },
+      { "value" : "Microsoft", "type" : "literal" },
+      { "value" : "Apple", "type" : "literal" },
+      { "value" : "Video", "type" : "literal" },
+      { "value" : "Media", "type" : "literal" },
+      { "value" : "Fun", "type" : "literal" },
+      { "value" : "Server", "type" : "literal" },
+      { "value" : "Client", "type" : "literal" },
+      { "value" : "Business", "type" : "literal" },
+      { "value" : "Operating", "type" : "literal" },
+      { "value" : "System", "type" : "literal" },
+      { "value" : "Management", "type" : "literal" },
+      { "value" : "Windows", "type" : "literal" },
+      { "value" : "Tutorial", "type" : "literal" },
+      { "value" : "Macintosh", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles-home-pcs-1990" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "http://www.archive.org/download/youtube-m-DHVClSvTo/format=JPEG", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T15:52:46-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:76", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles-home-pcs-1990.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles-home-pcs-1990.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles-home-pcs-1990.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Computer Chronicles: Home PCs (1990)", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "After disasters like IBM's PC Jr and the failure of PC companies like Texas Instruments and Atari, the future of home personal computers didn't look so good. But in 1990 a new generation of home PCs brought the business back. This program looks at the products that led to this rebirth, including the IBM PS/1, the Tandy 1000, the Magnavox Headstart, the Macintosh LC and the Mac Classic. Also includes coverage of the Commodore 64 and analysis from Dataquest. Originally broadcast in 1990. About Computer Chronicles: The Computer Chronicles was an American television series, broadcast during 1981-2002 on Public Broadcasting Service (PBS) public television, which documented the rise of the personal computer from its infancy to the immense market at the turn of the 21st century. The series was created in the Fall of 1981, by Stewart Cheifet (later co-host), then the station manager of the College of San Mateo's KCSM-TV (which co-produced the show with Harrisburg, PA's WITF-TV), initially broadcast as a local weekly series. Jim Warren was its founding host for its 1981-1982 season. It aired continuously from 1981 to 2002 with Cheifet co-hosting most of its later seasons. Gary Kildall served as co-host for six years (1983 to 1990) providing insights and commentary on products as well as discussions on the future of the ever-expanding personal computer sphere. More Info: http://stquantum.xtreemhost.com/cc/index.htm Source: https://www.youtube.com/watch?v=m-DHVClSvTo Uploader: Jes\u00fas Zafra Upload date: 2012-09-05", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://www.archive.org/download/youtube-m-DHVClSvTo/format=JPEG", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T15:52:46-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:190", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles-home-pcs-1990", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "Internet Archive", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/type" : [
+      { "value" : "movies", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/identifier" : [
+      { "value" : "youtube-m-DHVClSvTo", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/subject" : [
+      { "value" : "Youtube", "type" : "literal" },
+      { "value" : "video", "type" : "literal" },
+      { "value" : "Science & Technology", "type" : "literal" },
+      { "value" : "IBM", "type" : "literal" },
+      { "value" : "PC", "type" : "literal" },
+      { "value" : "Personal Computers", "type" : "literal" },
+      { "value" : "IBM PS/1", "type" : "literal" },
+      { "value" : "PC Jr", "type" : "literal" },
+      { "value" : "Texas Instruments", "type" : "literal" },
+      { "value" : "Atari", "type" : "literal" },
+      { "value" : "Computer Chronicles", "type" : "literal" },
+      { "value" : "Tandy 1000", "type" : "literal" },
+      { "value" : "Magnavox", "type" : "literal" },
+      { "value" : "Commodore 64", "type" : "literal" },
+      { "value" : "Dataquest", "type" : "literal" },
+      { "value" : "Macintosh", "type" : "literal" },
+      { "value" : "Stewart Cheifet", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "http://i.vimeocdn.com/video/621339961_640.jpg", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T11:34:08-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:72", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "IMAX encode demo using Premiere Pro", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "This demo from IML 475 Spring 2017 details how to prepare your footage for delivery for IMAX projection at USC. The clip used for the demo is a 29.97 UHD video file shot on an iPhone 6s and encoded in ProRes422 at 2048x1080 using Adobe Premiere Pro.", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://player.vimeo.com/video/206345057", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T11:34:08-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:184", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/contributor" : [
+      { "value" : "MA+P @ USC", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "Vimeo", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/date" : [
+      { "value" : "2017-03-01T22:03:15", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/type" : [
+      { "value" : "video", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/identifier" : [
+      { "value" : "206345057", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/impossibly-cute-husky-puppy-wolfies-first-week" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "https://i.ytimg.com/vi/32yJSz9j4XY/hqdefault.jpg", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T09:36:36-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:69", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/impossibly-cute-husky-puppy-wolfies-first-week.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/impossibly-cute-husky-puppy-wolfies-first-week.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/impossibly-cute-husky-puppy-wolfies-first-week.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Impossibly Cute Husky Puppy: Wolfie's First Week", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "You can follow Wolfie and Snow's (almost) daily moments on my Instagram (the_average_joe_e) or on his Facebook page now: ...", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://www.youtube.com/v/32yJSz9j4XY", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T09:36:36-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:178", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/impossibly-cute-husky-puppy-wolfies-first-week", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isReferencedBy" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/contributor" : [
+      { "value" : "Joe E", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "YouTube", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#sourceLocation" : [
+      { "value" : "https://www.youtube.com/watch?v=32yJSz9j4XY", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/date" : [
+      { "value" : "2013-06-20T16:25:47.000Z", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/identifier" : [
+      { "value" : "32yJSz9j4XY", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/c7c9063c6d7884b40eefe1f70df69f03--baby-beagle-beagle-puppies_thumb.jpg", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T09:53:36-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:71", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Puppy", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "This is a puppy", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/c7c9063c6d7884b40eefe1f70df69f03--baby-beagle-beagle-puppies.jpg", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T09:53:36-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:182", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isReferencedBy" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/portrait-of-napoleon-i" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "http://images.metmuseum.org/CRDImages/es/mobile-large/DT5157.jpg", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T11:54:39-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:73", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/portrait-of-napoleon-i.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/portrait-of-napoleon-i.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/portrait-of-napoleon-i.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Portrait of Napoleon I", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "After a painting by baron Fran\u00e7ois G\u00e9rard (French, Rome 1770\u20131837 Paris)", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://images.metmuseum.org/CRDImages/es/web-large/DT5157.jpg", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T11:54:39-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:186", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/portrait-of-napoleon-i", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isReferencedBy" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "The Metropolitan Museum of Art", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#sourceLocation" : [
+      { "value" : "http://www.metmuseum.org/art/collection/search/199313?sortBy=Relevance&amp;ft=napoleon&amp;offset=0&amp;rpp=20&amp;pos=6", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/date" : [
+      { "value" : "designed 1805, woven 1808\u201311", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/type" : [
+      { "value" : "Image", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/identifier" : [
+      { "value" : "43.99", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/medium" : [
+      { "value" : "Wool, silk, silver-gilt thread (26-28 warps per inch, 10-12 per cm.); gilded pine frame", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/star-wars-and-trailers" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "http://www.criticalcommons.org/Members/MCIMR/clips/star-wars-and-trailers/thumbnailImage_thumb", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T11:58:45-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:74", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/star-wars-and-trailers.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/star-wars-and-trailers.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/star-wars-and-trailers.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Star Wars and Trailers", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "The trailer for Star Wars: The Force Awakens", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://videos.criticalcommons.org/transcoded/http/www.criticalcommons.org/Members/MCIMR/clips/star-wars-and-trailers/video_file/mp4-high/star-wars-the-force-awakens-trailer-official-mp4.mp4", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-30T11:58:45-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:187", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/star-wars-and-trailers", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isReferencedBy" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/contributor" : [
+      { "value" : "JJ Abrams", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/dateSubmitted" : [
+      { "value" : "2016-01-11T16:50:50Z", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "Critical Commons", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#sourceLocation" : [
+      { "value" : "http://www.criticalcommons.org/Members/MCIMR/clips/star-wars-and-trailers", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/date" : [
+      { "value" : "2015", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/type" : [
+      { "value" : "Video", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/relation" : [
+      { "value" : "Star Wars: The Force Awakens", "type" : "literal" }
+    ]
+  },
+
+  "urn:scalar:tag:191:191" : {
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:tag:191:191", "type" : "uri" }
+    ],
+    "http://www.openannotation.org/ns/hasBody" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+    ],
+    "http://www.openannotation.org/ns/hasTarget" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://www.openannotation.org/ns/Annotation", "type" : "uri" }
+    ]
+  } 
+};
+	$(':button').bind('click', function() {
+		convert(JSONTestVal, "Joe Pires", "http://dev.upenndigitalscholarship.org/scalar/", "farm-animals");
+	});
+	</script>
+</html>

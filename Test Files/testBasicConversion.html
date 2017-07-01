@@ -1,0 +1,75 @@
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="pdfmake.js"></script>
+<script src="vfs_fonts.js"></script>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test Site</title>
+    </head>
+    <body>
+        <button type="button">Click Me!</button>
+    </body>
+    <script>
+    
+    $(':button').bind('click', function() {
+        var docDef = {
+            pageSize: 'LETTER',
+
+            pageMargins: [50, 50, 50, 50],
+
+            footer: function footer(currentPage, pageCount) {
+                return "Page: " + currentPage.toString() + ' of ' + pageCount;
+            },
+
+            content: [
+                stack: [
+                    {text: "This is some example", style: "body" },
+                    {text: "text", italics: true}
+                ]
+            ],
+
+            styles: {
+              /* Need to speak with Sasha regrding the design of the pdf
+               * These are just baseline things, just so I could quickly
+               * get to the PDF generation part of my work
+               */
+                title: {
+                    fontSize: 22,
+                    bold: true,
+                    alignment: 'center'
+                },
+                name: {
+                    fontSize: 14,
+                    bold: true,
+                    alignment: 'center'
+                },
+                description: {
+                    fontSize: 12,
+                    bold: false,
+                    alignment: 'left'
+                },
+                body: {
+                    fontSize: 16,
+                    bold: false,
+                    alignment: 'left'
+                },
+                spacing: {
+                    fontSize: 6,
+                    alignment: 'center'
+                },
+                preFormat: {
+                    fontSize: 10,
+                    alignment: 'center',
+                    bold: false
+                },
+                quoteFormat: {
+                    fontSize: 12,
+                    alignment: 'center',
+                    bold: true
+                }
+            }
+        };
+    });
+    </script>
+</html>
