@@ -17,6 +17,65 @@
 		return titleText;
 	}
 
+  function parseParagraph(paragraphString) {
+    var inTag = false;
+    var tagString = "";
+    var tempString = "";
+    var returnList = [];
+    for (var i = 0; i < paragraphString.length; i++) {
+      var charVal = paragraphString.charAt(i);
+      if (inTag) {
+        if (charVal === ">") {
+          if (paragraphString.substring(i-8, i+1) === "</strong>" && tagString === "strong") {
+            inTag = false;
+            tagString = "";
+            returnList.push(tempString);
+            tempString = "";
+          } else if (paragraphString.substring(i-3, i+1) === "</u>" && tagString === "u") {
+            inTag = false;
+            tagString = "";
+            returnList.push(tempString);
+            tempString = "";
+          } else if (paragraphString.substring(i-4, i+1) === "</em>" && tagString === "em") {
+            inTag = false;
+            tagString = "";
+            returnList.push(tempString);
+            tempString = "";
+          } else {
+            tempString = tempString + charVal;
+          }
+        } else {
+          tempString = tempString + charVal;
+        }
+      } else {
+        if (charVal === "<") {
+          if (paragraphString.substring(i, i+4) === "<em>") {
+            inTag = true;
+            tagString = "em";
+            returnList.push(tempString);
+            tempString = "";
+          } else if (paragraphString.substring(i, i+3) === "<u>") {
+            inTag = true;
+            tagString = "u";
+            returnList.push(tempString);
+            tempString = "";
+          } else if (paragraphString.substring(i, i+8) === "<strong>") {
+            inTag = true;
+            tagString = "strong";
+            returnList.push(tempString);
+            tempString = "";
+          } else {
+            tempString = tempString + charVal;
+          }
+        } else {
+          tempString = tempString + charVal;
+        }
+      }
+    }
+    returnList.push(tempString);
+    return returnList;
+  }
+
     function filterOut(descriptionString) {
       if (descriptionString.includes("DescTags:")) {
         descriptionString = descriptionString.replace(/DescTags: .*/, "");
@@ -169,16 +228,13 @@
    }
 
    function analyzeParagraph(paragraphString, siteURL) {
-    var splitRegex = /<str|<\/strong>|<e|<\/em>|<u|u>|<\/span><\/span>|<span|<\/span>|<a h|<\/a>|<a cl/g;
+    var splitRegex = /<\/span><\/span>|<span|<\/span>|<a h|<\/a>|<a cl/g;
     paragraphStringMatches = paragraphString.split(splitRegex);
     console.log(paragraphStringMatches);
     var textList = [];
     var pushObject = {};
     for (var i = 0; i < paragraphStringMatches.length; i++) {
-      if (paragraphStringMatches[i].includes("ong>")) {
-        pushObject = generateBoldParagraphElement(paragraphStringMatches[i]);
-        textList.push(pushObject);
-      } else if (paragraphStringMatches[i].includes('ass="') && (paragraphStringMatches[i].includes('youtube.com')) && !(paragraphStringMatches[i].includes('archive.org'))) {
+      if (paragraphStringMatches[i].includes('ass="') && (paragraphStringMatches[i].includes('youtube.com')) && !(paragraphStringMatches[i].includes('archive.org'))) {
       	pushObject = generateYoutubeLinkElement(paragraphStringMatches[i]);
       	textList.push(pushObject);
       }	else if (paragraphStringMatches[i].includes('ass="') && (paragraphStringMatches[i].includes('archive.org'))) {
@@ -196,12 +252,6 @@
       } else if (paragraphStringMatches[i].includes('name="') && (paragraphStringMatches[i].includes(siteURL))) {
       	pushObject = generateScalarImage(paragraphStringMatches[i]);
       	textList.push(pushObject);
-      } else if (paragraphStringMatches[i].includes("m>")) {
-        pushObject = generateItalicParagraphElement(paragraphStringMatches[i]);
-        textList.push(pushObject);
-      } else if (paragraphStringMatches[i].includes(">") && paragraphStringMatches[i].includes("</")) {
-        pushObject = generateUnderlineParagraphElement(paragraphStringMatches[i]);
-        textList.push(pushObject);
       } else if (paragraphStringMatches[i] === "") {
         continue;
       } else if (paragraphStringMatches[i].includes('ref="')) {
@@ -224,6 +274,16 @@
         
         textList.push(pushObject);
       } else {
+        var analyzedTextList = parseParagraph(paragraphStringMatches[i]);
+        for (var m = 0; m < analyzedTextList.length; m++) {
+          analyzedTextList[m] = parseParagraph(analyzedTextList[m]);
+        }
+        for (var m = 0; m < analyzedTextList.length; m++) {
+          for (var n = 0; n < analyzedTextList[m].length; n++) {
+            analyzedTextList[m][n] = parseParagraph(analyzedTextList[m][n]);
+          }
+        }
+        console.log(analyzedTextList);
         textList.push({text: paragraphStringMatches[i], style: "body"});
       }
     }
@@ -636,19 +696,19 @@
       { "value" : "urn:scalar:content:60", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
     ],
     "http://purl.org/dc/terms/hasVersion" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
       { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
     ]
   },
 
-  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20" : {
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22" : {
     "http://open.vocab.org/terms/versionnumber" : [
-      { "value" : "20", "type" : "literal" }
+      { "value" : "22", "type" : "literal" }
     ],
     "http://purl.org/dc/terms/title" : [
       { "value" : "Test", "type" : "literal" }
@@ -657,7 +717,7 @@
       { "value" : "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep No more; and by a sleep, to say we end the heart-ache, and the thousand natural shocks that Flesh is heir to? DescTags: moo, oink", "type" : "literal" }
     ],
     "http://rdfs.org/sioc/ns#content" : [
-      { "value" : "<h1>This Is The First Heading</h1><h2>Second Heading</h2><h3>Third Heading</h3><h4>Fourth Heading</h4><h5>Fifth Heading</h5>Lorem ipsum dolor sit amet, modo noster aliquid an mea. Eu vim nominati democritum, has quando iisque cu.<br /><br /><a name=\"scalar-inline-media\" class=\"inline\" href=\"http://www.archive.org/download/Computer_Chronicles/format=MPEG4\" resource=\"computer-chronicles\" data-size=\"small\" data-align=\"left\" data-caption=\"description\"></a><br /><br /><a name=\"scalar-inline-media\" class=\"inline\" href=\"http://www.archive.org/download/youtube-m-DHVClSvTo/format=JPEG\" resource=\"computer-chronicles-home-pcs-1990\" data-size=\"small\" data-align=\"left\" data-caption=\"description\"></a><br /><br />Id eos falli corrumpit disputando, mea ex vide delectus. Postea vocibus at vix, nullam forensibus est eu.<br /><br /><a class=\"inline\" resource=\"media/puppy\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/c7c9063c6d7884b40eefe1f70df69f03--baby-beagle-beagle-puppies.jpg\"></a><br /><br />Pri eu brute fuisset noluisse, ut vix assum complectitur. Nibh everti efficiantur ut duo, eum tale agam delicatissimi eu.<ol><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu.</span></li></ol>Est te sumo epicuri, ei vis exerci nonumes, ea mazim graece integre usu. Debet animal officiis nec te, nec atqui persius fuisset eu. Vel assum everti sententiae an. Diceret detracto voluptaria cu usu. At vis diam civibus suscipiantur.<ul><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Morbi consectetur, neque laoreet tristique maximus, turpis nulla mollis arcu, vel sagittis libero arcu nec nisl.&nbsp;</span></li></ul>At reque munere eam, ad evertitur comprehensam has. Pri altera labore in. Ius ea oratio dissentiunt. His ad etiam iudicabit, vim id falli nulla. Rebum nostro facilis ex sea, in enim volumus mel, ea vim tota legendos. Qui te nibh quodsi persequeris, cu viderer tacimates rationibus cum.<blockquote><p>This is a quote</p></blockquote>Etiam aperiam cum ei, pri oratio tamquam tacimates eu, erant omittam ex eos. Te his eros senserit. Dicunt inermis per ea, pri at vero mucius oportere. Delicata democritum in eum, novum voluptaria per ex.<br />&nbsp;<pre>Hello World\nThis is code\n</pre><br /><a href=\"http://nintendo.com\">Link</a><br /><br /><a class=\"inline\" resource=\"computer-chronicles---the-macintosh-computer-1985\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/youtube-iiuP-HYySNQ/format=JPEG\"></a><br /><br /><a class=\"inline\" resource=\"imax-encode-demo-using-premiere-pro\" data-size=\"small\" data-align=\"right\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://player.vimeo.com/video/206345057\"></a><br /><br /><strong>Velit sanctus suscipit ad vix, tibique assueverit referrentur ex his</strong>. <em>Amet vocent te mei, vis sapientem disputando et.</em> Ea has lorem <u>utroque consulatu, cu quis dico quo. Ne est modus vivendo dissentias</u>, per in atqui mucius noster, <a href=\"http://nytimes.com\">maiorum</a> habemus&nbsp;an. No mei veniam prompta molestiae, per no quodsi minimum mentitum. <span style=\"background-color:#008000;\">Ad quod minim posidonium duo</span><span style=\"color:#800000;\">, legere eruditi habemus an vim,</span> <span style=\"color:#2F4F4F;\"><span style=\"background-color:#800000;\">mel quod tibique ei.</span></span><ul><li><u>This</u> <em>is part</em> of <strong>a list</strong></li><li><em>Ditto</em></li></ul><br /><a class=\"inline\" resource=\"portrait-of-napoleon-i\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://images.metmuseum.org/CRDImages/es/web-large/DT5157.jpg\"></a><a class=\"inline\" resource=\"star-wars-and-trailers\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://videos.criticalcommons.org/transcoded/http/www.criticalcommons.org/Members/MCIMR/clips/star-wars-and-trailers/video_file/mp4-high/star-wars-the-force-awakens-trailer-official-mp4.mp4\"></a><br /><br /><a class=\"inline\" resource=\"impossibly-cute-husky-puppy-wolfies-first-week\" data-size=\"small\" data-align=\"left\" data-caption=\"none\" name=\"scalar-inline-media\" href=\"http://www.youtube.com/v/32yJSz9j4XY\"></a>", "type" : "literal" }
+      { "value" : "<h1>This Is The First Heading</h1><h2>Second Heading</h2><h3>Third Heading</h3><h4>Fourth Heading</h4><h5>Fifth Heading</h5>Lorem ipsum dolor sit amet, modo noster aliquid an mea. Eu vim nominati democritum, has quando iisque cu.<br /><br /><a class=\"inline\" resource=\"computer-chronicles\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/Computer_Chronicles/format=MPEG4\"></a><br /><br /><a class=\"inline\" resource=\"computer-chronicles-home-pcs-1990\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/youtube-m-DHVClSvTo/format=JPEG\"></a><br /><br />Id eos falli corrumpit disputando, mea ex vide delectus. Postea vocibus at vix, nullam forensibus est eu.<br /><br /><a class=\"inline\" resource=\"media/puppy\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/c7c9063c6d7884b40eefe1f70df69f03--baby-beagle-beagle-puppies.jpg\"></a><br /><br />Pri eu brute fuisset noluisse, ut vix assum complectitur. Nibh everti efficiantur ut duo, eum tale agam delicatissimi eu.<ol><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu.</span></li></ol>Est te sumo epicuri, ei vis exerci nonumes, ea mazim graece integre usu. Debet animal officiis nec te, nec atqui persius fuisset eu. Vel assum everti sententiae an. Diceret detracto voluptaria cu usu. At vis diam civibus suscipiantur.<ul><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Morbi consectetur, neque laoreet tristique maximus, turpis nulla mollis arcu, vel sagittis libero arcu nec nisl.&nbsp;</span></li></ul>At reque munere eam, ad evertitur comprehensam has. Pri altera labore in. Ius ea oratio dissentiunt. His ad etiam iudicabit, vim id falli nulla. Rebum nostro facilis ex sea, in enim volumus mel, ea vim tota legendos. Qui te nibh quodsi persequeris, cu viderer tacimates rationibus cum.<blockquote><p>This is a quote</p></blockquote>Etiam aperiam cum ei, pri oratio tamquam tacimates eu, erant omittam ex eos. Te his eros senserit. Dicunt inermis per ea, pri at vero mucius oportere. Delicata democritum in eum, novum voluptaria per ex.<br />&nbsp;<pre>Hello World\nThis is code\n</pre><br /><a href=\"http://nintendo.com\">Link</a><br /><br /><a class=\"inline\" resource=\"computer-chronicles---the-macintosh-computer-1985\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/youtube-iiuP-HYySNQ/format=JPEG\"></a><br /><br /><a class=\"inline\" resource=\"imax-encode-demo-using-premiere-pro\" data-size=\"small\" data-align=\"right\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://player.vimeo.com/video/206345057\"></a><br /><br /><strong>Velit sanctus suscipit ad vix, tibique assueverit referrentur ex his</strong>. <em>Amet vocent te mei, vis sapientem disputando et.</em> Ea has lorem <u>utroque consulatu, cu quis dico quo. Ne est modus vivendo dissentias</u>, per in atqui mucius noster, <a href=\"http://nytimes.com\">maiorum</a> habemus&nbsp;an. No mei veniam prompta molestiae, per no quodsi minimum mentitum. <span style=\"background-color:#008000;\">Ad quod minim posidonium duo</span><span style=\"color:#800000;\">, legere eruditi habemus an vim,</span> <span style=\"color:#2F4F4F;\"><span style=\"background-color:#800000;\">mel quod tibique ei.</span></span><ul><li><u>This</u> <em>is part</em> of <strong>a list</strong></li><li><em>Ditto</em></li></ul><em>It is <strong>a truth universally</strong> acknowledged, that a <u><strong>single man in possession of </strong></u>a good fortune, <u>must be in want of a wife</u>.</em> <strong>However little<em> known the feelings or</em> views of such a<u> man may be</u> on<u><em> his first entering a neighbourhood</em></u>,</strong> <u>this <em>truth is so well fixed in the minds of</em><strong> the surrounding families, that he<em> is considered the rightful property</em></strong> of some one or other of their <strong><em>daughters.</em></strong></u><br /><br /><a class=\"inline\" resource=\"portrait-of-napoleon-i\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://images.metmuseum.org/CRDImages/es/web-large/DT5157.jpg\"></a><a class=\"inline\" resource=\"star-wars-and-trailers\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://videos.criticalcommons.org/transcoded/http/www.criticalcommons.org/Members/MCIMR/clips/star-wars-and-trailers/video_file/mp4-high/star-wars-the-force-awakens-trailer-official-mp4.mp4\"></a><br /><br /><a class=\"inline\" resource=\"impossibly-cute-husky-puppy-wolfies-first-week\" data-size=\"small\" data-align=\"left\" data-caption=\"none\" name=\"scalar-inline-media\" href=\"http://www.youtube.com/v/32yJSz9j4XY\"></a>", "type" : "literal" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
       { "value" : "plain", "type" : "literal" }
@@ -666,10 +726,10 @@
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
     ],
     "http://purl.org/dc/terms/created" : [
-      { "value" : "2017-06-30T15:57:25-05:00", "type" : "literal" }
+      { "value" : "2017-07-02T20:45:11-05:00", "type" : "literal" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
-      { "value" : "urn:scalar:version:191", "type" : "uri" }
+      { "value" : "urn:scalar:version:193", "type" : "uri" }
     ],
     "http://purl.org/dc/terms/isVersionOf" : [
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
@@ -692,12 +752,12 @@
     ]
   },
 
-  "urn:scalar:term:191" : {
+  "urn:scalar:term:193" : {
     "http://www.openannotation.org/ns/hasBody" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
     ],
     "http://www.openannotation.org/ns/hasTarget" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals#datetime=2017-06-30T15:57:25-05:00&type=term", "type" : "uri" }
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals#datetime=2017-07-02T20:45:11-05:00&type=term", "type" : "uri" }
     ],
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
       { "value" : "http://www.openannotation.org/ns/Annotation", "type" : "uri" }
@@ -1288,15 +1348,15 @@
     ]
   },
 
-  "urn:scalar:tag:191:191" : {
+  "urn:scalar:tag:193:193" : {
     "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
-      { "value" : "urn:scalar:tag:191:191", "type" : "uri" }
+      { "value" : "urn:scalar:tag:193:193", "type" : "uri" }
     ],
     "http://www.openannotation.org/ns/hasBody" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
     ],
     "http://www.openannotation.org/ns/hasTarget" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.20", "type" : "uri" }
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
     ],
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
       { "value" : "http://www.openannotation.org/ns/Annotation", "type" : "uri" }
