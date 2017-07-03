@@ -385,7 +385,7 @@ function convert(JSONString, authorName, urlString) {
        * get to the PDF generation part of my work
        */
       title: {
-        fontSize: 22,
+        fontSize: 24,
         bold: true,
         alignment: 'center'
       },
@@ -404,6 +404,21 @@ function convert(JSONString, authorName, urlString) {
         bold: false,
         alignment: 'left'
       },
+      bold: {
+        fontSize: 16,
+        bold: true,
+        alignment: 'left'
+      },
+      italics: {
+        fontSize: 16,
+        italics: true,
+        alignment: 'left'
+      },
+      bold: {
+        fontSize: 16,
+        bold: true,
+        alignment: 'left'
+      },
       spacing: {
         fontSize: 6,
         alignment: 'center'
@@ -415,6 +430,36 @@ function convert(JSONString, authorName, urlString) {
       },
       quoteFormat: {
         fontSize: 12,
+        alignment: 'center',
+        bold: true
+      },
+      h1: {
+        fontSize: 20,
+        alignment: 'center',
+        bold: true
+      },
+      h2: {
+        fontSize: 18,
+        alignment: 'center',
+        bold: true
+      },
+      h3: {
+        fontSize: 16,
+        alignment: 'center',
+        bold: true
+      },
+      h4: {
+        fontSize: 14,
+        alignment: 'center',
+        bold: true
+      },
+      h5: {
+        fontSize: 12,
+        alignment: 'center',
+        bold: true
+      },
+      h6: {
+        fontSize: 10,
         alignment: 'center',
         bold: true
       }
