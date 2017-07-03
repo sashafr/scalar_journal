@@ -76,6 +76,243 @@
     return returnList;
   }
 
+  function generateObjectsFromParagraphMatrix(matrix) {
+    var firstTag;
+    var secondTag;
+    var thirdTag;
+    var pushObject = {};
+    var pushList = [];
+    for (var i = 0; i < matrix.length; i++) {
+      firstTag = null;
+      for (var j = 0; j < matrix[i].length; j++) {
+        secondTag = null;
+        for (var k = 0; k < matrix[i][j].length; k++) {
+          thirdTag = null;
+          if (matrix[i][j][k] === "") {
+            continue;
+          }
+          if (matrix[i][j][k].includes("em>") && !(matrix[i][j][k].includes("</em"))) {
+            if (firstTag === null) {
+              firstTag = "em";
+            } else if (secondTag === null) {
+              secondTag = "em";
+            } else {
+
+            }
+            var pushString = matrix[i][j][k].replace(/em>/, "");
+            if (pushString === "") {
+              continue;
+            }
+            
+            if (firstTag === "em" && secondTag === null) {
+              pushObject = {text: pushString, italics: true};
+            } else if (firstTag === "strong" && secondTag === "em") {
+              pushObject = {text: pushString, bold: true, italics: true};
+            } else if (firstTag === "u" && secondTag === "em") {
+              pushObject = {text: pushString, italics: true, decoration: "underline"};
+            } else {
+              
+            }
+            pushList.push(pushObject);
+          } else if (matrix[i][j][k].includes("u>") && !(matrix[i][j][k].includes("</u"))) {
+            if (firstTag === null) {
+              firstTag = "u";
+            } else if (secondTag === null) {
+              secondTag = "u"
+            } else {
+
+            }
+            var pushString = matrix[i][j][k].replace(/u>/, "");
+            if (pushString === "") {
+              continue;
+            }
+            
+            if (firstTag === "u" && secondTag === null) {
+              pushObject = {text: pushString, decoration: "underline"};
+            } else if (firstTag === "strong" && secondTag === "u") {
+              pushObject = {text: pushString, bold: true, decoration: "underline"};
+            } else if (firstTag === "em" && secondTag === "u") {
+              pushObject = {text: pushString, italics: true, decoration: "underline"};
+            } else {
+              
+            }
+            pushList.push(pushObject);
+          } else if (matrix[i][j][k].includes("strong>") && !(matrix[i][j][k].includes("</strong"))) {
+            if (firstTag === null) {
+              firstTag = "strong";
+            } else if (secondTag === null) {
+              secondTag = "strong";
+            } else {
+
+            }
+            var pushString = matrix[i][j][k].replace(/strong>/, "");
+            if (pushString === "") {
+              continue;
+            }
+            
+            if (firstTag === "strong" && secondTag === null) {
+              pushObject = {text: pushString, bold: true};
+            } else if (firstTag === "em" && secondTag === "strong") {
+              pushObject = {text: pushString, bold: true, italics: true};
+            } else if (firstTag === "u" && secondTag === "strong") {
+              pushObject = {text: pushString, bold: true, decoration: "underline"};
+            } else {
+              
+            }
+            pushList.push(pushObject);
+          } else if (matrix[i][j][k].includes("em>") && matrix[i][j][k].includes("</em")) {
+            var pushString = matrix[i][j][k].replace(/em>|<\/em/g, "");
+            if (pushString === "") {
+              continue;
+            }
+            if (firstTag === null && secondTag === null) {
+              pushObject = {text: pushString, italics: true};
+            } else if (firstTag === "strong" && secondTag === "u") {
+              pushObject = {text: pushString, bold: true, decoration: "underline", italics: true};
+            } else if (firstTag === "u" && secondTag === "strong") {
+              pushObject = {text: pushString, bold: true, decoration: "underline", italics: true};
+            } else if (firstTag === "strong" && secondTag === null) {
+              pushObject = {text: pushString, bold: true, italics: true};
+            } else if (firstTag === "u" && secondTag === null) {
+              pushObject = {text: pushString, italics: true, decoration: "underline"};
+            } else {
+
+            }
+            pushList.push(pushObject);
+          } else if (matrix[i][j][k].includes("u>") && matrix[i][j][k].includes("</u")) {
+            var pushString = matrix[i][j][k].replace(/u>|<\/u/g, "");
+            if (pushString === "") {
+              continue;
+            }
+            
+            if (firstTag === null && secondTag === null) {
+              pushObject = {text: pushString, decoration: "underline"};
+            } else if (firstTag === "strong" && secondTag === "em") {
+              pushObject = {text: pushString, italics: true, decoration: "underline", bold: true};
+            } else if (firstTag === "em" && secondTag === "strong") {
+              pushObject = {text: pushString, italics: true, decoration: "underline", bold: true};
+            } else if (firstTag === "strong" && secondTag === null) {
+              pushObject = {text: pushString, bold: true, decoration: "underline"};
+            } else if (firstTag === "em" && secondTag === null) {
+              pushObject = {text: pushString, italics: true, decoration: "underline"};
+            } else {
+
+            }
+            pushList.push(pushObject);
+          } else if (matrix[i][j][k].includes("strong>") && matrix[i][j][k].includes("</strong")) {
+            var pushString = matrix[i][j][k].replace(/strong>|<\/strong/g, "");
+            if (pushString === "") {
+              continue;
+            }
+            
+            if (firstTag === null && secondTag === null) {
+              pushObject = {text: pushString, bold: true};
+            } else if (firstTag === "em" && secondTag === "u") {
+              pushObject = {text: pushString, italics: true, decoration: "underline", bold: true};
+            } else if (firstTag === "u" && secondTag === "em") {
+              pushObject = {text: pushString, italics: true, decoration: "underline", bold: true};
+            } else if (firstTag === "em" && secondTag === null) {
+              pushObject = {text: pushString, italics: true, bold: true};
+            } else if (firstTag === "u" && secondTag === null) {
+              pushObject = {text: pushString, bold: true, decoration: "underline"};
+            } else {
+
+            }
+            pushList.push(pushObject);
+          } else if (!(matrix[i][j][k].includes("em>")) && matrix[i][j][k].includes("</em")) {
+            var pushString = matrix[i][j][k].replace(/<\/em/, "");
+            if (pushString === "") {
+              continue;
+            }
+            
+            if (firstTag === "u" && secondTag === null) {
+              pushObject = {text: pushString, decoration: "underline"};
+            } else if (firstTag === "strong" && secondTag === "u") {
+              pushObject = {text: pushString, bold: true, decoration: "underline"};
+            } else if (firstTag = "em" && secondTag == "u") {
+              pushObject = {text: pushString, italics: true, decoration: "underline"};
+            } else {
+              
+            }
+            pushList.push(pushObject);
+            if (firstTag === "em") {
+              firstTag = null;
+              secondTag = null;
+            } else if (secondTag === "em") {
+              secondTag = null;
+            } else {
+
+            }
+          } else if (!(matrix[i][j][k].includes("u>")) && matrix[i][j][k].includes("</u")) {
+            var pushString = matrix[i][j][k].replace(/<\/u/, "");
+            if (pushString === "") {
+              continue;
+            }
+            
+            if (firstTag === "u" && secondTag === null) {
+              pushObject = {text: pushString, decoration: "underline"};
+            } else if (firstTag === "strong" && secondTag === "u") {
+              pushObject = {text: pushString, bold: true, decoration: "underline"};
+            } else if (firstTag === "em" && secondTag === "u") {
+              pushObject = {text: pushString, italics: true, decoration: "underline"};
+            } else {
+              
+            }
+            pushList.push(pushObject);
+            if (firstTag === "u") {
+              firstTag = null;
+              secondTag = null;
+            } else if (secondTag === "u") {
+              secondTag = null;
+            } else {
+
+            }
+          } else if (!(matrix[i][j][k].includes("strong>")) && matrix[i][j][k].includes("</strong")) {
+            var pushString = matrix[i][j][k].replace(/<\/strong/, "");
+            if (pushString === "") {
+              continue;
+            }
+            
+            if (firstTag === "strong" && secondTag === null) {
+              pushObject = {text: pushString, bold: true};
+            } else if (firstTag === "em" && secondTag === "strong") {
+              pushObject = {text: pushString, bold: true, italics: true};
+            } else if (firstTag === "u" && secondTag === "strong") {
+              pushObject = {text: pushString, bold: true, decoration: "underline"};
+            } else {
+              
+            }
+            pushList.push(pushObject);
+            if (firstTag === "strong") {
+              firstTag = null;
+              secondTag = null;
+            } else if (secondTag === "strong") {
+              secondTag = null;
+            } else {
+
+            }
+          } else {
+            var pushString = matrix[i][j][k];
+            if (pushString === "") {
+              continue;
+            }
+            if (firstTag === "strong" && secondTag === null) {
+              pushObject = {text: pushString, bold: true};
+            } else if (firstTag === "em" && secondTag === null) {
+              pushObject = {text: pushString, italics: true};
+            } else if (firstTag === "u" && secondTag === null) {
+              pushObject = {text: pushString, decoration: "underline"};
+            } else {
+              pushObject = {text: pushString};     
+            }
+            pushList.push(pushObject);
+          }
+        }
+      }
+    }
+    return pushList;
+  }
+
     function filterOut(descriptionString) {
       if (descriptionString.includes("DescTags:")) {
         descriptionString = descriptionString.replace(/DescTags: .*/, "");
@@ -91,24 +328,25 @@
       return descriptionString;
     }
 
-
-   function generateBoldParagraphElement(tagString) {
-    tagString = tagString.replace("ong>", "");
-    pushObject = {text: tagString, style: "boldBody"};
-    return pushObject;
+   function generateCTDAElement(paragraphString) {
+      var hrefMatch = paragraphString.match(/href=".*" r|href=".*">/)[0];
+      var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
+      hrefMatch = hrefMatch.replace(/href="|" r/g, "");
+      textMatch = textMatch.replace(/resource="|" data-size/g, "");
+      textMatch = fixUpText(textMatch);
+      var returnObject = {text: textMatch, link: hrefMatch, style: "linkBody"};
+      return returnObject;
    }
 
-   function generateItalicParagraphElement(tagString) {
-    tagString = tagString.replace("m>", "");
-    pushObject = {text: tagString, style: "italicBody"};
-    return pushObject;
-   }
-
-   function generateUnderlineParagraphElement(tagString) {
-    tagString = tagString.replace(">", "");
-    tagString = tagString.replace("</", "");
-    pushObject = {text: tagString, style: "underlineBody"};
-    return pushObject;
+   function generateNYUElement(paragraphString) {
+    console.log(paragraphString);
+      var hrefMatch = paragraphString.match(/href=".*" r|href=".*">/)[0];
+      var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
+      hrefMatch = hrefMatch.replace(/href="|" r/g, "");
+      textMatch = textMatch.replace(/resource="|" data-size/g, "");
+      textMatch = fixUpText(textMatch);
+      var returnObject = {text: textMatch, link: hrefMatch, style: "linkBody"};
+      return returnObject;
    }
 
    function generateYoutubeLinkElement(paragraphString) {
@@ -118,6 +356,7 @@
    	textMatch = textMatch.replace(/".*/, "");
    	hrefMatch = hrefMatch.replace(/href="|"/g, "");
    	hrefMatch = hrefMatch.replace(/v\//, "watch?v=");
+    hrefMatch = hrefMatch.replace(/resource=.*/, "");
    	textMatch = fixUpText(textMatch);
    	var returnObject = {text: textMatch, link: hrefMatch, style: "linkBody"};
    	return returnObject;	
@@ -134,19 +373,16 @@
    }
 
    function generateInternetArchiveLinkElement(paragraphString) {
-   	console.log(paragraphString);
    	var linkMatch = paragraphString.match(/http:\/\/.*" r|http:\/\/.*">|http:\/\/.*" data-size/)[0];
    	linkMatch = linkMatch.replace(/" r|" data-size|">/, "");
    	var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
    	textMatch = textMatch.replace(/resource="|" data-size/g, "");
    	textMatch = fixUpText(textMatch);
    	var returnObject = {text: textMatch, link: linkMatch, style: "linkBody"};
-   	console.log(returnObject);
    	return returnObject;
    }
 
    function generateMetImageLinkElement(paragraphString) {
-   	console.log(paragraphString);
    	var linkMatch = paragraphString.match(/http:\/\/.*"|http:\/\/.*" r/)[0];
    	linkMatch = linkMatch.replace(/" r|"/, "");
    	var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
@@ -180,6 +416,10 @@
    	var textString = paragraphString.match(/>.*/)[0];
    	linkString = linkString.slice(0, linkString.length - 2);
    	textString = textString.slice(1, textString.length);
+    if (linkString.includes("youtube.com") && linkString.includes("/v/")) {
+      linkString = linkString.replace(/v\//, "watch?v=");
+      linkString = linkString.replace(/ r.*/, "");
+    }
    	var returnObject = {text: textString, link: linkString, style: "linkBody"};
    	return returnObject;
    }
@@ -230,11 +470,10 @@
    function analyzeParagraph(paragraphString, siteURL) {
     var splitRegex = /<\/span><\/span>|<span|<\/span>|<a h|<\/a>|<a cl/g;
     paragraphStringMatches = paragraphString.split(splitRegex);
-    console.log(paragraphStringMatches);
     var textList = [];
     var pushObject = {};
     for (var i = 0; i < paragraphStringMatches.length; i++) {
-      if (paragraphStringMatches[i].includes('ass="') && (paragraphStringMatches[i].includes('youtube.com')) && !(paragraphStringMatches[i].includes('archive.org'))) {
+      if (paragraphStringMatches[i].includes('ass="') && ((paragraphStringMatches[i].includes('youtube.com')) || (paragraphStringMatches[i].includes('youtube.googleapis.com'))) && !(paragraphStringMatches[i].includes('archive.org'))) {
       	pushObject = generateYoutubeLinkElement(paragraphStringMatches[i]);
       	textList.push(pushObject);
       }	else if (paragraphStringMatches[i].includes('ass="') && (paragraphStringMatches[i].includes('archive.org'))) {
@@ -246,6 +485,12 @@
       } else if (paragraphStringMatches[i].includes('name="') && (paragraphStringMatches[i].includes('vimeo.com'))) {
       	pushObject = generateVimeoLinkElement(paragraphStringMatches[i]);
       	textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes('name="') && (paragraphStringMatches[i].includes('hidvl.nyu.edu'))) {
+        pushObject = generateNYUElement(paragraphStringMatches[i]);
+        textList.push(pushObject);
+      } else if (paragraphStringMatches[i].includes('name="') && (paragraphStringMatches[i].includes('ctda.library.miami.edu'))) {
+        pushObject = generateCTDAElement(paragraphStringMatches[i]);
+        textList.push(pushObject);
       } else if (paragraphStringMatches[i].includes('name="') && (paragraphStringMatches[i].includes('videos.criticalcommons.org'))) {
       	pushObject = generateCriticalCommonsVideoLinkElement(paragraphStringMatches[i]);
       	textList.push(pushObject);
@@ -283,44 +528,29 @@
             analyzedTextList[m][n] = parseParagraph(analyzedTextList[m][n]);
           }
         }
-        console.log(analyzedTextList);
-        textList.push({text: paragraphStringMatches[i], style: "body"});
+        var objectFromMatrix = generateObjectsFromParagraphMatrix(analyzedTextList);
+        if (objectFromMatrix.length === 0) {
+          continue;
+        }
+        textList = textList.concat(objectFromMatrix);
       }
     }
-    var returnObject = {text: textList};
+    var returnObject = {text: textList, style: "body"};
     return returnObject;
    }
 
    function analyzeListContent(listTextVal) {
-   	listTextVal = listTextVal.replace(/<u>/, "<underline>");
-   	listTextVal = listTextVal.replace(/<\/u/, "<underline>");
-   	listArray = listTextVal.split(/<under|<str|<e|<\/strong>|<\/em>/);
-   	var pushObject = {};
-   	var objectList = [];
-   	console.log("8");
-   	console.log(listArray);
-   	for (var i = 0; i < listArray.length; i++) {
-      if (listArray[i].includes("ong>")) {
-      	listArray[i] = listArray[i].replace("ong>", "");
-        pushObject = generateBoldParagraphElement(listArray[i]);
-        objectList.push(pushObject);
-      } else if (listArray[i].includes("line>")) {
-      	listArray[i] = listArray[i].replace(/line>|>/g, "");
-      	pushObject = generateUnderlineParagraphElement(listArray[i]);
-        objectList.push(pushObject);
-      } else if (listArray[i].includes("m>")) {
-      	listArray[i] = listArray[i].replace(/m>/, "");
-      	pushObject = generateItalicParagraphElement(listArray[i]);
-        objectList.push(pushObject);
-      } else if (listArray[i] === "") {
-      	continue;
-   	  } else {
-      	objectList.push({text: listArray[i]});
+    var analyzedTextList = parseParagraph(listTextVal);
+    for (var m = 0; m < analyzedTextList.length; m++) {
+      analyzedTextList[m] = parseParagraph(analyzedTextList[m]);
+    }
+    for (var m = 0; m < analyzedTextList.length; m++) {
+      for (var n = 0; n < analyzedTextList[m].length; n++) {
+        analyzedTextList[m][n] = parseParagraph(analyzedTextList[m][n]);
       }
-   	}
-   	console.log("9");
-   	console.log(objectList);
-   	return objectList;
+    }
+    var objectFromMatrix = generateObjectsFromParagraphMatrix(analyzedTextList);
+    return objectFromMatrix;
    }
 
     function generateListObject(tagString, tagType) {
@@ -344,9 +574,9 @@
           var listTextList = analyzeListContent(splitArray[i]);
           var listObjVal = {text: listTextList, style: "listVal"};
           if (tagType === "ul") {
-            listObject["ul"].push(listObjVal);
+            listObject["ul"] = listObject["ul"].concat(listObjVal);
           } else {
-            listObject["ol"].push(listObjVal);
+            listObject["ol"] = listObject["ol"].concat(listObjVal);
           }
 
         }
@@ -465,7 +695,6 @@
       var titleList = JSONDescAndCont["http://purl.org/dc/terms/title"];
 			var titleIntermediary = titleList[0];
 			var title = titleIntermediary["value"];
-		console.log(contentParagraphMatches);
       var contentList = filterContent(contentParagraphMatches, siteURL);
 			var docDef = {
         pageSize: 'LETTER',
@@ -514,27 +743,10 @@
 						bold: false,
 						alignment: 'left'
 					},
-          boldBody: {
-            fontSize: 16,
-            bold: true,
-            alignment: 'left'
-          },
-          italicBody: {
-            fontSize: 16,
-            bold: false,
-            italics: true,
-            alignment: 'left'
-          },
           linkBody: {
           	fontSize: 16,
           	underline: true,
           	color: "#99ccff"
-          },
-          underlineBody: {
-            fontSize: 16,
-            bold: false,
-            decoration: 'underline',
-            alignment: 'left'
           },
           strikethroughBody: {
             fontSize: 16,
@@ -597,6 +809,188 @@
 			pdfMake.createPdf(docDef).download(authorName + ' - ' + 'pdfVal.pdf');
 		};
 		var JSONTestVal = {
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/bulfinch-gatehouses" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "http://mallhistory.org/files/thumbnails/263455267df0bdaad6df01c71dc8719c.jpg", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-07-03T11:27:24-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:80", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/bulfinch-gatehouses.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/bulfinch-gatehouses.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/bulfinch-gatehouses.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Bulfinch Gatehouses", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "Architect of the Capitol, Charles Bulfinch, designed the gatehouses and matching gateposts in the 1820s. They originally flanked a grand pedestrian entrance on the west side of <a href=\"http://mallhistory.org/items/show/59\">the Capitol</a>. They were removed\u00a0in 1874 and placed in their present locations\u00a0in 1880. Currently, one gatehouse and three gateposts are in place at the corner of 15th and Constitution Avenue; the other gatehouse is at the corner of 17th and Constitution, and the remaining gateposts are located at the entrance to the National Arboretum in north-eastern Washington.", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://mallhistory.org/files/original/263455267df0bdaad6df01c71dc8719c.jpg", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-07-03T11:27:24-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:197", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/bulfinch-gatehouses", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/contributor" : [
+      { "value" : "Charles Bulfinch", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "mallhistory.org", "type" : "literal" },
+      { "value" : "Library of Congress Prints and Photographs Division. <a href=\"http://www.loc.gov/pictures/item/dc0828/\">View original</a>.", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#sourceLocation" : [
+      { "value" : "http://mallhistory.org/files/show/13", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/date" : [
+      { "value" : "2012-08-15T12:37:15+00:00", "type" : "literal" },
+      { "value" : "c. 1827 (Designed)", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/identifier" : [
+      { "value" : "Bulfinch Blueprint.jpg", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/subject" : [
+      { "value" : "ghost mall", "type" : "literal" },
+      { "value" : "design & monuments", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/spatial" : [
+      { "value" : "38.89248322345,-77.033965587616", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/coverage" : [
+      { "value" : "1800-1829", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Composite", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#category" : [
+      { "value" : "term", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-06-12T08:51:26-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:60", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.24", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.24", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.24" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "24", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Test", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep No more; and by a sleep, to say we end the heart-ache, and the thousand natural shocks that Flesh is heir to? DescTags: moo, oink", "type" : "literal" }
+    ],
+    "http://rdfs.org/sioc/ns#content" : [
+      { "value" : "<h1>This Is The First Heading</h1><h2>Second Heading</h2><h3>Third Heading</h3><h4>Fourth Heading</h4><h5>Fifth Heading</h5>Lorem ipsum dolor sit amet, modo noster aliquid an mea. Eu vim nominati democritum, has quando iisque cu.<br /><br /><a class=\"inline\" resource=\"computer-chronicles\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/Computer_Chronicles/format=MPEG4\"></a><br /><br /><a class=\"inline\" resource=\"computer-chronicles-home-pcs-1990\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/youtube-m-DHVClSvTo/format=JPEG\"></a><br /><br />Id eos falli corrumpit disputando, mea ex vide delectus. Postea vocibus at vix, nullam forensibus est eu.<br /><br /><a class=\"inline\" resource=\"media/puppy\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/c7c9063c6d7884b40eefe1f70df69f03--baby-beagle-beagle-puppies.jpg\"></a><br /><br />Pri eu brute fuisset noluisse, ut vix assum complectitur. Nibh everti efficiantur ut duo, eum tale agam delicatissimi eu.<ol><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu.</span></li></ol>Est te sumo epicuri, ei vis exerci nonumes, ea mazim graece integre usu. <a href=\"http://www.youtube.com/v/32yJSz9j4XY\" resource=\"impossibly-cute-husky-puppy-wolfies-first-week\" data-size=\"small\" data-align=\"right\" data-caption=\"description\">Debet</a> animal officiis nec te, nec atqui persius fuisset eu. Vel assum everti sententiae an. Diceret detracto voluptaria cu usu. At vis diam civibus suscipiantur.<ul><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Morbi consectetur, neque laoreet tristique maximus, turpis nulla mollis arcu, vel sagittis libero arcu nec nisl.&nbsp;</span></li></ul>At reque munere eam, ad evertitur comprehensam has. Pri altera labore in. Ius ea oratio dissentiunt. His ad etiam iudicabit, vim id falli nulla. Rebum nostro facilis ex sea, in enim volumus mel, ea vim tota legendos. Qui te nibh quodsi persequeris, cu viderer tacimates rationibus cum.<blockquote><p>This is a quote</p></blockquote>Etiam aperiam cum ei, pri oratio tamquam tacimates eu, erant omittam ex eos. Te his eros senserit. Dicunt inermis per ea, pri at vero mucius oportere. Delicata democritum in eum, novum voluptaria per ex.<br />&nbsp;<pre>Hello World\nThis is code\n</pre><br /><a href=\"http://nintendo.com\">Link</a><br /><br /><a class=\"inline\" resource=\"computer-chronicles---the-macintosh-computer-1985\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/youtube-iiuP-HYySNQ/format=JPEG\"></a><br /><br /><a class=\"inline\" resource=\"imax-encode-demo-using-premiere-pro\" data-size=\"small\" data-align=\"right\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://player.vimeo.com/video/206345057\"></a><br /><br /><strong>Velit sanctus suscipit ad vix, tibique assueverit referrentur ex his</strong>. <em>Amet vocent te mei, vis sapientem disputando et.</em> Ea has lorem <u>utroque consulatu, cu quis dico quo. Ne est modus vivendo dissentias</u>, per in atqui mucius noster, <a href=\"http://nytimes.com\">maiorum</a> habemus&nbsp;an. No mei veniam prompta molestiae, per no quodsi minimum mentitum. <span style=\"background-color:#008000;\">Ad quod minim posidonium duo</span><span style=\"color:#800000;\">, legere eruditi habemus an vim,</span> <span style=\"color:#2F4F4F;\"><span style=\"background-color:#800000;\">mel quod tibique ei.</span></span><ul><li><u>This</u> <em>is part</em> of <strong>a list</strong></li><li><em>Ditto</em></li></ul><em>It is <strong>a truth universally</strong> acknowledged, that a <u><strong>single man in possession of </strong></u>a good fortune, <u>must be in want of a wife</u>.</em> <strong>However little<em> known the feelings or</em> views of such a<u> man may be</u> on<u><em> his first entering a neighbourhood</em></u>,</strong> <u>this <em>truth is so well fixed in the minds of</em><strong> the surrounding families, that he<em> is considered the rightful property</em></strong> of some one or other of their <strong><em>daughters.</em></strong></u><br /><br /><a class=\"inline\" resource=\"portrait-of-napoleon-i\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://images.metmuseum.org/CRDImages/es/web-large/DT5157.jpg\"></a><a class=\"inline\" resource=\"star-wars-and-trailers\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://videos.criticalcommons.org/transcoded/http/www.criticalcommons.org/Members/MCIMR/clips/star-wars-and-trailers/video_file/mp4-high/star-wars-the-force-awakens-trailer-official-mp4.mp4\"></a><br /><br /><a class=\"inline\" resource=\"bulfinch-gatehouses\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://mallhistory.org/files/original/263455267df0bdaad6df01c71dc8719c.jpg\"></a><br /><a class=\"inline\" resource=\"erno-abelesz-3\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://youtube.googleapis.com/v/jPyEJFfYFvg\"></a><br /><a class=\"inline\" resource=\"interview-with-rosemary-richmond-executive-director-of-the-aich\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://hidvl.nyu.edu/video/000518016.html\"></a><br /><a class=\"inline\" resource=\"the-versailles\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://ctda.library.miami.edu/media/digitalobjects/cta/0029/cta00290000090001001.tiff\"></a><br /><br /><br /><a class=\"inline\" resource=\"impossibly-cute-husky-puppy-wolfies-first-week\" data-size=\"small\" data-align=\"left\" data-caption=\"none\" name=\"scalar-inline-media\" href=\"http://www.youtube.com/v/32yJSz9j4XY\"></a>", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-07-03T13:19:00-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:199", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/references" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/impossibly-cute-husky-puppy-wolfies-first-week", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/the-versailles", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/interview-with-rosemary-richmond-executive-director-of-the-aich", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/erno-abelesz-3", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/bulfinch-gatehouses", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/portrait-of-napoleon-i", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/star-wars-and-trailers", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles", "type" : "uri" },
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles-home-pcs-1990", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#category" : [
+      { "value" : "term", "type" : "literal" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ]
+  },
+
+  "urn:scalar:term:199" : {
+    "http://www.openannotation.org/ns/hasBody" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.24", "type" : "uri" }
+    ],
+    "http://www.openannotation.org/ns/hasTarget" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals#datetime=2017-07-03T13:19:00-05:00&type=term", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://www.openannotation.org/ns/Annotation", "type" : "uri" }
+    ]
+  },
+
   "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles" : {
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
       { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
@@ -623,7 +1017,7 @@
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles.1", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
-      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
     ]
   },
 
@@ -676,94 +1070,6 @@
     ]
   },
 
-  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index" : {
-    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
-      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Composite", "type" : "uri" }
-    ],
-    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
-      { "value" : "1", "type" : "literal" }
-    ],
-    "http://scalar.usc.edu/2012/01/scalar-ns#category" : [
-      { "value" : "term", "type" : "literal" }
-    ],
-    "http://www.w3.org/ns/prov#wasAttributedTo" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
-    ],
-    "http://purl.org/dc/terms/created" : [
-      { "value" : "2017-06-12T08:51:26-05:00", "type" : "literal" }
-    ],
-    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
-      { "value" : "urn:scalar:content:60", "type" : "uri" }
-    ],
-    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
-    ],
-    "http://purl.org/dc/terms/hasVersion" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
-    ],
-    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
-      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
-    ]
-  },
-
-  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22" : {
-    "http://open.vocab.org/terms/versionnumber" : [
-      { "value" : "22", "type" : "literal" }
-    ],
-    "http://purl.org/dc/terms/title" : [
-      { "value" : "Test", "type" : "literal" }
-    ],
-    "http://purl.org/dc/terms/description" : [
-      { "value" : "To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer The slings and arrows of outrageous fortune, Or to take Arms against a Sea of troubles, And by opposing end them: to die, to sleep No more; and by a sleep, to say we end the heart-ache, and the thousand natural shocks that Flesh is heir to? DescTags: moo, oink", "type" : "literal" }
-    ],
-    "http://rdfs.org/sioc/ns#content" : [
-      { "value" : "<h1>This Is The First Heading</h1><h2>Second Heading</h2><h3>Third Heading</h3><h4>Fourth Heading</h4><h5>Fifth Heading</h5>Lorem ipsum dolor sit amet, modo noster aliquid an mea. Eu vim nominati democritum, has quando iisque cu.<br /><br /><a class=\"inline\" resource=\"computer-chronicles\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/Computer_Chronicles/format=MPEG4\"></a><br /><br /><a class=\"inline\" resource=\"computer-chronicles-home-pcs-1990\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/youtube-m-DHVClSvTo/format=JPEG\"></a><br /><br />Id eos falli corrumpit disputando, mea ex vide delectus. Postea vocibus at vix, nullam forensibus est eu.<br /><br /><a class=\"inline\" resource=\"media/puppy\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/c7c9063c6d7884b40eefe1f70df69f03--baby-beagle-beagle-puppies.jpg\"></a><br /><br />Pri eu brute fuisset noluisse, ut vix assum complectitur. Nibh everti efficiantur ut duo, eum tale agam delicatissimi eu.<ol><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu.</span></li></ol>Est te sumo epicuri, ei vis exerci nonumes, ea mazim graece integre usu. Debet animal officiis nec te, nec atqui persius fuisset eu. Vel assum everti sententiae an. Diceret detracto voluptaria cu usu. At vis diam civibus suscipiantur.<ul><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis neque eget tortor pulvinar malesuada at mollis odio. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Maecenas interdum velit dui, eu faucibus leo interdum eu. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </span></li><li><span style=\"color: rgb(0, 0, 0); font-family: 'Open Sans', Arial, sans-serif; font-size: 14px; text-align: justify;\">Morbi consectetur, neque laoreet tristique maximus, turpis nulla mollis arcu, vel sagittis libero arcu nec nisl.&nbsp;</span></li></ul>At reque munere eam, ad evertitur comprehensam has. Pri altera labore in. Ius ea oratio dissentiunt. His ad etiam iudicabit, vim id falli nulla. Rebum nostro facilis ex sea, in enim volumus mel, ea vim tota legendos. Qui te nibh quodsi persequeris, cu viderer tacimates rationibus cum.<blockquote><p>This is a quote</p></blockquote>Etiam aperiam cum ei, pri oratio tamquam tacimates eu, erant omittam ex eos. Te his eros senserit. Dicunt inermis per ea, pri at vero mucius oportere. Delicata democritum in eum, novum voluptaria per ex.<br />&nbsp;<pre>Hello World\nThis is code\n</pre><br /><a href=\"http://nintendo.com\">Link</a><br /><br /><a class=\"inline\" resource=\"computer-chronicles---the-macintosh-computer-1985\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://www.archive.org/download/youtube-iiuP-HYySNQ/format=JPEG\"></a><br /><br /><a class=\"inline\" resource=\"imax-encode-demo-using-premiere-pro\" data-size=\"small\" data-align=\"right\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://player.vimeo.com/video/206345057\"></a><br /><br /><strong>Velit sanctus suscipit ad vix, tibique assueverit referrentur ex his</strong>. <em>Amet vocent te mei, vis sapientem disputando et.</em> Ea has lorem <u>utroque consulatu, cu quis dico quo. Ne est modus vivendo dissentias</u>, per in atqui mucius noster, <a href=\"http://nytimes.com\">maiorum</a> habemus&nbsp;an. No mei veniam prompta molestiae, per no quodsi minimum mentitum. <span style=\"background-color:#008000;\">Ad quod minim posidonium duo</span><span style=\"color:#800000;\">, legere eruditi habemus an vim,</span> <span style=\"color:#2F4F4F;\"><span style=\"background-color:#800000;\">mel quod tibique ei.</span></span><ul><li><u>This</u> <em>is part</em> of <strong>a list</strong></li><li><em>Ditto</em></li></ul><em>It is <strong>a truth universally</strong> acknowledged, that a <u><strong>single man in possession of </strong></u>a good fortune, <u>must be in want of a wife</u>.</em> <strong>However little<em> known the feelings or</em> views of such a<u> man may be</u> on<u><em> his first entering a neighbourhood</em></u>,</strong> <u>this <em>truth is so well fixed in the minds of</em><strong> the surrounding families, that he<em> is considered the rightful property</em></strong> of some one or other of their <strong><em>daughters.</em></strong></u><br /><br /><a class=\"inline\" resource=\"portrait-of-napoleon-i\" data-size=\"small\" data-align=\"left\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://images.metmuseum.org/CRDImages/es/web-large/DT5157.jpg\"></a><a class=\"inline\" resource=\"star-wars-and-trailers\" data-size=\"small\" data-align=\"center\" data-caption=\"description\" name=\"scalar-inline-media\" href=\"http://videos.criticalcommons.org/transcoded/http/www.criticalcommons.org/Members/MCIMR/clips/star-wars-and-trailers/video_file/mp4-high/star-wars-the-force-awakens-trailer-official-mp4.mp4\"></a><br /><br /><a class=\"inline\" resource=\"impossibly-cute-husky-puppy-wolfies-first-week\" data-size=\"small\" data-align=\"left\" data-caption=\"none\" name=\"scalar-inline-media\" href=\"http://www.youtube.com/v/32yJSz9j4XY\"></a>", "type" : "literal" }
-    ],
-    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
-      { "value" : "plain", "type" : "literal" }
-    ],
-    "http://www.w3.org/ns/prov#wasAttributedTo" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
-    ],
-    "http://purl.org/dc/terms/created" : [
-      { "value" : "2017-07-02T20:45:11-05:00", "type" : "literal" }
-    ],
-    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
-      { "value" : "urn:scalar:version:193", "type" : "uri" }
-    ],
-    "http://purl.org/dc/terms/isVersionOf" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
-    ],
-    "http://purl.org/dc/terms/references" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/impossibly-cute-husky-puppy-wolfies-first-week", "type" : "uri" },
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985", "type" : "uri" },
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy", "type" : "uri" },
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro", "type" : "uri" },
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/portrait-of-napoleon-i", "type" : "uri" },
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/star-wars-and-trailers", "type" : "uri" },
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles", "type" : "uri" },
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles-home-pcs-1990", "type" : "uri" }
-    ],
-    "http://scalar.usc.edu/2012/01/scalar-ns#category" : [
-      { "value" : "term", "type" : "literal" }
-    ],
-    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
-      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
-    ]
-  },
-
-  "urn:scalar:term:193" : {
-    "http://www.openannotation.org/ns/hasBody" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
-    ],
-    "http://www.openannotation.org/ns/hasTarget" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals#datetime=2017-07-02T20:45:11-05:00&type=term", "type" : "uri" }
-    ],
-    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
-      { "value" : "http://www.openannotation.org/ns/Annotation", "type" : "uri" }
-    ]
-  },
-
   "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985" : {
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
       { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
@@ -790,7 +1096,7 @@
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles---the-macintosh-computer-1985.1", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
-      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
     ]
   },
 
@@ -887,7 +1193,7 @@
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/computer-chronicles-home-pcs-1990.1", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
-      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
     ]
   },
 
@@ -952,6 +1258,87 @@
     ]
   },
 
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/erno-abelesz-3" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#thumbnail" : [
+      { "value" : "https://vhaonline.usc.edu/VHAimages/icons/04710.jpeg", "type" : "uri" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-07-03T11:26:44-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:79", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/erno-abelesz-3.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/erno-abelesz-3.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/erno-abelesz-3.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Erno Abelesz (3)", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "Erno Abelesz, Jewish Survivor, Tape 3 (VHA Online)", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://youtube.googleapis.com/v/jPyEJFfYFvg", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-07-03T11:26:44-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:196", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/erno-abelesz-3", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "Shoah Foundation Institute Visual History Archive Online", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#sourceLocation" : [
+      { "value" : "http://vhaonline.usc.edu/viewingPage.aspx?testimonyID=6257&segmentNumber=66&TapeNumber=3", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/identifier" : [
+      { "value" : "4710", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/subject" : [
+      { "value" : "Jewish Survivor", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/language" : [
+      { "value" : "English", "type" : "literal" }
+    ],
+    "http://tempuri.org/TapeNumber" : [
+      { "value" : "3", "type" : "literal" }
+    ]
+  },
+
   "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro" : {
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
       { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
@@ -978,7 +1365,7 @@
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/imax-encode-demo-using-premiere-pro.1", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
-      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
     ]
   },
 
@@ -1056,7 +1443,7 @@
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/impossibly-cute-husky-puppy-wolfies-first-week.1", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
-      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
     ]
   },
 
@@ -1111,6 +1498,167 @@
     ]
   },
 
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/the-versailles" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-07-03T11:22:27-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:77", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/the-versailles.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/the-versailles.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/the-versailles.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "The Versailles", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "This  caf&eacute;-teatro  operated at the Versailles Hotel. This 1940s postcard for the hotel announces 'restricted clientele,' a code phrase that meant Blacks and Jews were not allowed. N&eacute;stor Cabell owned the&nbsp; caf&eacute;-teatro &nbsp;until the hotel became a condominium. Image courtesy of  Belle Isle Blog .", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://ctda.library.miami.edu/media/digitalobjects/cta/0029/cta00290000090001001.tiff", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-07-03T11:22:27-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:194", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/the-versailles", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isReferencedBy" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "Cuban Theater Digital Archive, Theater Ephemera Digital Collection", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/type" : [
+      { "value" : "Image", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/subject" : [
+      { "value" : "Advertising postcards", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/interview-with-rosemary-richmond-executive-director-of-the-aich" : {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#isLive" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-07-03T11:23:11-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:content:78", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#version" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/interview-with-rosemary-richmond-executive-director-of-the-aich.1", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/hasVersion" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/interview-with-rosemary-richmond-executive-director-of-the-aich.1", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
+    ]
+  },
+
+  "http://dev.upenndigitalscholarship.org/scalar/farm-animals/interview-with-rosemary-richmond-executive-director-of-the-aich.1" : {
+    "http://open.vocab.org/terms/versionnumber" : [
+      { "value" : "1", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/title" : [
+      { "value" : "Interview with Rosemary Richmond, Executive Director of the AICH", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/description" : [
+      { "value" : "Synopsis: Rosemary Richmond (Akwesasne Mohawk of the Bear Clan) is a third-generation member of New York City's American Indian Community. She has worked for the American Indian Community House (AICH) since 1975, and has been its Executive Director since 1987. Under her leadership, AICH (www.aich.org) has grown from a loose consortium of groups and individuals into a multi-faceted social support and cultur...", "type" : "literal" }
+    ],
+    "http://simile.mit.edu/2003/10/ontologies/artstor#url" : [
+      { "value" : "http://hidvl.nyu.edu/video/000518016.html", "type" : "uri" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#defaultView" : [
+      { "value" : "plain", "type" : "literal" }
+    ],
+    "http://www.w3.org/ns/prov#wasAttributedTo" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/users/8", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/created" : [
+      { "value" : "2017-07-03T11:23:11-05:00", "type" : "literal" }
+    ],
+    "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
+      { "value" : "urn:scalar:version:195", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isVersionOf" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/interview-with-rosemary-richmond-executive-director-of-the-aich", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/isReferencedBy" : [
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index", "type" : "uri" }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
+      { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Version", "type" : "uri" }
+    ],
+    "http://purl.org/dc/terms/source" : [
+      { "value" : "Hemispheric Institute", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/type" : [
+      { "value" : "Video", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/identifier" : [
+      { "value" : "Hemi-000518016", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/subject" : [
+      { "value" : "Keywords: Richmond", "type" : "literal" },
+      { "value" : "Rosemary--Interviews", "type" : "literal" },
+      { "value" : "American Indian Community House (New York", "type" : "literal" },
+      { "value" : "N.Y.)", "type" : "literal" },
+      { "value" : "Indians of North America--New York (State)--New York", "type" : "literal" },
+      { "value" : "Indian artists--New York (State)--New York", "type" : "literal" },
+      { "value" : "Indian arts--New York (State)--New York", "type" : "literal" },
+      { "value" : "Urban Indian", "type" : "literal" },
+      { "value" : "Indigenous performance", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/rights" : [
+      { "value" : "\"Materials of the Hemispheric Institute Digital Video Library are protected by copyright. They may not be copied, downloaded, or reproduced. The owner of this work has granted NYU Libraries non-exclusive rights to include this material in the Hemispheric Institute Digital Video Library and to make it accessible to the public for educational and research purposes. Requests to purchase or for permission to use the work should be directed to the owner.\" ", "type" : "literal" }
+    ],
+    "http://purl.org/dc/terms/spatial" : [
+      { "value" : "Location: Interviewed in New York City in July 2005.", "type" : "literal" }
+    ]
+  },
+
   "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy" : {
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
       { "value" : "http://scalar.usc.edu/2012/01/scalar-ns#Media", "type" : "uri" }
@@ -1137,7 +1685,7 @@
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/media/puppy.1", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
-      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
     ]
   },
 
@@ -1203,7 +1751,7 @@
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/portrait-of-napoleon-i.1", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
-      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
     ]
   },
 
@@ -1287,7 +1835,7 @@
       { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/star-wars-and-trailers.1", "type" : "uri" }
     ],
     "http://scalar.usc.edu/2012/01/scalar-ns#citation" : [
-      { "value" : "method=instancesof/content;methodNumNodes=9;", "type" : "literal" }
+      { "value" : "method=instancesof/content;methodNumNodes=13;", "type" : "literal" }
     ]
   },
 
@@ -1348,15 +1896,15 @@
     ]
   },
 
-  "urn:scalar:tag:193:193" : {
+  "urn:scalar:tag:199:199" : {
     "http://scalar.usc.edu/2012/01/scalar-ns#urn" : [
-      { "value" : "urn:scalar:tag:193:193", "type" : "uri" }
+      { "value" : "urn:scalar:tag:199:199", "type" : "uri" }
     ],
     "http://www.openannotation.org/ns/hasBody" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.24", "type" : "uri" }
     ],
     "http://www.openannotation.org/ns/hasTarget" : [
-      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.22", "type" : "uri" }
+      { "value" : "http://dev.upenndigitalscholarship.org/scalar/farm-animals/index.24", "type" : "uri" }
     ],
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#type" : [
       { "value" : "http://www.openannotation.org/ns/Annotation", "type" : "uri" }
