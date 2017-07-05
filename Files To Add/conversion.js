@@ -1,9 +1,37 @@
+/* Assuming that CORS is enabled, get the image from
+   the URL, return the object to hold the image data */
+function getBase64FromImageUrl(url) {
+    var img = new Image();
+
+    img.setAttribute('crossOrigin', 'anonymous');
+
+    img.onload = function () {
+        var canvas = document.createElement("canvas");
+        canvas.width = this.width;
+        canvas.height = this.height;
+
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(this, 0, 0);
+
+        var dataURL = canvas.toDataURL("image/png");
+
+        alert(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
+    };
+
+    img.src = url;
+}
+
+/* We're making the titles of link the resource value of the link tags.
+   This needs to be cleaned up so that there are no - characters, and that
+   things are properly capitalized */
 function fixUpText(titleText) {
     titleText = titleText.replace(/-/g, " ");
     titleText = titleText.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
     return titleText;
 }
 
+/* Go through the paragraph to split via italics, bold, and underline tags */
+/* Later on, let's see if I can make this more regex-based for sake of simplicity */
 function parseParagraph(paragraphString) {
     var inTag = false;
     var tagString = "";
@@ -63,6 +91,8 @@ returnList.push(tempString);
 return returnList;
 }
 
+/* From a 3D matrix of text values, convert the matrix value to a suitable tag
+   There has to be a better way to deal with this. */
 function generateObjectsFromParagraphMatrix(matrix) {
     var firstTag;
     var secondTag;
@@ -300,6 +330,8 @@ function generateObjectsFromParagraphMatrix(matrix) {
     return pushList;
 }
 
+/* Filter out the description-based tags so that they aren't in the description when 
+   the pdf gets created */
 function filterOut(descriptionString) {
     if (descriptionString.includes("DescTags:")) {
         descriptionString = descriptionString.replace(/DescTags: .*/, "");
@@ -315,6 +347,7 @@ function filterOut(descriptionString) {
     return descriptionString;
 }
 
+/* Generate appropriate link element for the CTDA */
 function generateCTDAElement(paragraphString) {
     var hrefMatch = paragraphString.match(/href=".*" r|href=".*">/)[0];
     var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
@@ -325,6 +358,7 @@ function generateCTDAElement(paragraphString) {
     return returnObject;
 }
 
+/* Generate appropriate link element for NYU */
 function generateNYUElement(paragraphString) {
     console.log(paragraphString);
     var hrefMatch = paragraphString.match(/href=".*" r|href=".*">/)[0];
@@ -336,6 +370,8 @@ function generateNYUElement(paragraphString) {
     return returnObject;
 }
 
+/* Generate appropriate link element for youtube links (that you generate from Scalar)
+   Also works for the USC Holocaust thing that Scalar also has */
 function generateYoutubeLinkElement(paragraphString) {
     var hrefMatch = paragraphString.match(/href=".*"/)[0];
     var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
@@ -349,6 +385,7 @@ function generateYoutubeLinkElement(paragraphString) {
     return returnObject;  
 }
 
+/* Generate link for Critical Commons elements */
 function generateCriticalCommonsVideoLinkElement(paragraphString) {
     var linkMatch = paragraphString.match(/http:\/\/.*"|http:\/\/.*" r/)[0];
     linkMatch = linkMatch.replace(/" r|"/, "");
@@ -359,6 +396,7 @@ function generateCriticalCommonsVideoLinkElement(paragraphString) {
     return returnObject;
 }
 
+/* Generate link for Internet Archive elements */
 function generateInternetArchiveLinkElement(paragraphString) {
     var linkMatch = paragraphString.match(/http:\/\/.*" r|http:\/\/.*">|http:\/\/.*" data-size/)[0];
     linkMatch = linkMatch.replace(/" r|" data-size|">/, "");
@@ -369,6 +407,7 @@ function generateInternetArchiveLinkElement(paragraphString) {
     return returnObject;
 }
 
+/* Generate link for Metropolitan Museum elements */
 function generateMetImageLinkElement(paragraphString) {
     var linkMatch = paragraphString.match(/http:\/\/.*"|http:\/\/.*" r/)[0];
     linkMatch = linkMatch.replace(/" r|"/, "");
@@ -379,6 +418,7 @@ function generateMetImageLinkElement(paragraphString) {
     return returnObject;
 }
 
+/* Generate link for Vimeo elements */
 function generateVimeoLinkElement(paragraphString) {
     var hrefMatch = paragraphString.match(/href=".*"/)[0];
     var textMatch = paragraphString.match(/resource=".*"/)[0];
@@ -390,14 +430,23 @@ function generateVimeoLinkElement(paragraphString) {
     return returnObject;
 }
 
+/* Depending on what we can do, either generate a link element to for a Scalar
+   image, or actually create the image and create an image element for the pdf
+   I really don't want to make an image out of this */
 function generateScalarImage(paragraphString) {
     // For now, just do the link
     var linkMatch = paragraphString.match(/http:\/\/.*"/)[0];
     linkMatch = linkMatch.slice(0, linkMatch.length - 1);
+    // Try to see if we can generate the image from where the image is from
+    getBase64FromImageUrl(linkMatch);
+    //console.log(linkMatch);
+    var modifiedLinkMatch = linkMatch.replace("http://", "");
+    //var returnObject = {image: modifiedLinkMatch};
     var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
     return returnObject;
 }
 
+/* For all other links, generate links from this function */
 function generateLinkParagraphElement(paragraphString) {
     var linkString = paragraphString.match(/.*">/)[0];
     var textString = paragraphString.match(/>.*/)[0];
@@ -411,6 +460,7 @@ function generateLinkParagraphElement(paragraphString) {
     return returnObject;
 }
 
+/* If both, generate the object to show both */
 function generateBothColorParagraphElement(paragraphString) {
     var backgroundColorStringVal = (paragraphString.match(/background-color:#.*;/))[0];
     paragraphString = paragraphString.replace(backgroundColorStringVal, "");
@@ -422,6 +472,7 @@ function generateBothColorParagraphElement(paragraphString) {
     return pushObject;
 }
 
+/* If there is either background color or text color, generate the object to show that */
 function generateColorParagraphElement(paragraphString) {
     var matchValArray;
     var matchVal;
@@ -454,6 +505,11 @@ function generateColorParagraphElement(paragraphString) {
     return pushObject;
 }
 
+/* Split by span tags and link tags. Those that have those elements will be designed around those
+   (i.e. any formatting outside of that will be ommitted). Otherwise, create a matrix from the text
+   and generate objects from that (mainly because there might be bold, italics, and underline tags) 
+   I understand that functionality is limited. Things will be added to this function as time goes on
+   and if people need that functionality*/
 function analyzeParagraph(paragraphString, siteURL) {
     var splitRegex = /<\/span><\/span>|<span|<\/span>|<a h|<\/a>|<a cl|<a re/g;
     paragraphStringMatches = paragraphString.split(splitRegex);
@@ -527,6 +583,8 @@ function analyzeParagraph(paragraphString, siteURL) {
     return returnObject;
 }
 
+/* Much like dealing with paragraphs, generate a 3D matrix from the text, then 
+   run it through generateObjectsFromParagraphMatrix to get all the appropriate objects */
 function analyzeListContent(listTextVal) {
     var analyzedTextList = parseParagraph(listTextVal);
     for (var m = 0; m < analyzedTextList.length; m++) {
@@ -541,6 +599,7 @@ function analyzeListContent(listTextVal) {
     return objectFromMatrix;
 }
 
+/* Determine what type of list it is, and generate the list accordingly */
 function generateListObject(tagString, tagType) {
     splitArray = tagString.split(/<\/li>/);
     var listObject = {};
@@ -557,7 +616,7 @@ function generateListObject(tagString, tagType) {
         if (splitArray[i] === "") {
             continue;
         } else {
-            // For now, filter out span related stuff
+            // For now, filter out span related stuff (I'll worry about it at another time)
             splitArray[i] = splitArray[i].replace(/<\/span>|<span style=.*">|<li>/g, "");
             var listTextList = analyzeListContent(splitArray[i]);
             var listObjVal = {text: listTextList, style: "listVal"};
@@ -571,7 +630,7 @@ function generateListObject(tagString, tagType) {
     }
     return listObject;
 };
-
+/* Filter out unnecessary text and generate an object for blockquotes*/
 function generateBlockQuoteObject(tagString) {
     var blockQuoteRegex = /quote>/g;
     tagString = tagString.replace(blockQuoteRegex, '');
@@ -590,6 +649,7 @@ function generateBlockQuoteObject(tagString) {
     return blockObjectList;
 };
 
+/* Filter out unnecessary text and generate an object for preformatted text*/
 function generatePreObject(tagString) {
     var regex = /&nbsp;|<pre>|<\/pre>/g;
     tagString = tagString.replace(regex, '');
@@ -602,6 +662,8 @@ function generatePreObject(tagString) {
     return returnList;
 };
 
+/* From the split content array, see what is a paragraph, what is a header,
+   what is a preformatted section, what is a blockquote, and what is a list */
 function filterContent(contentArray, siteURL) {
     var contentList = [];
     var pushObject = {};
@@ -661,6 +723,10 @@ function filterContent(contentArray, siteURL) {
     return contentList;
 };
 
+/* Access the JSON file. Get the description and the content.
+   Once the content has been retrieved, split it up by list, header, and break
+   tags and run it through a function to analyze that 
+   After that, generate the PDF from the objects */
 function convert(JSONObj, authorName, siteURL, titleVal) {
     var JSONString = JSON.stringify(JSONObj);
     var linkString = siteURL + titleVal + "/index.";
@@ -694,7 +760,6 @@ function convert(JSONObj, authorName, siteURL, titleVal) {
         },
 
         content: [
-            // ACTUALLY GET THE NAME 
             { text: authorName, style: "name" }, 
             { text: " ", style: "spacing"},
             { text: title, style: "title" }, 
@@ -704,10 +769,6 @@ function convert(JSONObj, authorName, siteURL, titleVal) {
             ],
 
             styles: {
-            /* Need to speak with Sasha regrding the design of the pdf
-            * These are just baseline things, just so I could quickly
-            * get to the PDF generation part of my work
-            */
                 title: {
                     fontSize: 26,
                     bold: true,
@@ -793,6 +854,5 @@ function convert(JSONObj, authorName, siteURL, titleVal) {
     for (var m = 0; m < contentList.length; m++) {
         docDef.content.push(contentList[m]);
     }
-    // Is there a specific process for going to ScholarlyCommons?
     pdfMake.createPdf(docDef).download(authorName + ' - ' + 'pdfVal.pdf');
 };
