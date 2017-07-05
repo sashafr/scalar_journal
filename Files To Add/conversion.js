@@ -14,8 +14,9 @@ function getBase64FromImageUrl(url) {
         ctx.drawImage(this, 0, 0);
 
         var dataURL = canvas.toDataURL("image/png");
-
-        alert(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
+        alert(dataURL);
+        //alert(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
+        return dataURL;
     };
 
     img.src = url;
@@ -438,10 +439,9 @@ function generateScalarImage(paragraphString) {
     var linkMatch = paragraphString.match(/http:\/\/.*"/)[0];
     linkMatch = linkMatch.slice(0, linkMatch.length - 1);
     // Try to see if we can generate the image from where the image is from
-    getBase64FromImageUrl(linkMatch);
-    //console.log(linkMatch);
-    var modifiedLinkMatch = linkMatch.replace("http://", "");
-    //var returnObject = {image: modifiedLinkMatch};
+    var imageGenVal = getBase64FromImageUrl(linkMatch);
+    //var modifiedLinkMatch = linkMatch.replace("http://", "");
+    //var returnObject = {image: imageGenVal};
     var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
     return returnObject;
 }
