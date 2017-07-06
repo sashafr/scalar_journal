@@ -1,25 +1,27 @@
+var globalURL;
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 /* Assuming that CORS is enabled, get the image from
    the URL, return the object to hold the image data */
-function getBase64FromImageUrl(url) {
-    var img = new Image();
-
-    img.setAttribute('crossOrigin', 'anonymous');
-
-    img.onload = function () {
-        var canvas = document.createElement("canvas");
-        canvas.width = this.width;
-        canvas.height = this.height;
-
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(this, 0, 0);
-
-        var dataURL = canvas.toDataURL("image/png");
-        alert(dataURL);
-        //alert(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
-        return dataURL;
-    };
-
+function getBase64FromImageUrl(url, callback, outputFormat){
+    var canvas = document.createElement('CANVAS'),
+    ctx = canvas.getContext('2d'),
+    img = new Image;
+    img.crossOrigin = 'Anonymous';
     img.src = url;
+    sleep(200000);
+    img.onload = function(){
+        var dataURL;
+        canvas.height = img.height;
+        canvas.width = img.width;
+        ctx.drawImage(img, 0, 0);
+        dataURL = canvas.toDataURL(outputFormat);
+        callback(dataURL);
+        canvas = null; 
+    };
+    
 }
 
 /* We're making the titles of link the resource value of the link tags.
@@ -439,10 +441,19 @@ function generateScalarImage(paragraphString) {
     var linkMatch = paragraphString.match(/http:\/\/.*"/)[0];
     linkMatch = linkMatch.slice(0, linkMatch.length - 1);
     // Try to see if we can generate the image from where the image is from
-    var imageGenVal = getBase64FromImageUrl(linkMatch);
-    //var modifiedLinkMatch = linkMatch.replace("http://", "");
-    //var returnObject = {image: imageGenVal};
-    var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
+    // Put getBase64 here instead
+    getBase64FromImageUrl(linkMatch, function(val) {
+        globalURL = val;
+    });
+    console.log(globalURL);
+    // alert(globalURL);
+    // var modifiedLinkMatch = linkMatch.replace("http://", "");
+    var returnObject = {
+                        image: globalURL, 
+                        width: 50,
+                        height: 50
+                       };
+    //var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
     return returnObject;
 }
 
