@@ -5,23 +5,23 @@ function sleep(ms) {
 }
 /* Assuming that CORS is enabled, get the image from
    the URL, return the object to hold the image data */
-function getBase64FromImageUrl(url, callback, outputFormat){
+function getBase64FromImageUrl(url, callback){
+    console.log(url);
     var canvas = document.createElement('CANVAS'),
     ctx = canvas.getContext('2d'),
     img = new Image;
     img.crossOrigin = 'Anonymous';
-    img.src = url;
-    sleep(200000);
+    
     img.onload = function(){
         var dataURL;
         canvas.height = img.height;
         canvas.width = img.width;
         ctx.drawImage(img, 0, 0);
-        dataURL = canvas.toDataURL(outputFormat);
+        dataURL = canvas.toDataURL('image/png');
         callback(dataURL);
         canvas = null; 
     };
-    
+    img.src = url;
 }
 
 /* We're making the titles of link the resource value of the link tags.
@@ -355,6 +355,7 @@ function generateCTDAElement(paragraphString) {
     var hrefMatch = paragraphString.match(/href=".*" r|href=".*">/)[0];
     var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
     hrefMatch = hrefMatch.replace(/href="|" r/g, "");
+    hrefMatch = hrefMatch.replace(/">/, "");
     textMatch = textMatch.replace(/resource="|" data-size/g, "");
     textMatch = fixUpText(textMatch);
     var returnObject = {text: textMatch, link: hrefMatch, style: "linkBody"};
@@ -363,10 +364,11 @@ function generateCTDAElement(paragraphString) {
 
 /* Generate appropriate link element for NYU */
 function generateNYUElement(paragraphString) {
-    console.log(paragraphString);
+    //console.log(paragraphString);
     var hrefMatch = paragraphString.match(/href=".*" r|href=".*">/)[0];
     var textMatch = paragraphString.match(/resource=".*" data-size/)[0];
     hrefMatch = hrefMatch.replace(/href="|" r/g, "");
+    hrefMatch = hrefMatch.replace(/">/, "");
     textMatch = textMatch.replace(/resource="|" data-size/g, "");
     textMatch = fixUpText(textMatch);
     var returnObject = {text: textMatch, link: hrefMatch, style: "linkBody"};
@@ -444,6 +446,7 @@ function generateScalarImage(paragraphString) {
     // Put getBase64 here instead
     getBase64FromImageUrl(linkMatch, function(val) {
         globalURL = val;
+        alert(val);
     });
     console.log(globalURL);
     // alert(globalURL);
@@ -459,14 +462,15 @@ function generateScalarImage(paragraphString) {
 
 /* For all other links, generate links from this function */
 function generateLinkParagraphElement(paragraphString) {
-    var linkString = paragraphString.match(/.*">/)[0];
+    var linkString = paragraphString.match(/http:.*">/)[0];
+    linkString = linkString.replace(/">/, "");
     var textString = paragraphString.match(/>.*/)[0];
-    linkString = linkString.slice(0, linkString.length - 2);
     textString = textString.slice(1, textString.length);
     if (linkString.includes("youtube.com") && linkString.includes("/v/")) {
         linkString = linkString.replace(/v\//, "watch?v=");
         linkString = linkString.replace(/ r.*/, "");
     }
+    linkString = linkString.replace(/"/g, "");
     var returnObject = {text: textString, link: linkString, style: "linkBody"};
     return returnObject;
 }
