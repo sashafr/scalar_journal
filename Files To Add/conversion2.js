@@ -32,6 +32,8 @@ function getBase64FromImageUrl(url){
 function getPictureValue(matches) {
     for (var i = 0; i < matches.length; i++) {
     	var textMatch = matches[i].match(/"http.*"/)[0];
+        console.log(textMatch);
+        throw new Error("Stop");
     	getBase64FromImageUrl(textMatch);
     }
 }
@@ -765,8 +767,8 @@ function convert(JSONObj, authorName, siteURL, titleVal) {
     content = content.replace(/<ul>/g, "<unlist>");
     var pictureMatchRegex = /<a class="inline" resource="media\/.*href=".*"><\/a>/g;
     var scalarPictureMatches = content.match(pictureMatchRegex);
-    //console.log(scalarPictureMatches);
-    //getPictureValue(scalarPictureMatches);
+    console.log(scalarPictureMatches);
+    getPictureValue(scalarPictureMatches);
     while (!(isComplete(scalarPictureMatches.length))) {
     	console.log(globalURLList);
     }
