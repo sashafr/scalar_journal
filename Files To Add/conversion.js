@@ -1,7 +1,15 @@
-var globalURL;
+var globalURL = null;
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+        end = new Date().getTime();
+    }
 }
 /* Assuming that CORS is enabled, get the image from
    the URL, return the object to hold the image data */
@@ -11,7 +19,7 @@ function getBase64FromImageUrl(url, callback){
     ctx = canvas.getContext('2d'),
     img = new Image;
     img.crossOrigin = 'Anonymous';
-    await sleep(2000);
+    img.src = url;
     img.onload = function(){
         var dataURL;
         canvas.height = img.height;
@@ -20,8 +28,7 @@ function getBase64FromImageUrl(url, callback){
         dataURL = canvas.toDataURL('image/png');
         callback(dataURL);
         canvas = null; 
-    };
-    img.src = url;
+    };  
 }
 
 /* We're making the titles of link the resource value of the link tags.
@@ -444,12 +451,17 @@ function generateScalarImage(paragraphString) {
     linkMatch = linkMatch.slice(0, linkMatch.length - 1);
     // Try to see if we can generate the image from where the image is from
     // Put getBase64 here instead
+    console.log(globalURL);
     getBase64FromImageUrl(linkMatch, function(val) {
         globalURL = val;
-        alert(val);
+        //alert(val);
     });
-    console.log(globalURL);
-    // alert(globalURL);
+    while(globalURL === null) {
+        console.log(globalURL);
+        wait(100);
+    }
+    //console.log(globalURL);
+    alert(globalURL);
     // var modifiedLinkMatch = linkMatch.replace("http://", "");
     var returnObject = {
                         image: globalURL, 
