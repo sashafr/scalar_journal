@@ -11,7 +11,7 @@ function getBase64FromImageUrl(url, callback){
     ctx = canvas.getContext('2d'),
     img = new Image;
     img.crossOrigin = 'Anonymous';
-    
+    await sleep(2000);
     img.onload = function(){
         var dataURL;
         canvas.height = img.height;
