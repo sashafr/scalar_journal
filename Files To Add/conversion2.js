@@ -15,6 +15,7 @@ function filler() {
 /* Assuming that CORS is enabled, get the image from
    the URL, return the object to hold the image data */
 function getBase64FromImageUrl(url){
+    console.log(url);
     var img = new Image();
     img.setAttribute('crossOrigin', 'anonymous');
     img.src = url;
@@ -465,7 +466,7 @@ function generateScalarImage(paragraphString) {
                         width: 50,
                         height: 50
                        };
-    var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
+    //var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
     return returnObject;
 }
 
