@@ -13,7 +13,7 @@ function wait(ms){
 }
 /* Assuming that CORS is enabled, get the image from
    the URL, return the object to hold the image data */
-function getBase64FromImageUrl(url, callback){
+function getBase64FromImageUrl(url) {
     console.log(url);
     var canvas = document.createElement('CANVAS'),
     ctx = canvas.getContext('2d'),
@@ -29,6 +29,11 @@ function getBase64FromImageUrl(url, callback){
         callback(dataURL);
         canvas = null; 
     };  
+    /*var request = new XMLHttpRequest();
+    request.open("GET", url, false);
+    request.send();
+    var godHelpMe = request.responeText;
+    console.log(godHelpMe);*/
 }
 
 /* We're making the titles of link the resource value of the link tags.
@@ -451,24 +456,9 @@ function generateScalarImage(paragraphString) {
     linkMatch = linkMatch.slice(0, linkMatch.length - 1);
     // Try to see if we can generate the image from where the image is from
     // Put getBase64 here instead
-    console.log(globalURL);
-    getBase64FromImageUrl(linkMatch, function(val) {
-        globalURL = val;
-        //alert(val);
-    });
-    while(globalURL === null) {
-        console.log(globalURL);
-        wait(100);
-    }
-    //console.log(globalURL);
-    alert(globalURL);
-    // var modifiedLinkMatch = linkMatch.replace("http://", "");
-    var returnObject = {
-                        image: globalURL, 
-                        width: 50,
-                        height: 50
-                       };
-    //var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
+    getBase64FromImageUrl(linkMatch);
+    //var returnObject = {image: 'c7c9063c6d7884b40eefe1f70df69f03--baby-beagle-beagle-puppies.jpg', width: 50, height: 50};
+    var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
     return returnObject;
 }
 
