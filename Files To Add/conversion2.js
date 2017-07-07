@@ -17,7 +17,9 @@ function filler() {
 function getBase64FromImageUrl(url){
     var img = new Image();
     img.setAttribute('crossOrigin', 'anonymous');
+    img.src = url;
     img.onload = function () {
+        alert("DING");
         var canvas = document.createElement("canvas");
         canvas.width = this.width;
         canvas.height = this.height;
@@ -25,15 +27,16 @@ function getBase64FromImageUrl(url){
         ctx.drawImage(this, 0, 0);
         var dataURL = canvas.toDataURL("image/png");
         globalURLList.push(dataURL);
+        alert(dataURL);
     };
-    img.src = url; 
+     
 }
 
 function getPictureValue(matches) {
     for (var i = 0; i < matches.length; i++) {
     	var textMatch = matches[i].match(/"http.*"/)[0];
         console.log(textMatch);
-        throw new Error("Stop");
+        //throw new Error("Stop");
     	getBase64FromImageUrl(textMatch);
     }
 }
@@ -769,9 +772,10 @@ function convert(JSONObj, authorName, siteURL, titleVal) {
     var scalarPictureMatches = content.match(pictureMatchRegex);
     console.log(scalarPictureMatches);
     getPictureValue(scalarPictureMatches);
-    while (!(isComplete(scalarPictureMatches.length))) {
-    	console.log(globalURLList);
-    }
+    var counter = 0;
+    //while (!(isComplete(scalarPictureMatches.length))) {
+    //	console.log(globalURLList);
+    //}
     var contentParagraphMatches = content.split(/<br \/>|<ol>|<un|l>|<\/h1>|<\/h2>|<\/h3>|<\/h4>|<\/h5>|<\/pre>|<block|<\/blockquote>|<h/);
     var titleList = JSONDescAndCont["http://purl.org/dc/terms/title"];
     var titleIntermediary = titleList[0];
