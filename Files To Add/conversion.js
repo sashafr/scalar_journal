@@ -14,7 +14,6 @@ function wait(ms){
 /* Assuming that CORS is enabled, get the image from
    the URL, return the object to hold the image data */
 function getBase64FromImageUrl(url) {
-    console.log(url);
     var canvas = document.createElement('CANVAS'),
     ctx = canvas.getContext('2d'),
     img = new Image;
@@ -456,7 +455,7 @@ function generateScalarImage(paragraphString) {
     linkMatch = linkMatch.slice(0, linkMatch.length - 1);
     // Try to see if we can generate the image from where the image is from
     // Put getBase64 here instead
-    getBase64FromImageUrl(linkMatch);
+    // getBase64FromImageUrl(linkMatch);
     //var returnObject = {image: 'c7c9063c6d7884b40eefe1f70df69f03--baby-beagle-beagle-puppies.jpg', width: 50, height: 50};
     var returnObject = {text: "Image Link", link: linkMatch, style: "linkBody"};
     return returnObject;
@@ -530,7 +529,6 @@ function generateColorParagraphElement(paragraphString) {
 function analyzeParagraph(paragraphString, siteURL) {
     var splitRegex = /<\/span><\/span>|<span|<\/span>|<a h|<\/a>|<a cl|<a re/g;
     paragraphStringMatches = paragraphString.split(splitRegex);
-    console.log(paragraphStringMatches);
     var textList = [];
     var pushObject = {};
     for (var i = 0; i < paragraphStringMatches.length; i++) {
@@ -727,9 +725,12 @@ function filterContent(contentArray, siteURL) {
             contentList = contentList.concat(pushObjectList);
         } else {
             if (contentArray[i].includes("<strong>") || contentArray[i].includes("<em>") || contentArray[i].includes("<u>") || contentArray[i].includes("<span style") || contentArray[i].includes("<a href") || contentArray[i].includes("<a class") || contentArray[i].includes("<a name") || contentArray[i].includes("<a resource")) {
+                contentArray[i] = contentArray[i].replace(/<span class="note".*">|<\/span>/g, "");
+                //console.log(contentArray[i]);
                 pushObject = analyzeParagraph(contentArray[i], siteURL);
                 contentList.push(pushObject);
             } else {
+                contentArray[i] = contentArray[i].replace(/<span class="note".*">|<\/span>/g, "");
                 pushObject = {text: contentArray[i], style: "body"};
                 contentList.push(pushObject);
             }
