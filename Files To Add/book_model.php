@@ -98,6 +98,7 @@ class Book_model extends MY_Model {
 
   		if (!isset($row->type) || empty($row->type)) $row->type = 'book';
   		if (isset($row->subtitle) && !empty($row->subtitle)) $row->title = $row->title.'<span class="subtitle">: '.$row->subtitle.'</span>';
+        print(parent::rdf($row, $base_uri));
   		return parent::rdf($row, $base_uri);
 
   	}
@@ -395,11 +396,11 @@ class Book_model extends MY_Model {
      * JP
 	 */
 	public function isolateDescTags($description) {
-        if (strpos($descriptionVal, "DescTags:")) {
+        if (strpos($description, "DescTags:")) {
             preg_match('/DescTags: (.*)/', $description, $matches);
-        } else if (strpos($descriptionVal, "Desc Tags:")) {
+        } else if (strpos($description, "Desc Tags:")) {
             preg_match('/Desc Tags: (.*)/', $description, $matches);
-        } else if (strpos($descriptionVal, "Description Tags: ")) {
+        } else if (strpos($description, "Description Tags: ")) {
             preg_match('/Description Tags: (.*)/', $description, $matches);
         } else {
             preg_match('/Tags: (.*)/', $description, $matches);
